@@ -1,0 +1,23 @@
+{
+  "name": "opencode-peon",
+  "version": "1.0.0",
+  "description": "OpenCode plugin that plays Warcraft II peon sounds on user commands and task completion",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "warcraft",
+    "peon",
+    "sounds"
+  ],
+  "author": "",
+  "license": "MIT",
+  "files": [
+    "index.js",
+    "sounds/"
+  ],
+  "peerDependencies": {
+    "@opencode-ai/plugin": "*"
+  }
+}
