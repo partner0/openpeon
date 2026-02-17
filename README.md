@@ -1,4 +1,4 @@
-# opencode-peon
+# openpeon
 
 An OpenCode plugin that plays Warcraft II peon voice lines when you interact with the AI agent.
 
@@ -15,7 +15,7 @@ Add to your `opencode.json`:
 
 ```json
 {
-  "plugin": ["opencode-peon"]
+  "plugin": ["openpeon"]
 }
 ```
 
@@ -24,13 +24,13 @@ Add to your `opencode.json`:
 Copy the plugin file and sounds folder to your OpenCode plugins directory:
 
 ```bash
-cp -r index.js sounds ~/.config/opencode/plugins/opencode-peon/
+cp -r index.js sounds ~/.config/opencode/plugins/openpeon/
 ```
 
 Or for project-specific use:
 
 ```bash
-cp -r index.js sounds .opencode/plugins/opencode-peon/
+cp -r index.js sounds .opencode/plugins/openpeon/
 ```
 
 ## Requirements

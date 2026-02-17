@@ -1,0 +1,120 @@
+{
+  "volume": 3,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/scv-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/scv-yes00.wav",
+        "scbw-terran/scv-yes01.wav",
+        "scbw-terran/scv-yes02.wav",
+        "scbw-terran/scv-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/scv-rdy00.wav",
+        "scbw-terran/scv-upd00.wav",
+        "scbw-terran/scv-wht03.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/scv-pss00.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/scv-rep04.wav",
+        "scbw-terran/scv-rep03.wav",
+        "scbw-terran/scv-rep02.wav",
+        "scbw-terran/scv-rep01.wav",
+        "scbw-terran/scv-rep00.wav"
+      ]
+    },
+    {
+      "name": "new-session",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.created"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/advisor-upd04.wav"
+      ]
+    }
+  ],
+  "randomPreset": true
+}

@@ -1,0 +1,104 @@
+{
+  "volume": 3,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/peon-other-ready.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/basic-orc-voices-acknowledge-1.wav",
+        "wc2-horde/basic-orc-voices-acknowledge-2.wav",
+        "wc2-horde/basic-orc-voices-acknowledge-3.wav",
+        "wc2-horde/basic-orc-voices-acknowledge-4.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/basic-orc-voices-other-work-complete.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/basic-orc-voices-selected-4.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/buildings-blacksmith.wav",
+        "wc2-alliance/buildings-foundry.wav",
+        "wc2-alliance/buildings-gold-mine.wav",
+        "wc2-alliance/buildings-lumber-mill.wav"
+      ]
+    }
+  ]
+}

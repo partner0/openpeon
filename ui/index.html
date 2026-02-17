@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenPeon Config</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --bg-elevated: #222222;
+      --border-color: #2a2a2a;
+      --border-light: #333333;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1a1;
+      --text-muted: #666666;
+      --accent: #b4ff39;
+      --accent-hover: #c8ff66;
+      --accent-muted: rgba(180, 255, 57, 0.1);
+      --danger: #ff4444;
+      --danger-hover: #ff6666;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-muted);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-muted);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-ghost:hover {
+      background: var(--accent-muted);
+    }
+
+    .btn-delete {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn-delete:hover {
+      color: var(--danger);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-icon {
+      padding: 8px;
+      width: 32px;
+      height: 32px;
+      justify-content: center;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .presets-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .preset-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px 8px 16px;
+      border-radius: 100px;
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-chip:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+
+    .preset-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .preset-delete:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .mapping-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .mapping-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+    }
+
+    .mapping-name {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      width: 300px;
+    }
+
+    .mapping-name:focus {
+      outline: none;
+    }
+
+    .mapping-name::placeholder {
+      color: var(--text-muted);
+    }
+
+    .mapping-body {
+      padding: 20px;
+    }
+
+    .mapping-section {
+      margin-bottom: 20px;
+    }
+
+    .mapping-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .mapping-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .trigger-row, .sound-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+    }
+
+    .trigger-row:last-of-type, .sound-row:last-of-type {
+      margin-bottom: 12px;
+    }
+
+    select, input[type="text"] {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    select {
+      min-width: 160px;
+      cursor: pointer;
+    }
+
+    .kv-input {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kv-input label {
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .kv-input input {
+      width: 100px;
+    }
+
+    .sound-path {
+      flex: 1;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .empty-state {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 900px;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sound-browser {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sound-browser-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .sound-browser-panel:last-child {
+      border-right: none;
+    }
+
+    .sound-browser-panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--bg-tertiary);
+    }
+
+    .sound-browser-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      max-height: 500px;
+    }
+
+    .sound-browser-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
+    .sound-browser-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .sound-browser-item.selected {
+      background: var(--accent-muted);
+      color: var(--accent);
+    }
+
+    .sound-browser-item-name {
+      flex: 1;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-primary);
+    }
+
+    .sound-browser-actions {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+    }
+
+    /* Status toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .toast.success {
+      border-color: var(--accent);
+    }
+
+    .toast.success::before {
+      content: "OK";
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .toast.error {
+      border-color: var(--danger);
+    }
+
+    .toast.error::before {
+      content: "X";
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Volume slider */
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 200px;
+      height: 6px;
+      background: var(--bg-elevated);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .volume-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .volume-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 36px;
+    }
+
+    /* Toggle switch */
+    .toggle-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: var(--accent-muted);
+      border-color: var(--accent);
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-text">Open<span>Peon</span></div>
+      </div>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="addMapping()">+ Add Mapping</button>
+        <button class="btn-secondary" onclick="saveConfig()">Save Config</button>
+        <button class="btn-ghost" onclick="loadConfig()">Reload</button>
+        <button class="btn-ghost" onclick="showSavePresetModal()">Save Preset</button>
+        <button class="btn-secondary" onclick="deployPlugin()" style="margin-left: auto;">Deploy Plugin</button>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Presets</h2>
+      </div>
+      <div id="preset-list" class="presets-grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Settings</h2>
+      </div>
+      <div class="toggle-control" style="margin-bottom: 16px;">
+        <span class="toggle-label">Random preset at startup</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="random-preset-toggle" onchange="updateRandomPreset(this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div class="volume-control">
+        <span class="toggle-label">Volume</span>
+        <input type="range" id="volume-slider" class="volume-slider" min="1" max="10" step="1" value="5" oninput="updateVolume(this.value)">
+        <span id="volume-value" class="volume-value">5 / 10</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Mappings</h2>
+      </div>
+      <div id="mappings"></div>
+    </section>
+  </div>
+
+  <div id="sound-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Select Sounds</h3>
+        <button class="btn-ghost btn-icon" onclick="closeSoundModal()">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="sound-browser">
+          <div class="sound-browser-panel">
+            <div class="sound-browser-panel-header">Directories</div>
+            <div class="sound-browser-panel-body" id="sound-dirs"></div>
+          </div>
+          <div class="sound-browser-panel" style="flex: 2;">
+            <div class="sound-browser-panel-header">Sound Files</div>
+            <div class="sound-browser-actions">
+              <input type="text" id="sound-filter" placeholder="Filter sounds..." oninput="filterSounds()" style="flex: 1;">
+              <button class="btn-secondary btn-sm" onclick="selectAllSounds()">Select All</button>
+              <button class="btn-ghost btn-sm" onclick="clearSoundSelection()">Clear</button>
+            </div>
+            <div class="sound-browser-panel-body" id="sound-files"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeSoundModal()">Cancel</button>
+        <button class="btn-primary" onclick="confirmSoundSelection()">Add Selected</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="preset-modal" class="modal-overlay">
+    <div class="modal" style="width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Save Preset</h3>
+        <button class="btn-ghost btn-icon" onclick="closePresetModal()">X</button>
+      </div>
+      <div style="padding: 24px;">
+        <input type="text" id="preset-name" placeholder="Enter preset name..." style="width: 100%;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closePresetModal()">Cancel</button>
+        <button class="btn-primary" onclick="savePreset()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let config = { volume: 5, mappings: [] }
+    let meta = { triggerTypes: [], eventValues: [], toolValues: [] }
+    let currentSoundCallback = null
+    let selectedSoundDir = "."
+    let selectedSoundFiles = new Set()
+    let allSoundFiles = []
+
+    async function init() {
+      const metaRes = await fetch("/api/meta")
+      meta = await metaRes.json()
+      await loadConfig()
+      await loadPresets()
+    }
+
+    function renderSettings() {
+      const vol = typeof config.volume === "number" ? config.volume : 5
+      document.getElementById("volume-slider").value = vol
+      document.getElementById("volume-value").textContent = `${vol} / 10`
+      document.getElementById("random-preset-toggle").checked = Boolean(config.randomPreset)
+    }
+
+    function updateVolume(value) {
+      const vol = parseInt(value, 10)
+      config.volume = vol
+      document.getElementById("volume-value").textContent = `${vol} / 10`
+    }
+
+    function updateRandomPreset(checked) {
+      config.randomPreset = checked
+    }
+
+    async function loadConfig() {
+      const res = await fetch("/api/config")
+      config = await res.json()
+      if (typeof config.volume !== "number") {
+        config.volume = 5
+      }
+      if (typeof config.randomPreset !== "boolean") {
+        config.randomPreset = false
+      }
+      renderSettings()
+      renderMappings()
+    }
+
+    async function saveConfig() {
+      const res = await fetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      })
+      if (res.ok) {
+        showToast("Config saved successfully", "success")
+      } else {
+        showToast("Failed to save config", "error")
+      }
+    }
+
+    async function loadPresets() {
+      const res = await fetch("/api/presets")
+      const presets = await res.json()
+      const container = document.getElementById("preset-list")
+      if (presets.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 14px;">No presets saved yet</span>'
+      } else {
+        container.innerHTML = presets.map(name => 
+          `<div class="preset-chip">
+            <span onclick="loadPreset('${name}')">${name}</span>
+            <span class="preset-delete" onclick="deletePreset('${name}', event)">&times;</span>
+          </div>`
+        ).join("")
+      }
+    }
+
+    async function deletePreset(name, event) {
+      event.stopPropagation()
+      if (!confirm(`Delete preset "${name}"?`)) {
+        return
+      }
+      try {
+        const res = await fetch(`/api/presets/${encodeURIComponent(name)}`, { method: "DELETE" })
+        const result = await res.json()
+        if (result.success) {
+          showToast(`Deleted preset: ${name}`, "success")
+          await loadPresets()
+        } else {
+          showToast(`Failed to delete: ${result.error}`, "error")
+        }
+      } catch (err) {
+        showToast(`Delete error: ${err.message}`, "error")
+      }
+    }
+
+    async function loadPreset(name) {
+      const res = await fetch(`/api/presets/${encodeURIComponent(name)}`)
+      if (res.ok) {
+        config = await res.json()
+        if (typeof config.volume !== "number") {
+          config.volume = 5
+        }
+        if (typeof config.randomPreset !== "boolean") {
+          config.randomPreset = false
+        }
+        renderSettings()
+        renderMappings()
+        showToast(`Loaded preset: ${name}`, "success")
+      }
+    }
+
+    function showSavePresetModal() {
+      document.getElementById("preset-modal").classList.add("active")
+      document.getElementById("preset-name").value = ""
+      document.getElementById("preset-name").focus()
+    }
+
+    function closePresetModal() {
+      document.getElementById("preset-modal").classList.remove("active")
+    }
+
+    async function savePreset() {
+      const name = document.getElementById("preset-name").value.trim()
+      if (!name) {
+        showToast("Please enter a preset name", "error")
+        return
+      }
+
+      const res = await fetch(`/api/presets/${encodeURIComponent(name)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      })
+
+      if (res.ok) {
+        closePresetModal()
+        await loadPresets()
+        showToast(`Saved preset: ${name}`, "success")
+      } else {
+        showToast("Failed to save preset", "error")
+      }
+    }
+
+    function addMapping() {
+      config.mappings.unshift({
+        name: "New Mapping",
+        triggers: [],
+        sounds: [],
+      })
+      renderMappings()
+    }
+
+    function removeMapping(index) {
+      config.mappings.splice(index, 1)
+      renderMappings()
+    }
+
+    function updateMappingName(index, name) {
+      config.mappings[index].name = name
+    }
+
+    function addTrigger(mappingIndex) {
+      config.mappings[mappingIndex].triggers.push({
+        type: "event",
+        event: "session.idle",
+      })
+      renderMappings()
+    }
+
+    function removeTrigger(mappingIndex, triggerIndex) {
+      config.mappings[mappingIndex].triggers.splice(triggerIndex, 1)
+      renderMappings()
+    }
+
+    function updateTriggerType(mappingIndex, triggerIndex, type) {
+      const trigger = config.mappings[mappingIndex].triggers[triggerIndex]
+      trigger.type = type
+      if (type === "event") {
+        delete trigger.tool
+        trigger.event = meta.eventValues[0]
+      } else if (type === "tool.before") {
+        delete trigger.event
+        delete trigger.role
+        trigger.tool = meta.toolValues[0]
+      }
+      renderMappings()
+    }
+
+    function updateTriggerValue(mappingIndex, triggerIndex, value) {
+      const trigger = config.mappings[mappingIndex].triggers[triggerIndex]
+      if (trigger.type === "event") {
+        trigger.event = value
+        if (value !== "message.updated") {
+          delete trigger.role
+        }
+      } else if (trigger.type === "tool.before") {
+        trigger.tool = value
+      }
+      renderMappings()
+    }
+
+    function updateTriggerKV(mappingIndex, triggerIndex, key, value) {
+      const trigger = config.mappings[mappingIndex].triggers[triggerIndex]
+      if (value) {
+        trigger[key] = value
+      } else {
+        delete trigger[key]
+      }
+    }
+
+    function addSound(mappingIndex) {
+      openSoundModal((soundPaths) => {
+        config.mappings[mappingIndex].sounds.push(...soundPaths)
+        renderMappings()
+      })
+    }
+
+    function removeSound(mappingIndex, soundIndex) {
+      config.mappings[mappingIndex].sounds.splice(soundIndex, 1)
+      renderMappings()
+    }
+
+    function openSoundModal(callback) {
+      currentSoundCallback = callback
+      selectedSoundDir = "."
+      selectedSoundFiles = new Set()
+      document.getElementById("sound-modal").classList.add("active")
+      loadSoundDirs()
+    }
+
+    function closeSoundModal() {
+      document.getElementById("sound-modal").classList.remove("active")
+      currentSoundCallback = null
+    }
+
+    async function loadSoundDirs() {
+      const res = await fetch("/api/sounds/directories")
+      const dirs = await res.json()
+      const container = document.getElementById("sound-dirs")
+      container.innerHTML = dirs.map(dir => 
+        `<div class="sound-browser-item ${dir === selectedSoundDir ? 'selected' : ''}" onclick="selectSoundDir('${dir}')">
+          <span class="sound-browser-item-name">${dir === "." ? "Root" : dir}</span>
+        </div>`
+      ).join("")
+      await loadSoundFiles()
+    }
+
+    async function selectSoundDir(dir) {
+      selectedSoundDir = dir
+      selectedSoundFiles = new Set()
+      document.getElementById("sound-filter").value = ""
+      await loadSoundDirs()
+    }
+
+    async function loadSoundFiles() {
+      const res = await fetch(`/api/sounds/list/${encodeURIComponent(selectedSoundDir)}`)
+      allSoundFiles = await res.json()
+      renderSoundFiles()
+    }
+
+    function filterSounds() {
+      renderSoundFiles()
+    }
+
+    function renderSoundFiles() {
+      const filter = (document.getElementById("sound-filter")?.value || "").toLowerCase()
+      const files = filter ? allSoundFiles.filter(f => f.toLowerCase().includes(filter)) : allSoundFiles
+      const container = document.getElementById("sound-files")
+      container.innerHTML = files.map(file => {
+        const fullPath = selectedSoundDir === "." ? file : `${selectedSoundDir}/${file}`
+        return `<div class="sound-browser-item ${selectedSoundFiles.has(file) ? 'selected' : ''}">
+          <span class="sound-browser-item-name" onclick="toggleSoundFile('${file}')">${file}</span>
+          <button class="btn-ghost btn-sm" onclick="playSound('${fullPath}')">Play</button>
+        </div>`
+      }).join("")
+    }
+
+    function toggleSoundFile(file) {
+      if (selectedSoundFiles.has(file)) {
+        selectedSoundFiles.delete(file)
+      } else {
+        selectedSoundFiles.add(file)
+      }
+      renderSoundFiles()
+    }
+
+    async function selectAllSounds() {
+      const res = await fetch(`/api/sounds/list/${encodeURIComponent(selectedSoundDir)}`)
+      const files = await res.json()
+      selectedSoundFiles = new Set(files)
+      loadSoundFiles()
+    }
+
+    function clearSoundSelection() {
+      selectedSoundFiles = new Set()
+      renderSoundFiles()
+    }
+
+    function playSound(path) {
+      const audio = new Audio(`/api/sounds/play/${encodeURIComponent(path)}`)
+      audio.play()
+    }
+
+    function confirmSoundSelection() {
+      if (selectedSoundFiles.size === 0) {
+        showToast("Please select at least one sound", "error")
+        return
+      }
+
+      const fullPaths = Array.from(selectedSoundFiles).map(file =>
+        selectedSoundDir === "." ? file : `${selectedSoundDir}/${file}`
+      )
+      if (currentSoundCallback) {
+        currentSoundCallback(fullPaths)
+      }
+      closeSoundModal()
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById("toast")
+      toast.textContent = message
+      toast.className = `toast show ${type}`
+      setTimeout(() => {
+        toast.classList.remove("show")
+      }, 3000)
+    }
+
+    async function deployPlugin() {
+      try {
+        // Save config to disk first so deploy copies the latest state
+        await fetch("/api/config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(config),
+        })
+        const res = await fetch("/api/deploy", { method: "POST" })
+        const result = await res.json()
+        if (result.success) {
+          showToast("Plugin deployed! Restart OpenCode to apply changes.", "success")
+        } else {
+          showToast(`Deploy failed: ${result.error}`, "error")
+        }
+      } catch (err) {
+        showToast(`Deploy error: ${err.message}`, "error")
+      }
+    }
+
+    function renderMappings() {
+      const container = document.getElementById("mappings")
+      
+      if (config.mappings.length === 0) {
+        container.innerHTML = `
+          <div class="mapping-card">
+            <div class="empty-state">
+              No mappings configured. Click "+ Add Mapping" to get started.
+            </div>
+          </div>
+        `
+        return
+      }
+
+      container.innerHTML = config.mappings.map((mapping, mi) => `
+        <div class="mapping-card">
+          <div class="mapping-header">
+            <input type="text" class="mapping-name" value="${mapping.name || ''}" placeholder="Mapping name..." onchange="updateMappingName(${mi}, this.value)">
+            <button class="btn-delete btn-sm" onclick="removeMapping(${mi})">×</button>
+          </div>
+          <div class="mapping-body">
+            <div class="mapping-section">
+              <div class="mapping-section-title">Triggers</div>
+              ${(mapping.triggers || []).map((trigger, ti) => renderTrigger(mi, ti, trigger)).join("")}
+              <button class="btn-secondary btn-sm" onclick="addTrigger(${mi})">+ Add Trigger</button>
+            </div>
+            <div class="mapping-section">
+              <div class="mapping-section-title">Sounds (plays one at random)</div>
+              ${(mapping.sounds || []).map((sound, si) => `
+                <div class="sound-row">
+                  <span class="sound-path">${sound}</span>
+                  <button class="btn-ghost btn-sm" onclick="playSound('${sound}')">Play</button>
+                  <button class="btn-delete btn-sm" onclick="removeSound(${mi}, ${si})">×</button>
+                </div>
+              `).join("")}
+              <button class="btn-secondary btn-sm" onclick="addSound(${mi})">+ Add Sounds</button>
+            </div>
+          </div>
+        </div>
+      `).join("")
+    }
+
+    function renderTrigger(mi, ti, trigger) {
+      let valueSelect = ""
+      let kvInputs = ""
+
+      if (trigger.type === "event") {
+        valueSelect = `
+          <select onchange="updateTriggerValue(${mi}, ${ti}, this.value)">
+            ${[...meta.eventValues].sort().map(v => `<option value="${v}" ${v === trigger.event ? 'selected' : ''}>${v}</option>`).join("")}
+          </select>
+        `
+        if (trigger.event === "message.updated") {
+          kvInputs = `
+            <div class="kv-input">
+              <label>role:</label>
+              <input type="text" value="${trigger.role || ''}" placeholder="user" onchange="updateTriggerKV(${mi}, ${ti}, 'role', this.value)">
+            </div>
+          `
+        }
+      } else if (trigger.type === "tool.before") {
+        valueSelect = `
+          <select onchange="updateTriggerValue(${mi}, ${ti}, this.value)">
+            ${[...meta.toolValues].sort().map(v => `<option value="${v}" ${v === trigger.tool ? 'selected' : ''}>${v}</option>`).join("")}
+          </select>
+        `
+      }
+
+      return `
+        <div class="trigger-row">
+          <select onchange="updateTriggerType(${mi}, ${ti}, this.value)">
+            ${meta.triggerTypes.map(t => `<option value="${t}" ${t === trigger.type ? 'selected' : ''}>${t}</option>`).join("")}
+          </select>
+          ${valueSelect}
+          ${kvInputs}
+          <div style="flex:1"></div>
+          <button class="btn-delete btn-sm" onclick="removeTrigger(${mi}, ${ti})">×</button>
+        </div>
+      `
+    }
+
+    init()
+  </script>
+</body>
+</html>

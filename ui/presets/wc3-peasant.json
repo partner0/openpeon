@@ -1,0 +1,112 @@
+{
+  "volume": 3,
+  "randomPreset": false,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc3-peasant/peasant-ready-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc3-peasant/peasant-acknowledge-2.wav",
+        "wc3-peasant/peasant-acknowledge-1.wav",
+        "wc3-peasant/peasant-acknowledge-3.wav",
+        "wc3-peasant/peasant-acknowledge-4.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc3-peasant/peasant-work-complete-1.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc3-peasant/peasant-selected-1.wav",
+        "wc3-peasant/peasant-selected-2.wav",
+        "wc3-peasant/peasant-selected-3.wav",
+        "wc3-peasant/peasant-selected-4.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/buildings-blacksmith.wav",
+        "wc2-alliance/buildings-foundry.wav",
+        "wc2-alliance/buildings-gold-mine.wav",
+        "wc2-alliance/buildings-lumber-mill.wav"
+      ]
+    }
+  ]
+}
