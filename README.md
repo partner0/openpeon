@@ -65,6 +65,8 @@ Restart OpenCode after deployment.
 
 A web-based UI for managing your sound configuration:
 
+![Config UI](ui/screenshot.png)
+
 ```bash
 bun run ui
 ```
