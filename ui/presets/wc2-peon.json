@@ -96,9 +96,10 @@
       "sounds": [
         "wc2-alliance/buildings-blacksmith.wav",
         "wc2-alliance/buildings-foundry.wav",
-        "wc2-alliance/buildings-gold-mine.wav",
-        "wc2-alliance/buildings-lumber-mill.wav"
-      ]
+        "wc2-alliance/buildings-gold-mine.wav"
+      ],
+      "whisper": true
     }
-  ]
+  ],
+  "randomPreset": true
 }

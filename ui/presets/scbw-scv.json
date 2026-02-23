@@ -38,9 +38,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/scv-rdy00.wav",
-        "scbw-terran/scv-upd00.wav",
-        "scbw-terran/scv-wht03.wav"
+        "scbw-terran/scv-upd00.wav"
       ]
     },
     {
@@ -115,5 +113,6 @@
         "scbw-terran/advisor-upd04.wav"
       ]
     }
-  ]
+  ],
+  "randomPreset": true
 }

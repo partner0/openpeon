@@ -1,5 +1,6 @@
 {
   "volume": 3,
+  "randomPreset": true,
   "mappings": [
     {
       "name": "welcome",
@@ -10,7 +11,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/scv-rdy00.wav"
+        "wc3-peasant/peasant-ready-1.wav"
       ]
     },
     {
@@ -23,10 +24,10 @@
         }
       ],
       "sounds": [
-        "scbw-terran/scv-yes00.wav",
-        "scbw-terran/scv-yes01.wav",
-        "scbw-terran/scv-yes02.wav",
-        "scbw-terran/scv-yes03.wav"
+        "wc3-peasant/peasant-acknowledge-2.wav",
+        "wc3-peasant/peasant-acknowledge-1.wav",
+        "wc3-peasant/peasant-acknowledge-3.wav",
+        "wc3-peasant/peasant-acknowledge-4.wav"
       ]
     },
     {
@@ -38,9 +39,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/scv-rdy00.wav",
-        "scbw-terran/scv-upd00.wav",
-        "scbw-terran/scv-wht03.wav"
+        "wc3-peasant/peasant-work-complete-1.mp3"
       ]
     },
     {
@@ -56,7 +55,10 @@
         }
       ],
       "sounds": [
-        "scbw-terran/scv-pss00.wav"
+        "wc3-peasant/peasant-selected-1.wav",
+        "wc3-peasant/peasant-selected-2.wav",
+        "wc3-peasant/peasant-selected-3.wav",
+        "wc3-peasant/peasant-selected-4.wav"
       ]
     },
     {
@@ -92,29 +94,19 @@
         },
         {
           "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
           "tool": "bash"
         }
       ],
       "sounds": [
-        "scbw-terran/scv-rep04.wav",
-        "scbw-terran/scv-rep03.wav",
-        "scbw-terran/scv-rep02.wav",
-        "scbw-terran/scv-rep01.wav",
-        "scbw-terran/scv-rep00.wav"
-      ]
-    },
-    {
-      "name": "new-session",
-      "triggers": [
-        {
-          "type": "event",
-          "event": "session.created"
-        }
+        "wc2-alliance/buildings-blacksmith.wav",
+        "wc2-alliance/buildings-foundry.wav",
+        "wc2-alliance/buildings-gold-mine.wav"
       ],
-      "sounds": [
-        "scbw-terran/advisor-upd04.wav"
-      ]
+      "whisper": true
     }
-  ],
-  "randomPreset": true
+  ]
 }

@@ -882,6 +882,10 @@
       config.mappings[index].name = name
     }
 
+    function updateMappingWhisper(index, checked) {
+      config.mappings[index].whisper = checked
+    }
+
     function addTrigger(mappingIndex) {
       config.mappings[mappingIndex].triggers.push({
         type: "event",
@@ -1086,6 +1090,13 @@
         <div class="mapping-card">
           <div class="mapping-header">
             <input type="text" class="mapping-name" value="${mapping.name || ''}" placeholder="Mapping name..." onchange="updateMappingName(${mi}, this.value)">
+            <div class="toggle-control" style="gap: 8px; margin-left: auto; margin-right: 12px;">
+              <span class="toggle-label" style="font-size: 12px;">whisper</span>
+              <label class="toggle-switch" title="Whisper (play at volume 1)">
+                <input type="checkbox" ${mapping.whisper ? 'checked' : ''} onchange="updateMappingWhisper(${mi}, this.checked)">
+                <span class="toggle-track"></span>
+              </label>
+            </div>
             <button class="btn-delete btn-sm" onclick="removeMapping(${mi})">×</button>
           </div>
           <div class="mapping-body">

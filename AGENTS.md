@@ -39,6 +39,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
   "mappings": [
     {
       "name": "mapping-name",
+      "whisper": false,
       "triggers": [
         { "type": "event", "event": "session.idle" },
         { "type": "event", "event": "message.updated", "role": "user" },

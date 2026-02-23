@@ -133,14 +133,17 @@ export const OpenPeonPlugin = async ({ client }) => {
     logDebug("disabled", { reason: "afplay-missing", path: afplayPath })
   }
 
-  const playSound = (soundFile) => {
+  const WHISPER_VOLUME = 1
+
+  const playSound = (soundFile, whisper) => {
     if (audioDisabled) {
       return
     }
     const soundPath = getSoundPath(soundFile)
     // Convert volume 1-10 to afplay volume 0-1 with exponential curve
     // This makes perceived loudness feel linear to human ears
-    const normalized = volume / 10
+    const effectiveVolume = whisper ? WHISPER_VOLUME : volume
+    const normalized = effectiveVolume / 10
     const afplayVolume = Math.pow(normalized, 2)
 
     setTimeout(() => {
@@ -197,8 +200,8 @@ export const OpenPeonPlugin = async ({ client }) => {
       return
     }
 
-    logDebug("mapping-play", { name: mapping.name, soundFile, source })
-    playSound(soundFile)
+    logDebug("mapping-play", { name: mapping.name, soundFile, source, whisper: Boolean(mapping.whisper) })
+    playSound(soundFile, Boolean(mapping.whisper))
   }
 
   const matchesEventTrigger = (trigger, eventType, messageRole) => {
