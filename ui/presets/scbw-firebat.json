@@ -1,0 +1,70 @@
+{
+  "volume": 3,
+  "tier": 3,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        { "type": "event", "event": "openpeon.startup" }
+      ],
+      "sounds": [
+        "scbw-terran/firebat-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        { "type": "event", "event": "message.updated", "role": "user" }
+      ],
+      "sounds": [
+        "scbw-terran/firebat-yes00.wav",
+        "scbw-terran/firebat-yes01.wav",
+        "scbw-terran/firebat-yes02.wav",
+        "scbw-terran/firebat-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        { "type": "event", "event": "session.idle" }
+      ],
+      "sounds": [
+        "scbw-terran/firebat-dth00.wav",
+        "scbw-terran/firebat-dth01.wav",
+        "scbw-terran/firebat-dth02.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        { "type": "event", "event": "permission.asked" },
+        { "type": "tool.before", "tool": "question" }
+      ],
+      "sounds": [
+        "scbw-terran/firebat-wht00.wav",
+        "scbw-terran/firebat-wht01.wav",
+        "scbw-terran/firebat-wht02.wav",
+        "scbw-terran/firebat-wht03.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        { "type": "tool.before", "tool": "todowrite" },
+        { "type": "tool.before", "tool": "todoread" },
+        { "type": "tool.before", "tool": "read" },
+        { "type": "tool.before", "tool": "write" },
+        { "type": "tool.before", "tool": "edit" },
+        { "type": "tool.before", "tool": "glob" },
+        { "type": "tool.before", "tool": "grep" },
+        { "type": "tool.before", "tool": "bash" }
+      ],
+      "sounds": [
+        "scbw-terran/firebat-fir00.wav",
+        "scbw-terran/firebat-fir01.wav"
+      ],
+      "whisper": true
+    }
+  ],
+  "randomPreset": true
+}

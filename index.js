@@ -104,6 +104,35 @@ function loadPreset(presetsDir, presetName) {
   }
 }
 
+// Tier weights: tier 1 = 3, tier 2 = 2, tier 3 = 1 (~50%, ~33%, ~17%)
+const TIER_WEIGHTS = { 1: 3, 2: 2, 3: 1 }
+const DEFAULT_TIER_WEIGHT = 2
+
+function pickWeightedPreset(presetsDir, presetNames) {
+  if (presetNames.length === 0) {
+    return null
+  }
+
+  const weighted = presetNames.map((name) => {
+    const config = loadPreset(presetsDir, name)
+    const tier = config?.tier
+    const weight = typeof tier === "number" && TIER_WEIGHTS[tier] != null ? TIER_WEIGHTS[tier] : DEFAULT_TIER_WEIGHT
+    return { name, weight }
+  })
+
+  const totalWeight = weighted.reduce((sum, entry) => sum + entry.weight, 0)
+  let roll = Math.random() * totalWeight
+
+  for (const entry of weighted) {
+    roll -= entry.weight
+    if (roll <= 0) {
+      return entry.name
+    }
+  }
+
+  return weighted[weighted.length - 1].name
+}
+
 export const OpenPeonPlugin = async ({ client }) => {
   const debug = Boolean(process.env.OPENPEON_DEBUG)
   const debugLogPath = resolve(homedir(), ".config", "opencode", "openpeon-debug.log")
@@ -140,7 +169,7 @@ export const OpenPeonPlugin = async ({ client }) => {
       return
     }
     const soundPath = getSoundPath(soundFile)
-    // Convert volume 1-10 to afplay volume 0-1 with exponential curve
+    // Convert volume 0-10 to afplay volume 0-1 with exponential curve
     // This makes perceived loudness feel linear to human ears
     const effectiveVolume = whisper ? WHISPER_VOLUME : volume
     const normalized = effectiveVolume / 10
@@ -176,8 +205,8 @@ export const OpenPeonPlugin = async ({ client }) => {
   if (config.randomPreset) {
     const presets = listPresets(presetsDir)
     if (presets.length > 0) {
-      const picked = presets[Math.floor(Math.random() * presets.length)]
-      const presetConfig = loadPreset(presetsDir, picked)
+      const picked = pickWeightedPreset(presetsDir, presets)
+      const presetConfig = picked ? loadPreset(presetsDir, picked) : null
       if (presetConfig) {
         mappings = Array.isArray(presetConfig.mappings) ? presetConfig.mappings : mappings
         volume = typeof presetConfig.volume === "number" ? presetConfig.volume : volume
@@ -335,7 +364,9 @@ export const OpenPeonPlugin = async ({ client }) => {
           const lines = ["Available presets:"]
           for (const preset of presets) {
             const marker = preset === currentPreset ? " (active)" : ""
-            lines.push(`  - ${preset}${marker}`)
+            const presetConfig = loadPreset(presetsDir, preset)
+            const tierLabel = presetConfig?.tier ? ` [tier ${presetConfig.tier}]` : ""
+            lines.push(`  - ${preset}${tierLabel}${marker}`)
           }
           return lines.join("\n")
         },
@@ -380,12 +411,12 @@ export const OpenPeonPlugin = async ({ client }) => {
         },
       }),
       peon_set_volume: tool({
-        description: "Set the OpenPeon sound volume (1-10)",
+        description: "Set the OpenPeon sound volume (0-10)",
         args: {
-          level: tool.schema.number().describe("Volume level from 1 (quiet) to 10 (loud)"),
+          level: tool.schema.number().describe("Volume level from 0 (mute) to 10 (loud)"),
         },
         async execute(args) {
-          const newVolume = Math.round(Math.max(1, Math.min(10, args.level)))
+          const newVolume = Math.round(Math.max(0, Math.min(10, args.level)))
           volume = newVolume
           config.volume = newVolume
 

@@ -1,0 +1,88 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        { "type": "event", "event": "openpeon.startup" }
+      ],
+      "sounds": [
+        "sc2-terran/marine-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        { "type": "event", "event": "message.updated", "role": "user" }
+      ],
+      "sounds": [
+        "sc2-terran/marine-yes00.mp3",
+        "sc2-terran/marine-yes01.mp3",
+        "sc2-terran/marine-yes02.mp3",
+        "sc2-terran/marine-yes03.mp3",
+        "sc2-terran/marine-yes04.mp3",
+        "sc2-terran/marine-yes05.mp3",
+        "sc2-terran/marine-yes06.mp3",
+        "sc2-terran/marine-yes07.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        { "type": "event", "event": "session.idle" }
+      ],
+      "sounds": [
+        "sc2-terran/marine-death00.mp3",
+        "sc2-terran/marine-death01.mp3",
+        "sc2-terran/marine-death02.mp3",
+        "sc2-terran/marine-death03.mp3",
+        "sc2-terran/marine-death04.mp3",
+        "sc2-terran/marine-death05.mp3",
+        "sc2-terran/marine-death06.mp3",
+        "sc2-terran/marine-death07.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        { "type": "event", "event": "permission.asked" },
+        { "type": "tool.before", "tool": "question" }
+      ],
+      "sounds": [
+        "sc2-terran/marine-what00.mp3",
+        "sc2-terran/marine-what01.mp3",
+        "sc2-terran/marine-what02.mp3",
+        "sc2-terran/marine-what03.mp3",
+        "sc2-terran/marine-what04.mp3",
+        "sc2-terran/marine-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        { "type": "tool.before", "tool": "todowrite" },
+        { "type": "tool.before", "tool": "todoread" },
+        { "type": "tool.before", "tool": "read" },
+        { "type": "tool.before", "tool": "write" },
+        { "type": "tool.before", "tool": "edit" },
+        { "type": "tool.before", "tool": "glob" },
+        { "type": "tool.before", "tool": "grep" },
+        { "type": "tool.before", "tool": "bash" }
+      ],
+      "sounds": [
+        "sc2-terran/marine-attack00.mp3",
+        "sc2-terran/marine-attack01.mp3",
+        "sc2-terran/marine-attack02.mp3",
+        "sc2-terran/marine-attack03.mp3",
+        "sc2-terran/marine-attack04.mp3",
+        "sc2-terran/marine-attack05.mp3",
+        "sc2-terran/marine-attack06.mp3",
+        "sc2-terran/marine-attack07.mp3",
+        "sc2-terran/marine-attack08.mp3"
+      ],
+      "whisper": true
+    }
+  ],
+  "randomPreset": true
+}

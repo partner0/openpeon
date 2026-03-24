@@ -1,0 +1,69 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        { "type": "event", "event": "openpeon.startup" }
+      ],
+      "sounds": [
+        "scbw-terran/marine-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        { "type": "event", "event": "message.updated", "role": "user" }
+      ],
+      "sounds": [
+        "scbw-terran/marine-yes00.wav",
+        "scbw-terran/marine-yes01.wav",
+        "scbw-terran/marine-yes02.wav",
+        "scbw-terran/marine-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        { "type": "event", "event": "session.idle" }
+      ],
+      "sounds": [
+        "scbw-terran/marine-dth00.wav",
+        "scbw-terran/marine-dth01.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        { "type": "event", "event": "permission.asked" },
+        { "type": "tool.before", "tool": "question" }
+      ],
+      "sounds": [
+        "scbw-terran/marine-wht00.wav",
+        "scbw-terran/marine-wht01.wav",
+        "scbw-terran/marine-wht02.wav",
+        "scbw-terran/marine-wht03.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        { "type": "tool.before", "tool": "todowrite" },
+        { "type": "tool.before", "tool": "todoread" },
+        { "type": "tool.before", "tool": "read" },
+        { "type": "tool.before", "tool": "write" },
+        { "type": "tool.before", "tool": "edit" },
+        { "type": "tool.before", "tool": "glob" },
+        { "type": "tool.before", "tool": "grep" },
+        { "type": "tool.before", "tool": "bash" }
+      ],
+      "sounds": [
+        "scbw-terran/marine-sti00.wav",
+        "scbw-terran/marine-sti01.wav"
+      ],
+      "whisper": true
+    }
+  ],
+  "randomPreset": true
+}

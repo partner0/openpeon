@@ -1,0 +1,67 @@
+{
+  "volume": 3,
+  "tier": 3,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        { "type": "event", "event": "openpeon.startup" }
+      ],
+      "sounds": [
+        "scbw-zerg/zergling-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        { "type": "event", "event": "message.updated", "role": "user" }
+      ],
+      "sounds": [
+        "scbw-zerg/zergling-yes00.wav",
+        "scbw-zerg/zergling-yes01.wav",
+        "scbw-zerg/zergling-yes02.wav",
+        "scbw-zerg/zergling-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        { "type": "event", "event": "session.idle" }
+      ],
+      "sounds": [
+        "scbw-zerg/zergling-dth00.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        { "type": "event", "event": "permission.asked" },
+        { "type": "tool.before", "tool": "question" }
+      ],
+      "sounds": [
+        "scbw-zerg/zergling-wht00.wav",
+        "scbw-zerg/zergling-wht01.wav",
+        "scbw-zerg/zergling-wht02.wav",
+        "scbw-zerg/zergling-wht03.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        { "type": "tool.before", "tool": "todowrite" },
+        { "type": "tool.before", "tool": "todoread" },
+        { "type": "tool.before", "tool": "read" },
+        { "type": "tool.before", "tool": "write" },
+        { "type": "tool.before", "tool": "edit" },
+        { "type": "tool.before", "tool": "glob" },
+        { "type": "tool.before", "tool": "grep" },
+        { "type": "tool.before", "tool": "bash" }
+      ],
+      "sounds": [
+        "scbw-misc/uzefir00.wav"
+      ],
+      "whisper": true
+    }
+  ],
+  "randomPreset": true
+}

@@ -53,7 +53,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 ### Volume
 
-- `volume` (number, 1-10) - Default playback volume. Defaults to 5 if omitted.
+- `volume` (number, 0-10) - Default playback volume. Defaults to 5 if omitted. 0 is mute.
 - Converted to afplay volume using an exponential curve for perceptually linear loudness.
 - Can be changed at runtime via the `peon_set_volume` tool or the config UI.
 
@@ -61,7 +61,15 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 - `randomPreset` (boolean) - When `true`, a random preset is loaded at startup before the `openpeon.startup` event fires. Defaults to `false`.
 - The preset's mappings and volume override the base config for the session.
+- Selection is weighted by the preset's `tier` field (see below).
 - Can be toggled via the config UI.
+
+### Tier (Preset Weighting)
+
+- `tier` (number, 1-3) - Optional field in preset JSON files that controls weighted random selection.
+- Tier 1 = weight 3 (~50%), Tier 2 = weight 2 (~33%), Tier 3 = weight 1 (~17%).
+- Presets without a `tier` field default to weight 2.
+- Only affects random preset selection at startup when `randomPreset` is `true`.
 
 ### Trigger Types
 
