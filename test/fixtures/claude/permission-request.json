@@ -1,0 +1,10 @@
+{
+  "session_id": "test-session-1",
+  "transcript_path": "/tmp/test-transcript.jsonl",
+  "cwd": "/tmp",
+  "hook_event_name": "PermissionRequest",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "git push"
+  }
+}
