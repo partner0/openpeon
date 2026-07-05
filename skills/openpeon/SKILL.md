@@ -7,7 +7,7 @@ description: Control OpenPeon sounds for the current Claude Code session. Use wh
 
 ## Prefer the peon_* tools when available
 
-If the session exposes `peon_list_presets`, `peon_switch_preset`, `peon_current_config`, or `peon_set_volume` (OpenCode sessions do), use those tools and ignore the rest of this skill. The file-editing protocol below is for Claude Code, where those tools don't exist. The installs are separate: editing `~/.claude/openpeon/` has no effect on OpenCode sounds, so using this skill from OpenCode would silently change the wrong install.
+If the session exposes `peon_list_presets`, `peon_switch_preset`, `peon_current_config`, or `peon_set_volume`, use those tools and ignore the rest of this skill. The file-editing protocol below is for any situation where those tools don't exist. The installs are separate: the `peon_*` tools act on the OpenCode install, the files below act on the Claude Code install (`~/.claude/openpeon/`), so using the wrong surface silently changes the wrong install.
 
 OpenPeon plays Blizzard RTS sounds on Claude Code hook events. Everything lives under `~/.claude/openpeon/`:
 
