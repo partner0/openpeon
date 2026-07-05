@@ -1,0 +1,83 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        { "type": "event", "event": "openpeon.startup" }
+      ],
+      "sounds": [
+        "sc2-terran/ghost-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        { "type": "event", "event": "message.updated", "role": "user" }
+      ],
+      "sounds": [
+        "sc2-terran/ghost-yes00.mp3",
+        "sc2-terran/ghost-yes01.mp3",
+        "sc2-terran/ghost-yes02.mp3",
+        "sc2-terran/ghost-yes03.mp3",
+        "sc2-terran/ghost-yes04.mp3",
+        "sc2-terran/ghost-yes05.mp3",
+        "sc2-terran/ghost-yes06.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        { "type": "event", "event": "session.idle" }
+      ],
+      "sounds": [
+        "sc2-terran/ghost-death00.mp3",
+        "sc2-terran/ghost-death01.mp3",
+        "sc2-terran/ghost-death02.mp3",
+        "sc2-terran/ghost-death03.mp3",
+        "sc2-terran/ghost-death04.mp3",
+        "sc2-terran/ghost-death05.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        { "type": "event", "event": "permission.asked" },
+        { "type": "tool.before", "tool": "question" }
+      ],
+      "sounds": [
+        "sc2-terran/ghost-what00.mp3",
+        "sc2-terran/ghost-what01.mp3",
+        "sc2-terran/ghost-what02.mp3",
+        "sc2-terran/ghost-what03.mp3",
+        "sc2-terran/ghost-what04.mp3",
+        "sc2-terran/ghost-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        { "type": "tool.before", "tool": "todowrite" },
+        { "type": "tool.before", "tool": "todoread" },
+        { "type": "tool.before", "tool": "read" },
+        { "type": "tool.before", "tool": "write" },
+        { "type": "tool.before", "tool": "edit" },
+        { "type": "tool.before", "tool": "glob" },
+        { "type": "tool.before", "tool": "grep" },
+        { "type": "tool.before", "tool": "bash" }
+      ],
+      "sounds": [
+        "sc2-terran/ghost-attack00.mp3",
+        "sc2-terran/ghost-attack01.mp3",
+        "sc2-terran/ghost-attack02.mp3",
+        "sc2-terran/ghost-attack03.mp3",
+        "sc2-terran/ghost-attack04.mp3",
+        "sc2-terran/ghost-attack05.mp3",
+        "sc2-terran/ghost-attack06.mp3"
+      ],
+      "whisper": true
+    }
+  ],
+  "randomPreset": true
+}
