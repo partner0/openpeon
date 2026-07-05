@@ -1,0 +1,10 @@
+{
+  "volume": 7,
+  "mappings": [
+    {
+      "name": "acknowledge",
+      "triggers": [{ "type": "event", "event": "message.updated", "role": "user" }],
+      "sounds": ["acknowledge1.wav"]
+    }
+  ]
+}

@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "ui": "bun run ui/server.js"
+    "ui": "bun run ui/server.js",
+    "test": "bun test"
   },
   "keywords": [
     "opencode",

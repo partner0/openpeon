@@ -1,0 +1,11 @@
+{
+  "tier": 1,
+  "volume": 4,
+  "mappings": [
+    {
+      "name": "work-complete",
+      "triggers": [{ "type": "event", "event": "session.idle" }],
+      "sounds": ["work-complete.wav"]
+    }
+  ]
+}
