@@ -12,6 +12,7 @@ import {
   resolveSessionConfig,
   sanitizeSessionId,
   statePath,
+  touchState,
   translateHookEvent,
   writeState,
 } from "../claude/hook.js"
@@ -168,6 +169,22 @@ describe("session state", () => {
   test("gcState tolerates a missing state directory", () => {
     expect(() => gcState(resolve(root, "nope"))).not.toThrow()
   })
+
+  test("touchState refreshes the mtime so the session survives GC and stays newest", () => {
+    writeState(root, "session-a", { preset: null })
+    const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000)
+    utimesSync(statePath(root, "session-a"), eightDaysAgo, eightDaysAgo)
+
+    touchState(root, "session-a")
+    gcState(root)
+
+    expect(readState(root, "session-a")).toEqual({ preset: null })
+  })
+
+  test("touchState tolerates a missing state file", () => {
+    expect(() => touchState(root, "never-written")).not.toThrow()
+    expect(() => touchState(root, null)).not.toThrow()
+  })
 })
 
 describe("resolveSessionConfig", () => {
@@ -228,15 +245,52 @@ describe("resolveSessionConfig", () => {
     expect(resolved.volume).toBe(0)
   })
 
-  test("keeps the base config when randomPreset is off, and writes no state", () => {
+  test("keeps the base config when randomPreset is off, but still registers the session", () => {
     writeFileSync(resolve(root, "openpeon.json"), JSON.stringify({ ...BASE_CONFIG, randomPreset: false }))
 
-    const resolved = resolveSessionConfig(root, "session-a", () => 0)
+    const resolved = resolveSessionConfig(root, "session-a", () => {
+      throw new Error("must not roll when randomPreset is off")
+    })
 
     expect(resolved.preset).toBeNull()
     expect(resolved.volume).toBe(3)
     expect(resolved.mappings[0].name).toBe("base-ack")
-    expect(readState(root, "session-a")).toBeNull()
+    // The state file must exist anyway: the openpeon skill discovers the
+    // current session through it
+    expect(readState(root, "session-a")).toEqual({ preset: null })
+  })
+
+  test("a state volume override beats the preset volume", () => {
+    writeState(root, "session-a", { preset: "only-preset", volume: 7 })
+
+    const resolved = resolveSessionConfig(root, "session-a", () => 0)
+
+    expect(resolved.preset).toBe("only-preset")
+    expect(resolved.mappings[0].name).toBe("preset-ack")
+    expect(resolved.volume).toBe(7)
+  })
+
+  test("a state volume override beats the base volume when no preset is active", () => {
+    writeState(root, "session-a", { preset: null, volume: 9 })
+
+    const resolved = resolveSessionConfig(root, "session-a", () => 0)
+
+    expect(resolved.preset).toBeNull()
+    expect(resolved.volume).toBe(9)
+  })
+
+  test("a state volume of 0 mutes the session", () => {
+    writeState(root, "session-a", { preset: null, volume: 0 })
+
+    expect(resolveSessionConfig(root, "session-a", () => 0).volume).toBe(0)
+  })
+
+  test("state volume is clamped to 0-10", () => {
+    writeState(root, "session-a", { preset: null, volume: 42 })
+    expect(resolveSessionConfig(root, "session-a", () => 0).volume).toBe(10)
+
+    writeState(root, "session-a", { preset: null, volume: -3 })
+    expect(resolveSessionConfig(root, "session-a", () => 0).volume).toBe(0)
   })
 
   test("falls back to the base config when the persisted preset no longer exists", () => {

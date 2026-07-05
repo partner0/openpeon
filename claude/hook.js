@@ -8,6 +8,7 @@ import {
   unlinkSync,
   mkdirSync,
   statSync,
+  utimesSync,
   appendFileSync,
 } from "fs"
 import {
@@ -138,6 +139,21 @@ export function writeState(root, sessionId, state) {
   }
 }
 
+// Refreshing the state file's mtime on every user prompt keeps "newest state
+// file = current session" true, which is how the openpeon skill finds the
+// session to edit, and protects long-running sessions from the 7-day GC.
+export function touchState(root, sessionId) {
+  const path = statePath(root, sessionId)
+  if (!path || !existsSync(path)) {
+    return
+  }
+
+  try {
+    const now = new Date()
+    utimesSync(path, now, now)
+  } catch {}
+}
+
 export function deleteState(root, sessionId) {
   const path = statePath(root, sessionId)
   if (!path || !existsSync(path)) {
@@ -172,17 +188,22 @@ export function gcState(root, maxAgeMs = STATE_MAX_AGE_MS, now = Date.now()) {
 }
 
 // Resolve the effective config for a session: base openpeon.json, overlaid
-// with the session's preset. Rolls (and persists) a weighted preset on the
-// first event of a session when randomPreset is enabled.
+// with the session's preset, overlaid with the session's volume override.
+// The state file is created on the first event of a session (rolling a
+// weighted preset when randomPreset is enabled) so that every live session
+// has one; the openpeon skill relies on that for session discovery.
+// Volume precedence: state volume > preset volume > base config volume.
 export function resolveSessionConfig(root, sessionId, random = Math.random) {
   const config = loadConfig(resolve(root, "openpeon.json"))
   let mappings = Array.isArray(config.mappings) ? config.mappings : DEFAULT_CONFIG.mappings
   let volume = typeof config.volume === "number" ? config.volume : DEFAULT_CONFIG.volume
 
   let state = readState(root, sessionId)
-  if (!state && config.randomPreset && sanitizeSessionId(sessionId)) {
+  if (!state && sanitizeSessionId(sessionId)) {
     const presetsDir = resolve(root, "presets")
-    const picked = pickWeightedPreset(presetsDir, listPresets(presetsDir), random)
+    const picked = config.randomPreset
+      ? pickWeightedPreset(presetsDir, listPresets(presetsDir), random)
+      : null
     state = { preset: picked }
     writeState(root, sessionId, state)
   }
@@ -195,6 +216,10 @@ export function resolveSessionConfig(root, sessionId, random = Math.random) {
       volume = typeof presetConfig.volume === "number" ? presetConfig.volume : volume
       preset = state.preset
     }
+  }
+
+  if (typeof state?.volume === "number") {
+    volume = Math.max(0, Math.min(10, state.volume))
   }
 
   return { mappings, volume, preset }
@@ -252,6 +277,10 @@ function main() {
   }
 
   const { mappings, volume, preset } = resolveSessionConfig(ROOT, sessionId)
+
+  if (payload.hook_event_name === "UserPromptSubmit") {
+    touchState(ROOT, sessionId)
+  }
 
   if (action.kind === "state-only") {
     return
