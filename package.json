@@ -18,6 +18,7 @@
   "license": "MIT",
   "files": [
     "index.js",
+    "lib/",
     "sounds/"
   ],
   "peerDependencies": {

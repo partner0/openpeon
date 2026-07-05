@@ -1,136 +1,24 @@
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
-import { existsSync, appendFile, readFileSync, readdirSync } from "fs"
-import { spawn } from "child_process"
+import { existsSync, appendFile } from "fs"
 import { homedir } from "os"
 import { tool } from "@opencode-ai/plugin"
+import {
+  DEFAULT_CONFIG,
+  getRandomSound,
+  loadConfig,
+  listPresets,
+  loadPreset,
+  pickWeightedPreset,
+  matchesEventTrigger,
+  matchesToolTrigger,
+  playSound as corePlaySound,
+} from "./lib/core.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const DEFAULT_CONFIG = {
-  volume: 5,
-  mappings: [
-    {
-      name: "acknowledge",
-      triggers: [
-        { type: "event", event: "tui.command.execute" },
-        { type: "event", event: "command.executed" },
-        { type: "event", event: "permission.replied" },
-        { type: "event", event: "message.updated", role: "user" },
-      ],
-      sounds: [
-        "acknowledge1.wav",
-        "acknowledge2.wav",
-        "acknowledge3.wav",
-        "acknowledge4.wav",
-      ],
-    },
-    {
-      name: "work-complete",
-      triggers: [{ type: "event", event: "session.idle" }],
-      sounds: ["work-complete.wav"],
-    },
-    {
-      name: "permission-asked",
-      triggers: [
-        { type: "event", event: "permission.asked" },
-        { type: "tool.before", tool: "question" },
-      ],
-      sounds: ["selected4.wav"],
-    },
-  ],
-}
-
 function getSoundPath(filename) {
   return resolve(__dirname, "sounds", filename)
-}
-
-function getRandomSound(sounds) {
-  if (!Array.isArray(sounds) || sounds.length === 0) {
-    return null
-  }
-
-  const index = Math.floor(Math.random() * sounds.length)
-  return sounds[index]
-}
-
-function loadConfig(configPath, logDebug) {
-  if (!existsSync(configPath)) {
-    logDebug("config-missing", { path: configPath })
-    return DEFAULT_CONFIG
-  }
-
-  try {
-    const contents = readFileSync(configPath, "utf8")
-    const parsed = JSON.parse(contents)
-    if (!parsed || !Array.isArray(parsed.mappings)) {
-      logDebug("config-invalid", { reason: "missing-mappings" })
-      return DEFAULT_CONFIG
-    }
-
-    return parsed
-  } catch (error) {
-    logDebug("config-error", { message: error?.message ?? "unknown" })
-    return DEFAULT_CONFIG
-  }
-}
-
-function listPresets(presetsDir) {
-  if (!existsSync(presetsDir)) {
-    return []
-  }
-
-  try {
-    const files = readdirSync(presetsDir)
-    return files
-      .filter((f) => f.endsWith(".json"))
-      .map((f) => f.replace(".json", ""))
-  } catch {
-    return []
-  }
-}
-
-function loadPreset(presetsDir, presetName) {
-  const presetPath = resolve(presetsDir, `${presetName}.json`)
-  if (!existsSync(presetPath)) {
-    return null
-  }
-
-  try {
-    const contents = readFileSync(presetPath, "utf8")
-    return JSON.parse(contents)
-  } catch {
-    return null
-  }
-}
-
-// Tier weights: tier 1 = 3, tier 2 = 2, tier 3 = 1 (~50%, ~33%, ~17%)
-const TIER_WEIGHTS = { 1: 3, 2: 2, 3: 1 }
-const DEFAULT_TIER_WEIGHT = 2
-
-function pickWeightedPreset(presetsDir, presetNames) {
-  if (presetNames.length === 0) {
-    return null
-  }
-
-  const weighted = presetNames.map((name) => {
-    const config = loadPreset(presetsDir, name)
-    const tier = config?.tier
-    const weight = typeof tier === "number" && TIER_WEIGHTS[tier] != null ? TIER_WEIGHTS[tier] : DEFAULT_TIER_WEIGHT
-    return { name, weight }
-  })
-
-  const totalWeight = weighted.reduce((sum, entry) => sum + entry.weight, 0)
-  let roll = Math.random() * totalWeight
-
-  for (const entry of weighted) {
-    roll -= entry.weight
-    if (roll <= 0) {
-      return entry.name
-    }
-  }
-
-  return weighted[weighted.length - 1].name
 }
 
 export const OpenPeonPlugin = async ({ client }) => {
@@ -162,37 +50,15 @@ export const OpenPeonPlugin = async ({ client }) => {
     logDebug("disabled", { reason: "afplay-missing", path: afplayPath })
   }
 
-  const WHISPER_VOLUME = 1
-
   const playSound = (soundFile, whisper) => {
     if (audioDisabled) {
       return
     }
-    const soundPath = getSoundPath(soundFile)
-    // Convert volume 0-10 to afplay volume 0-1 with exponential curve
-    // This makes perceived loudness feel linear to human ears
-    const effectiveVolume = whisper ? WHISPER_VOLUME : volume
-    const normalized = effectiveVolume / 10
-    const afplayVolume = Math.pow(normalized, 2)
 
-    setTimeout(() => {
-      try {
-        const child = spawn(afplayPath, ["-v", String(afplayVolume), soundPath], {
-          stdio: "ignore",
-          detached: true,
-        })
-
-        child.on("error", (error) => {
-          audioDisabled = true
-          logDebug("afplay-error", { message: error.message })
-        })
-
-        child.unref()
-      } catch (error) {
-        audioDisabled = true
-        logDebug("spawn-failed", { message: error?.message ?? "unknown" })
-      }
-    }, 0)
+    corePlaySound(afplayPath, getSoundPath(soundFile), volume, whisper, (error, reason) => {
+      audioDisabled = true
+      logDebug(reason, { message: error?.message ?? "unknown" })
+    })
   }
 
   const configPath = resolve(__dirname, "openpeon.json")
@@ -231,22 +97,6 @@ export const OpenPeonPlugin = async ({ client }) => {
 
     logDebug("mapping-play", { name: mapping.name, soundFile, source, whisper: Boolean(mapping.whisper) })
     playSound(soundFile, Boolean(mapping.whisper))
-  }
-
-  const matchesEventTrigger = (trigger, eventType, messageRole) => {
-    if (trigger?.type !== "event") {
-      return false
-    }
-
-    if (trigger.event !== eventType) {
-      return false
-    }
-
-    if (eventType === "message.updated" && trigger.role) {
-      return trigger.role === messageRole
-    }
-
-    return true
   }
 
   const fireEvent = (eventType) => {
@@ -325,8 +175,8 @@ export const OpenPeonPlugin = async ({ client }) => {
           continue
         }
 
-        const matched = mapping.triggers.some(
-          (trigger) => trigger?.type === "tool.before" && trigger?.tool === toolName
+        const matched = mapping.triggers.some((trigger) =>
+          matchesToolTrigger(trigger, "tool.before", toolName)
         )
 
         if (matched) {
@@ -342,8 +192,8 @@ export const OpenPeonPlugin = async ({ client }) => {
           continue
         }
 
-        const matched = mapping.triggers.some(
-          (trigger) => trigger?.type === "tool.after" && trigger?.tool === toolName
+        const matched = mapping.triggers.some((trigger) =>
+          matchesToolTrigger(trigger, "tool.after", toolName)
         )
 
         if (matched) {
