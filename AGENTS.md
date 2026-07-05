@@ -22,6 +22,7 @@ openpeon/
     *.wav               # Root-level sounds (legacy peon sounds)
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
+  skills/openpeon/      # Claude Code skill (session preset/volume control), deployed to ~/.claude/skills/
   test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
   ui/                   # Config management UI
     server.js           # Bun server for the UI (also owns deployment)
@@ -100,7 +101,9 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 `claude/hook.js` is wired into all seven hook events in `~/.claude/settings.json` (`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PermissionRequest`, `PreToolUse`, `PostToolUse`) with the same async command; the adapter dispatches on `hook_event_name`. Trigger translation: SessionStart (startup/resume/clear) > `openpeon.startup`, SessionStart (compact) > state upkeep only, UserPromptSubmit > `message.updated` role user, Stop > `session.idle`, PermissionRequest > `permission.asked`, Pre/PostToolUse > `tool.before`/`tool.after` with the tool name map in `TOOL_NAME_MAP` (unknown tools fall back to lowercase).
 
-Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores only `{"preset": name | null}`. The preset is rolled on the first event of a session when `randomPreset` is on, reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
+Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores `{"preset": name | null, "volume": 0-10}` (volume key optional). The state file is created on the first event of EVERY session (preset rolled only when `randomPreset` is on), reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Volume precedence: state volume (clamped 0-10) > preset volume > base config volume. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
+
+The state file doubles as the per-session control surface for the `openpeon` skill (repo `skills/openpeon/SKILL.md`, deployed to `~/.claude/skills/openpeon/`): the skill finds the current session by newest mtime and merges `preset`/`volume` edits into it.
 
 ### Gotchas (hard-won, do not regress)
 
@@ -109,7 +112,8 @@ Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores only `{"p
 - Hook command uses the absolute `"$HOME/.bun/bin/bun"` because the hook shell's PATH is not guaranteed. The adapter also runs under node (v22 verified).
 - `OPENPEON_ROOT` env var overrides the install root; tests and silent E2E runs use temp roots with `volume: 0` (afplay runs, inaudible).
 - Hook wiring changes in `settings.json` only apply to new Claude Code sessions; config/preset changes under `~/.claude/openpeon/` are live per event.
-- The `peon_*` custom tools are OpenCode-only; on Claude the preset is per-session via state.
+- The `peon_*` custom tools are OpenCode-only; on Claude the equivalent is the `openpeon` skill editing the session state file.
+- The hook touches the state file's mtime on every UserPromptSubmit. This is what makes "newest state file = current session" true for the skill's discovery heuristic, and it protects long-running sessions from the 7-day GC. Do not remove it.
 
 ## Deployment
 
@@ -122,7 +126,7 @@ The repo is the source of truth. Deployment produces two independent, self-conta
 
 Preferred: `bun run ui`, pick the target (OpenCode, Claude, or both), Deploy Plugin. Or POST `{"target": "opencode" | "claude" | "all"}` to `http://localhost:3456/api/deploy`.
 
-Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
+Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/` and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets and volume overrides). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
 
 Manual copy steps for both targets are in README.md. Restart OpenCode after an opencode deploy; Claude sessions pick up a claude deploy on their next event.
 

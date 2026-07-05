@@ -11,6 +11,7 @@ const UI_DIR = resolve(ROOT, "ui")
 const DEPLOY_DIR = resolve(homedir(), ".config", "opencode", "plugins", "openpeon")
 const DEPLOY_LOADER = resolve(homedir(), ".config", "opencode", "plugins", "openpeon.js")
 const CLAUDE_DEPLOY_DIR = resolve(homedir(), ".claude", "openpeon")
+const CLAUDE_SKILL_DIR = resolve(homedir(), ".claude", "skills", "openpeon")
 
 if (!existsSync(PRESETS_DIR)) {
   mkdirSync(PRESETS_DIR, { recursive: true })
@@ -193,6 +194,7 @@ function deployClaude() {
   copyDirReplacing(resolve(ROOT, "lib"), resolve(CLAUDE_DEPLOY_DIR, "lib"))
   copyDirReplacing(SOUNDS_DIR, resolve(CLAUDE_DEPLOY_DIR, "sounds"))
   copyDirReplacing(PRESETS_DIR, resolve(CLAUDE_DEPLOY_DIR, "presets"))
+  copyDirReplacing(resolve(ROOT, "skills", "openpeon"), CLAUDE_SKILL_DIR)
 }
 
 function deployPlugin(target = "all") {

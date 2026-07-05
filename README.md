@@ -32,7 +32,7 @@ Switch to the wc2-ogre-mage preset
 
 The agent uses the `peon_switch_preset` tool, no restart required.
 
-Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. On Claude Code, the preset is rolled once per session and remembered for its whole lifetime (the `peon_*` tools are OpenCode-only for now).
+Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. On Claude Code, the preset is rolled once per session and remembered for its whole lifetime; the same "switch to the ogre-mage preset" request works there through the bundled `openpeon` skill.
 
 ## Installation
 
@@ -194,6 +194,8 @@ Claude Code has no plugin process: for each hook event it spawns `claude/hook.js
 
 Tool names are mapped (`Bash` > `bash`, `AskUserQuestion` > `question`, `WebFetch` > `webfetch`, ...); unknown tools fall back to their lowercased name. With `randomPreset` on, the preset rolled for a session is stored in `~/.claude/openpeon/state/<session_id>.json`, reused for every event of that session, and deleted when the session ends.
 
+The state file is also the per-session control surface. It accepts a `volume` override (`{"preset": "wc2-peon", "volume": 2}`) with precedence state volume > preset volume > base volume, so a session can be turned down or muted without touching any shared file. The deploy installs an `openpeon` skill at `~/.claude/skills/openpeon/` that teaches Claude how to do this, so requests like "switch to the peasant preset" or "mute the sounds for this session" just work in chat.
+
 ## Custom Tools
 
 The plugin registers tools usable from within OpenCode chat:
@@ -204,6 +206,8 @@ The plugin registers tools usable from within OpenCode chat:
 | `peon_switch_preset` | Switch to a different preset |
 | `peon_current_config` | Show current config and active mappings |
 | `peon_set_volume` | Set volume (1-10) |
+
+On Claude Code the same requests are handled by the `openpeon` skill (installed by the deploy), which edits the session's state file instead.
 
 ## Debug Mode
 
