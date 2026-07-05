@@ -5,3 +5,5 @@ node_modules/
 *.pem
 *.key
 openpeon-debug.log
+state/
+debug.log

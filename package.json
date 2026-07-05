@@ -19,6 +19,7 @@
   "license": "MIT",
   "files": [
     "index.js",
+    "claude/",
     "lib/",
     "sounds/"
   ],
