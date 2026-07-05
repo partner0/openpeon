@@ -10,6 +10,7 @@ const PRESETS_DIR = resolve(ROOT, "ui", "presets")
 const UI_DIR = resolve(ROOT, "ui")
 const DEPLOY_DIR = resolve(homedir(), ".config", "opencode", "plugins", "openpeon")
 const DEPLOY_LOADER = resolve(homedir(), ".config", "opencode", "plugins", "openpeon.js")
+const CLAUDE_DEPLOY_DIR = resolve(homedir(), ".claude", "openpeon")
 
 if (!existsSync(PRESETS_DIR)) {
   mkdirSync(PRESETS_DIR, { recursive: true })
@@ -160,31 +161,58 @@ function savePreset(name, config) {
   writeFileSync(presetPath, JSON.stringify(config, null, 2))
 }
 
-function deployPlugin() {
+function copyDirReplacing(sourceDir, destDir) {
+  if (existsSync(destDir)) {
+    rmSync(destDir, { recursive: true })
+  }
+  if (existsSync(sourceDir)) {
+    cpSync(sourceDir, destDir, { recursive: true })
+  }
+}
+
+function deployOpenCode() {
+  mkdirSync(DEPLOY_DIR, { recursive: true })
+
+  cpSync(resolve(ROOT, "index.js"), resolve(DEPLOY_DIR, "index.js"))
+  cpSync(CONFIG_PATH, resolve(DEPLOY_DIR, "openpeon.json"))
+  copyDirReplacing(resolve(ROOT, "lib"), resolve(DEPLOY_DIR, "lib"))
+  copyDirReplacing(SOUNDS_DIR, resolve(DEPLOY_DIR, "sounds"))
+  copyDirReplacing(PRESETS_DIR, resolve(DEPLOY_DIR, "presets"))
+
+  const loaderContent = 'export { OpenPeonPlugin } from "./openpeon/index.js"\n'
+  writeFileSync(DEPLOY_LOADER, loaderContent)
+}
+
+function deployClaude() {
+  // Self-contained install: never references the OpenCode plugin directory,
+  // and never touches the runtime state/ dir (per-session presets live there)
+  mkdirSync(CLAUDE_DEPLOY_DIR, { recursive: true })
+
+  cpSync(CONFIG_PATH, resolve(CLAUDE_DEPLOY_DIR, "openpeon.json"))
+  copyDirReplacing(resolve(ROOT, "claude"), resolve(CLAUDE_DEPLOY_DIR, "claude"))
+  copyDirReplacing(resolve(ROOT, "lib"), resolve(CLAUDE_DEPLOY_DIR, "lib"))
+  copyDirReplacing(SOUNDS_DIR, resolve(CLAUDE_DEPLOY_DIR, "sounds"))
+  copyDirReplacing(PRESETS_DIR, resolve(CLAUDE_DEPLOY_DIR, "presets"))
+}
+
+function deployPlugin(target = "all") {
+  const targets = target === "all" ? ["opencode", "claude"] : [target]
+  if (!targets.every((t) => t === "opencode" || t === "claude")) {
+    return { success: false, error: `Unknown deploy target: ${target}` }
+  }
+
   try {
-    mkdirSync(DEPLOY_DIR, { recursive: true })
-
-    cpSync(resolve(ROOT, "index.js"), resolve(DEPLOY_DIR, "index.js"))
-    cpSync(CONFIG_PATH, resolve(DEPLOY_DIR, "openpeon.json"))
-
-    const deployedSoundsDir = resolve(DEPLOY_DIR, "sounds")
-    if (existsSync(deployedSoundsDir)) {
-      rmSync(deployedSoundsDir, { recursive: true })
+    const paths = []
+    if (targets.includes("opencode")) {
+      deployOpenCode()
+      paths.push(DEPLOY_DIR)
     }
-    cpSync(SOUNDS_DIR, deployedSoundsDir, { recursive: true })
-
-    const deployedPresetsDir = resolve(DEPLOY_DIR, "presets")
-    if (existsSync(deployedPresetsDir)) {
-      rmSync(deployedPresetsDir, { recursive: true })
-    }
-    if (existsSync(PRESETS_DIR)) {
-      cpSync(PRESETS_DIR, deployedPresetsDir, { recursive: true })
+    if (targets.includes("claude")) {
+      deployClaude()
+      paths.push(CLAUDE_DEPLOY_DIR)
     }
 
-    const loaderContent = 'export { OpenPeonPlugin } from "./openpeon/index.js"\n'
-    writeFileSync(DEPLOY_LOADER, loaderContent)
-
-    return { success: true, path: DEPLOY_DIR }
+    return { success: true, paths }
   } catch (error) {
     return { success: false, error: error?.message ?? "Unknown error" }
   }
@@ -271,8 +299,10 @@ function handleApi(req) {
   }
 
   if (path === "/api/deploy" && req.method === "POST") {
-    const result = deployPlugin()
-    return Response.json(result)
+    return req
+      .json()
+      .catch(() => ({}))
+      .then((body) => Response.json(deployPlugin(body?.target ?? "all")))
   }
 
   return new Response("Not found", { status: 404 })

@@ -638,7 +638,12 @@
         <button class="btn-secondary" onclick="saveConfig()">Save Config</button>
         <button class="btn-ghost" onclick="loadConfig()">Reload</button>
         <button class="btn-ghost" onclick="showSavePresetModal()">Save Preset</button>
-        <button class="btn-secondary" onclick="deployPlugin()" style="margin-left: auto;">Deploy Plugin</button>
+        <select id="deploy-target" style="margin-left: auto;">
+          <option value="all">OpenCode + Claude</option>
+          <option value="opencode">OpenCode only</option>
+          <option value="claude">Claude only</option>
+        </select>
+        <button class="btn-secondary" onclick="deployPlugin()">Deploy Plugin</button>
       </div>
     </header>
 
@@ -1053,6 +1058,7 @@
     }
 
     async function deployPlugin() {
+      const target = document.getElementById("deploy-target").value
       try {
         // Save config to disk first so deploy copies the latest state
         await fetch("/api/config", {
@@ -1060,10 +1066,17 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(config),
         })
-        const res = await fetch("/api/deploy", { method: "POST" })
+        const res = await fetch("/api/deploy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target }),
+        })
         const result = await res.json()
         if (result.success) {
-          showToast("Plugin deployed! Restart OpenCode to apply changes.", "success")
+          const hint = target === "claude"
+            ? "Claude Code sessions pick it up on their next event."
+            : "Restart OpenCode to apply changes."
+          showToast(`Deployed (${target})! ${hint}`, "success")
         } else {
           showToast(`Deploy failed: ${result.error}`, "error")
         }
