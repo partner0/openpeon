@@ -1,6 +1,6 @@
 # OpenPeon
 
-An [OpenCode](https://opencode.ai) plugin that plays Blizzard RTS sound effects during your coding sessions.
+An [OpenCode](https://opencode.ai) plugin and [Claude Code](https://claude.com/claude-code) hook that plays Blizzard RTS sound effects during your coding sessions.
 
 Hear "Work complete!" when the agent finishes, peon acknowledgements when you send a message, and building sounds as tools run in the background.
 
@@ -32,7 +32,7 @@ Switch to the wc2-ogre-mage preset
 
 The agent uses the `peon_switch_preset` tool, no restart required.
 
-Set `"randomPreset": true` in `openpeon.json` to load a random preset each session.
+Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. On Claude Code, the preset is rolled once per session and remembered for its whole lifetime (the `peon_*` tools are OpenCode-only for now).
 
 ## Installation
 
@@ -41,16 +41,26 @@ Set `"randomPreset": true` in `openpeon.json` to load a random preset each sessi
 - macOS (uses `afplay` for audio playback)
 - [Bun](https://bun.sh) (for the config UI)
 
-### Deploy to OpenCode
+### Deploy with the UI (recommended)
+
+```bash
+bun run ui
+```
+
+Open http://localhost:3456, pick a target (OpenCode, Claude, or both), and click Deploy Plugin. Each target gets its own fully self-contained install; neither references the other.
+
+### Manual deploy to OpenCode
 
 ```bash
 # Create plugin directory
 mkdir -p ~/.config/opencode/plugins/openpeon
 
-# Copy plugin code, config, and sounds
+# Copy plugin code, config, sounds, and presets
 cp index.js ~/.config/opencode/plugins/openpeon/
+cp -R lib ~/.config/opencode/plugins/openpeon/
 cp openpeon.json ~/.config/opencode/plugins/openpeon/
 cp -R sounds ~/.config/opencode/plugins/openpeon/
+cp -R ui/presets ~/.config/opencode/plugins/openpeon/presets
 ```
 
 Create the loader file at `~/.config/opencode/plugins/openpeon.js`:
@@ -60,6 +70,42 @@ export { OpenPeonPlugin } from "./openpeon/index.js"
 ```
 
 Restart OpenCode after deployment.
+
+### Manual deploy to Claude Code
+
+```bash
+# Create install directory
+mkdir -p ~/.claude/openpeon
+
+# Copy hook adapter, shared core, config, sounds, and presets
+cp -R claude ~/.claude/openpeon/
+cp -R lib ~/.claude/openpeon/
+cp openpeon.json ~/.claude/openpeon/
+cp -R sounds ~/.claude/openpeon/
+cp -R ui/presets ~/.claude/openpeon/presets
+```
+
+Then wire the hook into `~/.claude/settings.json`. Append the same entry to each of the seven events (`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PermissionRequest`, `PreToolUse`, `PostToolUse`), merging with any hooks you already have:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "\"$HOME/.bun/bin/bun\" \"$HOME/.claude/openpeon/claude/hook.js\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Hook changes apply to new Claude Code sessions; config and preset changes under `~/.claude/openpeon/` are picked up live on the next event.
 
 ## Config UI
 
@@ -79,7 +125,7 @@ Open http://localhost:3456 to:
 - Toggle whisper mode per mapping
 - Browse and preview all available sounds
 - Save and load presets
-- Deploy directly to the OpenCode plugins directory
+- Deploy to OpenCode, Claude Code, or both
 
 ## Configuration
 
@@ -134,6 +180,20 @@ Per-mapping `whisper` flag. When `true`, the mapping always plays at volume 1 re
 
 `question`, `bash`, `read`, `write`, `edit`, `glob`, `grep`, `task`, `webfetch`, `todowrite`, `todoread`, `skill`
 
+## Claude Code Support
+
+Claude Code has no plugin process: for each hook event it spawns `claude/hook.js`, which reads the event payload from stdin, translates it into OpenPeon's trigger vocabulary, and plays the matching sound through the same shared core, config, presets, and sounds as the OpenCode plugin.
+
+| Claude Code hook | OpenPeon trigger |
+|------------------|------------------|
+| `SessionStart` | `openpeon.startup` |
+| `UserPromptSubmit` | `message.updated` with role `user` |
+| `Stop` | `session.idle` |
+| `PermissionRequest` | `permission.asked` |
+| `PreToolUse` / `PostToolUse` | `tool.before` / `tool.after` |
+
+Tool names are mapped (`Bash` > `bash`, `AskUserQuestion` > `question`, `WebFetch` > `webfetch`, ...); unknown tools fall back to their lowercased name. With `randomPreset` on, the preset rolled for a session is stored in `~/.claude/openpeon/state/<session_id>.json`, reused for every event of that session, and deleted when the session ends.
+
 ## Custom Tools
 
 The plugin registers tools usable from within OpenCode chat:
@@ -149,9 +209,10 @@ The plugin registers tools usable from within OpenCode chat:
 
 ```bash
 OPENPEON_DEBUG=1 opencode
+OPENPEON_DEBUG=1 claude
 ```
 
-Logs are written to `~/.config/opencode/openpeon-debug.log`.
+OpenCode logs to `~/.config/opencode/openpeon-debug.log`; the Claude Code hook logs to `~/.claude/openpeon/debug.log`.
 
 ## Notes
 

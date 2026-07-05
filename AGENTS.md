@@ -1,10 +1,10 @@
 # OpenPeon Plugin
 
-An OpenCode plugin that plays Warcraft II sounds in response to various events during your coding session.
+An OpenCode plugin and Claude Code hook adapter that plays Warcraft II sounds in response to various events during your coding session.
 
 ## Overview
 
-This plugin hooks into OpenCode events and tool executions to play sound effects:
+OpenPeon hooks into OpenCode events (long-lived in-process plugin) and Claude Code hook events (a fresh `claude/hook.js` process per event) to play sound effects:
 - **Acknowledge sounds** - Play when you send a message, execute a command, or reply to a permission prompt
 - **Work complete sound** - Plays when the session goes idle (agent finished working)
 - **Permission asked sound** - Plays when a permission prompt appears or the question tool is invoked
@@ -13,20 +13,25 @@ This plugin hooks into OpenCode events and tool executions to play sound effects
 
 ```
 openpeon/
-  index.js              # Main plugin code
+  index.js              # OpenCode plugin (event glue + peon_* custom tools)
+  lib/core.js           # Shared core: config, presets, tier weighting, trigger matching, volume curve, afplay
+  claude/hook.js        # Claude Code hook adapter (stdin JSON in, sound out)
   openpeon.json         # Config file mapping triggers to sounds
   package.json          # NPM package metadata
   sounds/               # Sound assets
     *.wav               # Root-level sounds (legacy peon sounds)
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
+  test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
   ui/                   # Config management UI
-    server.js           # Bun server for the UI
+    server.js           # Bun server for the UI (also owns deployment)
     index.html          # Web interface
     presets/            # Saved preset configurations
   AGENTS.md             # This file (not deployed)
   README.md             # User-facing documentation
 ```
+
+`lib/core.js` must stay dependency-free (no `@opencode-ai/plugin`, no Bun-only APIs): the Claude hook runs it under whatever runtime the hook command uses (bun or node).
 
 ## Config Format
 
@@ -91,29 +96,35 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 - `question`, `bash`, `read`, `write`, `edit`, `glob`, `grep`, `task`, `webfetch`, `todowrite`, `todoread`, `skill`
 
+## Claude Code Support
+
+`claude/hook.js` is wired into all seven hook events in `~/.claude/settings.json` (`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PermissionRequest`, `PreToolUse`, `PostToolUse`) with the same async command; the adapter dispatches on `hook_event_name`. Trigger translation: SessionStart (startup/resume/clear) > `openpeon.startup`, SessionStart (compact) > state upkeep only, UserPromptSubmit > `message.updated` role user, Stop > `session.idle`, PermissionRequest > `permission.asked`, Pre/PostToolUse > `tool.before`/`tool.after` with the tool name map in `TOOL_NAME_MAP` (unknown tools fall back to lowercase).
+
+Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores only `{"preset": name | null}`. The preset is rolled on the first event of a session when `randomPreset` is on, reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
+
+### Gotchas (hard-won, do not regress)
+
+- The hook must NEVER write to stdout: on PermissionRequest, JSON on stdout can auto-approve/deny the permission dialog. Debug goes to `<root>/debug.log` behind `OPENPEON_DEBUG`.
+- The hook must never call `process.exit()`: core `playSound` defers its detached afplay spawn through a `setTimeout(0)`, and an explicit exit cancels it. Always exit 0 by falling off the end.
+- Hook command uses the absolute `"$HOME/.bun/bin/bun"` because the hook shell's PATH is not guaranteed. The adapter also runs under node (v22 verified).
+- `OPENPEON_ROOT` env var overrides the install root; tests and silent E2E runs use temp roots with `volume: 0` (afplay runs, inaudible).
+- Hook wiring changes in `settings.json` only apply to new Claude Code sessions; config/preset changes under `~/.claude/openpeon/` are live per event.
+- The `peon_*` custom tools are OpenCode-only; on Claude the preset is per-session via state.
+
 ## Deployment
 
-Deploy to global OpenCode plugins directory:
+The repo is the source of truth. Deployment produces two independent, self-contained installs:
 
-```bash
-# Copy plugin code
-cp index.js ~/.config/opencode/plugins/openpeon/index.js
+| Target | Location |
+|--------|----------|
+| `opencode` | `~/.config/opencode/plugins/openpeon/` (+ loader `~/.config/opencode/plugins/openpeon.js`) |
+| `claude` | `~/.claude/openpeon/` |
 
-# Copy config
-cp openpeon.json ~/.config/opencode/plugins/openpeon/openpeon.json
+Preferred: `bun run ui`, pick the target (OpenCode, Claude, or both), Deploy Plugin. Or POST `{"target": "opencode" | "claude" | "all"}` to `http://localhost:3456/api/deploy`.
 
-# Copy sounds (replace existing)
-rm -rf ~/.config/opencode/plugins/openpeon/sounds
-cp -R sounds ~/.config/opencode/plugins/openpeon/sounds
-```
+Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
 
-Create the loader file at `~/.config/opencode/plugins/openpeon.js`:
-
-```javascript
-export { OpenPeonPlugin } from "./openpeon/index.js"
-```
-
-Restart OpenCode after deployment.
+Manual copy steps for both targets are in README.md. Restart OpenCode after an opencode deploy; Claude sessions pick up a claude deploy on their next event.
 
 ## Config UI
 
@@ -129,6 +140,15 @@ Open http://localhost:3456 to:
 - Browse and preview sounds
 - Save/load presets
 - Export config to `openpeon.json`
+- Deploy to OpenCode, Claude Code, or both
+
+## Testing
+
+```bash
+bun test
+```
+
+Covers `lib/core.js` (weighted preset picking with injected random, config/preset fallbacks, trigger matching, volume curve) and `claude/hook.js` (event translation, tool name map, session id sanitization, state round-trip/GC, session config resolution). Claude payload fixtures live in `test/fixtures/claude/` and double as manual pipe-test inputs: `OPENPEON_ROOT=<root> bun claude/hook.js < test/fixtures/claude/stop.json`.
 
 ## Debug Mode
 
@@ -136,9 +156,10 @@ Enable debug logging:
 
 ```bash
 OPENPEON_DEBUG=1 opencode
+OPENPEON_DEBUG=1 claude
 ```
 
-Logs are written to `~/.config/opencode/openpeon-debug.log`.
+OpenCode logs to `~/.config/opencode/openpeon-debug.log`; the Claude hook logs to `~/.claude/openpeon/debug.log`.
 
 ## Custom Tools
 
