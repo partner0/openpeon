@@ -112,7 +112,7 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 - Hook command uses the absolute `"$HOME/.bun/bin/bun"` because the hook shell's PATH is not guaranteed. The adapter also runs under node (v22 verified).
 - `OPENPEON_ROOT` env var overrides the install root; tests and silent E2E runs use temp roots with `volume: 0` (afplay runs, inaudible).
 - Hook wiring changes in `settings.json` only apply to new Claude Code sessions; config/preset changes under `~/.claude/openpeon/` are live per event.
-- The `peon_*` custom tools are OpenCode-only; on Claude the equivalent is the `openpeon` skill editing the session state file. The skills directory is shared between both tools on this machine (dotfiles symlink chain), so the skill instructs agents to prefer the `peon_*` tools whenever they are available.
+- Runtime sound control: prefer the `peon_*` custom tools when the session has them; the `openpeon` skill's file-editing protocol is the fallback for sessions without them. The skills directory is shared between OpenCode and Claude Code on this machine (dotfiles symlink chain), so the skill is visible in both.
 - The hook touches the state file's mtime on every UserPromptSubmit. This is what makes "newest state file = current session" true for the skill's discovery heuristic, and it protects long-running sessions from the 7-day GC. Do not remove it.
 
 ## Deployment
