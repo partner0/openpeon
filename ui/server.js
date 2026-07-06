@@ -194,6 +194,7 @@ function deployClaude() {
   copyDirReplacing(resolve(ROOT, "lib"), resolve(CLAUDE_DEPLOY_DIR, "lib"))
   copyDirReplacing(SOUNDS_DIR, resolve(CLAUDE_DEPLOY_DIR, "sounds"))
   copyDirReplacing(PRESETS_DIR, resolve(CLAUDE_DEPLOY_DIR, "presets"))
+  copyDirReplacing(resolve(ROOT, "tmux"), resolve(CLAUDE_DEPLOY_DIR, "tmux"))
   copyDirReplacing(resolve(ROOT, "skills", "openpeon"), CLAUDE_SKILL_DIR)
 }
 

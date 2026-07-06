@@ -196,6 +196,32 @@ Tool names are mapped (`Bash` > `bash`, `AskUserQuestion` > `question`, `WebFetc
 
 The state file is also the per-session control surface. It accepts a `volume` override (`{"preset": "wc2-peon", "volume": 2}`) with precedence state volume > preset volume > base volume, so a session can be turned down or muted without touching any shared file. The deploy installs an `openpeon` skill at `~/.claude/skills/openpeon/` that teaches Claude how to do this, so requests like "switch to the peasant preset" or "mute the sounds for this session" just work in chat.
 
+## tmux popup
+
+A tmux key can pop up a small volume/preset control for the Claude Code
+session running in the current window, without typing anything into the
+session. Add to `~/.tmux.conf` (requires `jq`):
+
+```
+bind-key -n C-p run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
+```
+
+The popup shows a volume bar and the preset list: ←/→ (or h/l) adjust the
+volume, `m` mutes, ↑/↓ (or k/j) and Enter switch presets, `q` closes. Every
+change plays a sample sound so you hear what you set, and applies on the
+session's very next sound (the hook re-reads config per event).
+
+Volume changes persist to the session state file AND the base
+`openpeon.json`, so new sessions inherit them (until the next deploy);
+preset changes are session-scoped so `randomPreset` keeps rolling fresh
+sessions. The window's session is found via the claude process's working
+directory matched against live state files; with several live sessions from
+the same directory, the newest transcript wins (the popup header says so).
+
+Running OpenCode sessions cannot be controlled this way (the plugin holds
+its config in memory): the popup tells you to use `peon_set_volume` /
+`peon_switch_preset` in chat instead.
+
 ## Custom Tools
 
 The plugin registers tools usable from within OpenCode chat:

@@ -23,6 +23,7 @@ openpeon/
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
   skills/openpeon/      # Claude Code skill (session preset/volume control), deployed to ~/.claude/skills/
+  tmux/                 # tmux popup (volume/preset control for the window's Claude session)
   test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
   ui/                   # Config management UI
     server.js           # Bun server for the UI (also owns deployment)
@@ -115,6 +116,36 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 - Runtime sound control: prefer the `peon_*` custom tools when the session has them; the `openpeon` skill's file-editing protocol is the fallback for sessions without them.
 - The hook touches the state file's mtime on every UserPromptSubmit. This is what makes "newest state file = current session" true for the skill's discovery heuristic, and it protects long-running sessions from the 7-day GC. Do not remove it.
 
+## tmux popup (tmux/openpeon-popup.sh)
+
+- Root binding `C-p` (user's deliberate choice; it steals readline
+  previous-history inside tmux) runs `popup '#{client_name}' '#{pane_id}'`,
+  which resolves the WINDOW's session, then opens the TUI in a top-right
+  `display-popup` sized before opening (popups cannot resize).
+- Window → session resolution chain: pane `#{pane_tty}` → the claude process
+  on that tty (`ps -t`, skip `<defunct>`) → its cwd (`lsof -a -d cwd -F n`;
+  the `-F n` form survives spaces in paths) → `~/.claude/projects/<slug>/`
+  transcripts intersected with live state files. Slug rule:
+  `[^A-Za-z0-9-]` → `-`. Several live sessions from one directory: newest
+  transcript mtime wins and the header shows "(newest of N here)". The claude
+  process holds NO open fd to its transcript and has no session id in its
+  env; cwd intersection is the only reliable external mapping found.
+- Volume writes go to the state file AND the base `openpeon.json` (user
+  decision: new sessions inherit until the next deploy overwrites it).
+  Preset writes are state-only so `randomPreset` keeps rolling new sessions.
+- Running OpenCode sessions are unreachable by design (in-memory config, no
+  disk re-read); the popup shows an explanatory message for opencode panes.
+- bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`
+  (unbound-variable error under `set -u`); always brace as `"${bar}▓"` when
+  concatenating multibyte literals.
+- Feedback sounds spawn `afplay` directly with the same `(v/10)^2` curve as
+  `lib/core.js`; the previous feedback pid is killed first so arrow-key
+  repeats do not stack sounds. Requires `jq` (the only bash/jq component in
+  an otherwise JS repo).
+- Tests (`test/tmux-popup.test.js`) cover only the pure `resolve-cwd` half
+  via `OPENPEON_ROOT`/`OPENPEON_PROJECTS_DIR` overrides; the tty/ps/lsof
+  half was verified live and has no headless harness.
+
 ## Deployment
 
 The repo is the source of truth. Deployment produces two independent, self-contained installs:
@@ -126,7 +157,7 @@ The repo is the source of truth. Deployment produces two independent, self-conta
 
 Preferred: `bun run ui`, pick the target (OpenCode, Claude, or both), Deploy Plugin. Or POST `{"target": "opencode" | "claude" | "all"}` to `http://localhost:3456/api/deploy`.
 
-Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/` and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets and volume overrides). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
+Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/` and `tmux/` and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets and volume overrides). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
 
 Manual copy steps for both targets are in README.md. Restart OpenCode after an opencode deploy; Claude sessions pick up a claude deploy on their next event.
 
