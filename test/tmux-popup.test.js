@@ -100,3 +100,35 @@ describe("resolve-cwd", () => {
     expect(status).toBe("err")
   })
 })
+
+describe("msg", () => {
+  // The error popup has a 78-column width cap (76 interior); messages longer
+  // than that must word-wrap onto extra rows instead of overwriting line 1.
+  const LONG =
+    "OpenCode holds its sound config in memory: ask in chat (peon_set_volume, peon_switch_preset)"
+
+  function runMsg(width, text) {
+    const result = spawnSync("/bin/bash", [SCRIPT, "msg", String(width), text], {
+      input: "q",
+      encoding: "utf8",
+    })
+    return result.stdout
+  }
+
+  test("word-wraps long messages within the popup interior width", () => {
+    const lines = runMsg(74, LONG).split("\n")
+    expect(lines.length).toBe(2)
+    for (const line of lines) expect(line.length).toBeLessThanOrEqual(75)
+    expect(lines.map((l) => l.trim()).join(" ")).toBe(LONG)
+  })
+
+  test("does not end with a newline (it would scroll a full popup)", () => {
+    expect(runMsg(74, LONG).endsWith("\n")).toBe(false)
+    expect(runMsg(74, "short message").endsWith("\n")).toBe(false)
+  })
+
+  test("short messages stay on one line", () => {
+    const out = runMsg(74, "no Claude Code session in this window")
+    expect(out).toBe(" no Claude Code session in this window")
+  })
+})

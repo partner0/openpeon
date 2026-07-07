@@ -9,7 +9,7 @@
 #   tui <session-id> [n]   the interactive popup body (volume bar + presets)
 #   resolve <pane-id>      print the resolution for a pane (ok/err, tab-sep)
 #   resolve-cwd <cwd>      pure file-based resolution half, used by tests
-#   msg <text...>          print a message and wait for a key (error popups)
+#   msg <w> <text...>      print a message wrapped at w columns, wait for a key
 #
 # Session resolution: the window's active pane -> its tty -> the claude
 # process on it (ps -t) -> its cwd (lsof) -> ~/.claude/projects/<cwd-slug>/
@@ -254,8 +254,10 @@ run_popup() {
   rest="${res#*$TAB}"
   if [[ "$status" != "ok" ]]; then
     w=$(( ${#rest} + 4 )); (( w > 78 )) && w=78
-    exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h 3 \
-      -E "$(printf '%q msg %q' "$self" "$rest")"
+    # msg word-wraps at w-4 columns; size the height to the folded line count
+    h=$(( $(printf '%s\n' "$rest" | fold -s -w $((w - 4)) | wc -l) + 2 ))
+    exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
+      -E "$(printf '%q msg %q %q' "$self" "$((w - 4))" "$rest")"
   fi
   sid="${rest%%$TAB*}"
   ncand="${rest#*$TAB}"
@@ -274,6 +276,10 @@ case "$CMD" in
   resolve-cwd) resolve_cwd "${2:-}" ;;
   popup) run_popup "$@" ;;
   tui) run_tui "${2:-}" "${3:-1}" ;;
-  msg) shift; printf ' %s' "$*"; IFS= read -rsn1 k ;;
+  msg) shift; fw="${1:-74}"; shift
+    # No trailing newline: with exactly enough rows it would scroll line 1 away.
+    out=$(printf '%s\n' "$*" | fold -s -w "$fw" | sed 's/^/ /')
+    printf '%s' "$out"
+    IFS= read -rsn1 k ;;
   *) exit 0 ;;
 esac
