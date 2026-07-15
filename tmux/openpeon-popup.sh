@@ -2,11 +2,11 @@
 # openpeon-popup: tmux popup to control OpenPeon volume and preset for the
 # Claude Code session running in the current window. Bind a key to `popup`:
 #
-#   bind-key -n C-p run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
+#   bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 #
 # Subcommands:
 #   popup [client] [pane]  resolve the window's session, size and open the TUI
-#   tui <session-id> [n]   the interactive popup body (volume bar + presets)
+#   tui <session-id>       the interactive popup body (volume bar + presets)
 #   resolve <pane-id>      print the resolution for a pane (ok/err, tab-sep)
 #   resolve-cwd <cwd>      pure file-based resolution half, used by tests
 #   msg <w> <text...>      print a message wrapped at w columns, wait for a key
@@ -146,11 +146,6 @@ play_feedback() { # play_feedback <preset-or-empty> <volume>
 draw_tui() { # uses caller's locals (dynamic scoping)
   local i bar n row
   printf '\033[H\033[2J'
-  if [[ "$NCAND" -gt 1 ]]; then
-    printf '\033[1m openpeon\033[0m \033[2m· session %s (newest of %s here)\033[0m\n' "${SID:0:8}" "$NCAND"
-  else
-    printf '\033[1m openpeon\033[0m \033[2m· session %s\033[0m\n' "${SID:0:8}"
-  fi
   bar=""
   # ${bar} braces are required: bash 3.2 would otherwise parse "$bar▓" as a
   # variable named bar▓ under a UTF-8 locale.
@@ -172,7 +167,7 @@ draw_tui() { # uses caller's locals (dynamic scoping)
 }
 
 run_tui() {
-  local SID="$1" NCAND="${2:-1}" STATE CUR VOL SEL ROWS
+  local SID="$1" STATE CUR VOL SEL ROWS
   local k k2 k3 i p
   STATE="$ROOT/state/$SID.json"
   command -v jq >/dev/null 2>&1 || { printf ' jq is required'; IFS= read -rsn1 k; exit 0; }
@@ -246,7 +241,7 @@ run_tui() {
 # ----------------------------------------------------------------- popup
 
 run_popup() {
-  local client="${2:-}" pane="${3:-}" res status rest sid ncand n w h self
+  local client="${2:-}" pane="${3:-}" res status rest sid n w h self
   command -v tmux >/dev/null 2>&1 || exit 0
   self=$(self_path)
   res=$(resolve_pane "$pane")
@@ -257,25 +252,24 @@ run_popup() {
     # msg word-wraps at w-4 columns; size the height to the folded line count
     h=$(( $(printf '%s\n' "$rest" | fold -s -w $((w - 4)) | wc -l) + 2 ))
     exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
-      -E "$(printf '%q msg %q %q' "$self" "$((w - 4))" "$rest")"
+      -T ' openpeon ' -E "$(printf '%q msg %q %q' "$self" "$((w - 4))" "$rest")"
   fi
   sid="${rest%%$TAB*}"
-  ncand="${rest#*$TAB}"
   n=0
   for p in "$ROOT/presets/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
-  h=$((n + 6))   # header + volume + base row + n presets + help + border
+  h=$((n + 5))   # volume + base row + n presets + help + border
   w=44
   exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
-    -E "$(printf '%q tui %q %q' "$self" "$sid" "$ncand")"
+    -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
 }
 
 case "$CMD" in
   resolve) resolve_pane "${2:-}" ;;
   resolve-cwd) resolve_cwd "${2:-}" ;;
   popup) run_popup "$@" ;;
-  tui) run_tui "${2:-}" "${3:-1}" ;;
+  tui) run_tui "${2:-}" ;;
   msg) shift; fw="${1:-74}"; shift
     # No trailing newline: with exactly enough rows it would scroll line 1 away.
     out=$(printf '%s\n' "$*" | fold -s -w "$fw" | sed 's/^/ /')

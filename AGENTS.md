@@ -118,8 +118,8 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 
 ## tmux popup (tmux/openpeon-popup.sh)
 
-- Root binding `C-p` (user's deliberate choice; it steals readline
-  previous-history inside tmux) runs `popup '#{client_name}' '#{pane_id}'`,
+- Root binding `C-n` (user's deliberate choice; it steals readline
+  next-history inside tmux) runs `popup '#{client_name}' '#{pane_id}'`,
   which resolves the WINDOW's session, then opens the TUI in a top-right
   `display-popup` sized before opening (popups cannot resize).
 - Window → session resolution chain: pane `#{pane_tty}` → the claude process
@@ -127,7 +127,8 @@ The state file doubles as the per-session control surface for the `openpeon` ski
   the `-F n` form survives spaces in paths) → `~/.claude/projects/<slug>/`
   transcripts intersected with live state files. Slug rule:
   `[^A-Za-z0-9-]` → `-`. Several live sessions from one directory: newest
-  transcript mtime wins and the header shows "(newest of N here)". The claude
+  transcript mtime wins, silently (no in-popup header; the popup title comes
+  from `display-popup -T`, which needs tmux >= 3.3). The claude
   process holds NO open fd to its transcript and has no session id in its
   env; cwd intersection is the only reliable external mapping found.
 - Volume writes go to the state file AND the base `openpeon.json` (user

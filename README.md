@@ -203,7 +203,7 @@ session running in the current window, without typing anything into the
 session. Add to `~/.tmux.conf` (requires `jq`):
 
 ```
-bind-key -n C-p run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
+bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 ```
 
 The popup shows a volume bar and the preset list: ←/→ (or h/l) adjust the
@@ -216,7 +216,7 @@ Volume changes persist to the session state file AND the base
 preset changes are session-scoped so `randomPreset` keeps rolling fresh
 sessions. The window's session is found via the claude process's working
 directory matched against live state files; with several live sessions from
-the same directory, the newest transcript wins (the popup header says so).
+the same directory, the newest transcript wins.
 
 Running OpenCode sessions cannot be controlled this way (the plugin holds
 its config in memory): the popup tells you to use `peon_set_volume` /
