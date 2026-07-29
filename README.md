@@ -194,7 +194,7 @@ Claude Code has no plugin process: for each hook event it spawns `claude/hook.js
 
 Tool names are mapped (`Bash` > `bash`, `AskUserQuestion` > `question`, `WebFetch` > `webfetch`, ...); unknown tools fall back to their lowercased name. With `randomPreset` on, the preset rolled for a session is stored in `~/.claude/openpeon/state/<session_id>.json`, reused for every event of that session, and deleted when the session ends.
 
-The state file is also the per-session control surface. It accepts a `volume` override (`{"preset": "wc2-peon", "volume": 2}`) with precedence state volume > preset volume > base volume, so a session can be turned down or muted without touching any shared file. The deploy installs an `openpeon` skill at `~/.claude/skills/openpeon/` that teaches Claude how to do this, so requests like "switch to the peasant preset" or "mute the sounds for this session" just work in chat.
+The state file is also the per-session control surface. It accepts a `volume` override (`{"preset": "wc2-peon", "volume": 2}`) with precedence state volume > preset volume > base volume, so a session can be turned down or muted without touching any shared file. A `"whisper": false` key disables mapping `whisper` flags for the session, so whispered sounds (the working-hard mappings) play at the normal session volume instead of the fixed quiet whisper volume. The deploy installs an `openpeon` skill at `~/.claude/skills/openpeon/` that teaches Claude how to do this, so requests like "switch to the peasant preset" or "mute the sounds for this session" just work in chat.
 
 ## tmux popup
 
@@ -206,15 +206,17 @@ session. Add to `~/.tmux.conf` (requires `jq`):
 bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 ```
 
-The popup shows a volume bar and the preset list: ←/→ (or h/l) adjust the
-volume, `m` mutes, ↑/↓ (or k/j) and Enter switch presets, `q` closes. Every
-change plays a sample sound so you hear what you set, and applies on the
-session's very next sound (the hook re-reads config per event).
+The popup shows a volume bar, the whisper state, and the preset list: ←/→
+(or h/l) adjust the volume, `m` mutes, `w` toggles whisper (off = whispered
+working sounds play at full session volume), ↑/↓ (or k/j) and Enter switch
+presets, `q` closes. Every change plays a sample sound so you hear what you
+set, and applies on the session's very next sound (the hook re-reads config
+per event).
 
 Volume changes persist to the session state file AND the base
 `openpeon.json`, so new sessions inherit them (until the next deploy);
-preset changes are session-scoped so `randomPreset` keeps rolling fresh
-sessions. The window's session is found via the claude process's working
+preset and whisper changes are session-scoped so `randomPreset` keeps
+rolling fresh sessions and whisper resets to on. The window's session is found via the claude process's working
 directory matched against live state files; with several live sessions from
 the same directory, the newest transcript wins.
 

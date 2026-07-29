@@ -17,9 +17,10 @@
 # several live sessions from the same directory, the newest transcript wins.
 #
 # Volume changes persist to the session state file AND the base openpeon.json
-# (so new sessions inherit them until the next deploy); preset changes are
-# session-scoped only, so randomPreset keeps rolling fresh sessions. Every
-# change plays a feedback sound so you hear what you set. Requires jq.
+# (so new sessions inherit them until the next deploy); preset and whisper
+# changes are session-scoped only, so randomPreset keeps rolling fresh
+# sessions and whisper resets to on. Every change plays a feedback sound so
+# you hear what you set. Requires jq.
 #
 # OpenCode sessions cannot be controlled from outside (the plugin holds its
 # config in memory); the popup explains that instead.
@@ -125,13 +126,14 @@ write_state() { # write_state <state-file> <jq-program>
 }
 
 # Play a short sample at the current settings so the change is audible.
-# Uses the first mapping's sounds from the active preset (or base config).
+# Uses the first mapping's sounds from the active preset (or base config),
+# or the sounds selected by the optional jq filter argument.
 FEEDBACK_PID=""
-play_feedback() { # play_feedback <preset-or-empty> <volume>
+play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
   local src sounds n sound afv
   (( $2 > 0 )) || return 0
   if [[ -n "$1" ]]; then src="$ROOT/presets/$1.json"; else src="$ROOT/openpeon.json"; fi
-  sounds=$(jq -r '.mappings[0].sounds[]' "$src" 2>/dev/null)
+  sounds=$(jq -r "${3:-.mappings[0].sounds[]}" "$src" 2>/dev/null)
   [[ -n "$sounds" ]] || return 0
   n=$(printf '%s\n' "$sounds" | grep -c .)
   sound=$(printf '%s\n' "$sounds" | sed -n "$(( (RANDOM % n) + 1 ))p")
@@ -153,6 +155,7 @@ draw_tui() { # uses caller's locals (dynamic scoping)
     if (( i <= VOL )); then bar="${bar}▓"; else bar="${bar}░"; fi
   done
   printf ' volume  %s %s\n' "$bar" "$VOL"
+  printf ' whisper %s\n' "$WHIS"
   for (( i = 0; i < ${#ROWS[@]}; i++ )); do
     row="${ROWS[i]}"
     n=""
@@ -163,12 +166,15 @@ draw_tui() { # uses caller's locals (dynamic scoping)
       printf ' %s%s\n' "${row:-(base config)}" "$n"
     fi
   done
-  printf '\033[2m ⏎ preset  ←/→ volume  m mute  q quit\033[0m'
+  printf '\033[2m ⏎ preset  ←/→ vol  m mute  w whisper  q quit\033[0m'
 }
 
+# Sounds of whispered mappings, for whisper-toggle feedback.
+WHISPER_SOUNDS_FILTER='[.mappings[]? | select(.whisper == true) | .sounds[]] | .[]'
+
 run_tui() {
-  local SID="$1" STATE CUR VOL SEL ROWS
-  local k k2 k3 i p
+  local SID="$1" STATE CUR VOL WHIS SEL ROWS
+  local k k2 k3 i p fbv
   STATE="$ROOT/state/$SID.json"
   command -v jq >/dev/null 2>&1 || { printf ' jq is required'; IFS= read -rsn1 k; exit 0; }
 
@@ -181,6 +187,8 @@ run_tui() {
 
   CUR=$(jq -r '.preset // empty' "$STATE" 2>/dev/null)
   VOL=$(effective_volume "$STATE" "$CUR")
+  WHIS=on
+  [[ "$(jq -r '.whisper' "$STATE" 2>/dev/null)" == "false" ]] && WHIS=off
   SEL=0
   for (( i = 0; i < ${#ROWS[@]}; i++ )); do
     [[ -n "$CUR" && "${ROWS[i]}" == "$CUR" ]] && SEL=$i
@@ -220,6 +228,13 @@ run_tui() {
         write_state "$STATE" ".volume = 0"
         write_state "$ROOT/openpeon.json" ".volume = 0"
         draw_tui ;;
+      w) # Session-only: whispered mappings play quietly (on) or at full volume (off)
+        if [[ "$WHIS" == "on" ]]; then WHIS=off; else WHIS=on; fi
+        write_state "$STATE" ".whisper = $([[ "$WHIS" == "on" ]] && printf true || printf false)"
+        # Feedback with a whispered-mapping sound at its new effective volume
+        # (1 = WHISPER_VOLUME in lib/core.js)
+        fbv=$VOL; [[ "$WHIS" == "on" ]] && fbv=1
+        draw_tui; play_feedback "$CUR" "$fbv" "$WHISPER_SOUNDS_FILTER" ;;
       "") # Enter: apply the selected preset (row 0 = back to base config)
         CUR="${ROWS[SEL]}"
         if [[ -n "$CUR" ]]; then
@@ -259,8 +274,8 @@ run_popup() {
   for p in "$ROOT/presets/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
-  h=$((n + 5))   # volume + base row + n presets + help + border
-  w=44
+  h=$((n + 6))   # volume + whisper + base row + n presets + help + border
+  w=48
   exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
     -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
 }

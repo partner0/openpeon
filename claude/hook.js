@@ -193,6 +193,8 @@ export function gcState(root, maxAgeMs = STATE_MAX_AGE_MS, now = Date.now()) {
 // weighted preset when randomPreset is enabled) so that every live session
 // has one; the openpeon skill relies on that for session discovery.
 // Volume precedence: state volume > preset volume > base config volume.
+// A state whisper of exactly false disables mapping whisper flags for the
+// session, so whispered mappings play at the normal session volume.
 export function resolveSessionConfig(root, sessionId, random = Math.random) {
   const config = loadConfig(resolve(root, "openpeon.json"))
   let mappings = Array.isArray(config.mappings) ? config.mappings : DEFAULT_CONFIG.mappings
@@ -222,7 +224,7 @@ export function resolveSessionConfig(root, sessionId, random = Math.random) {
     volume = Math.max(0, Math.min(10, state.volume))
   }
 
-  return { mappings, volume, preset }
+  return { mappings, volume, preset, whisper: state?.whisper !== false }
 }
 
 function logDebug(message, extra) {
@@ -276,7 +278,7 @@ function main() {
     gcState(ROOT)
   }
 
-  const { mappings, volume, preset } = resolveSessionConfig(ROOT, sessionId)
+  const { mappings, volume, preset, whisper } = resolveSessionConfig(ROOT, sessionId)
 
   if (payload.hook_event_name === "UserPromptSubmit") {
     touchState(ROOT, sessionId)
@@ -309,8 +311,9 @@ function main() {
         continue
       }
 
-      logDebug("mapping-play", { name: mapping.name, soundFile, preset, volume, whisper: Boolean(mapping.whisper) })
-      playSound(AFPLAY_PATH, resolve(ROOT, "sounds", soundFile), volume, Boolean(mapping.whisper), (error, reason) => {
+      const effectiveWhisper = whisper && Boolean(mapping.whisper)
+      logDebug("mapping-play", { name: mapping.name, soundFile, preset, volume, whisper: effectiveWhisper })
+      playSound(AFPLAY_PATH, resolve(ROOT, "sounds", soundFile), volume, effectiveWhisper, (error, reason) => {
         logDebug(reason, { message: error?.message ?? "unknown" })
       })
     }

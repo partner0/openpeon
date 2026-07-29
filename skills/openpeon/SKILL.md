@@ -13,7 +13,7 @@ OpenPeon plays Blizzard RTS sounds on Claude Code hook events. Everything lives 
 
 - `openpeon.json` - base config (shared defaults, don't edit it for session-scoped requests)
 - `presets/*.json` - available presets (optional `tier` and `volume` fields)
-- `state/<session_id>.json` - per-session overrides: `{"preset": "<name>" | null, "volume": <0-10>}`
+- `state/<session_id>.json` - per-session overrides: `{"preset": "<name>" | null, "volume": <0-10>, "whisper": <bool>}` (`"whisper": false` makes whispered working sounds play at full session volume)
 
 The hook re-resolves config from disk on every event, so state edits apply on the very next sound, no restart. Volume precedence: state volume > preset volume > base volume. The state file is deleted when the session ends, so every override here is session-scoped by construction.
 

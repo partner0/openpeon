@@ -285,6 +285,23 @@ describe("resolveSessionConfig", () => {
     expect(resolveSessionConfig(root, "session-a", () => 0).volume).toBe(0)
   })
 
+  test("whisper stays enabled unless the state disables it", () => {
+    expect(resolveSessionConfig(root, "session-a", () => 0).whisper).toBe(true)
+
+    writeState(root, "session-a", { preset: null, whisper: true })
+    expect(resolveSessionConfig(root, "session-a", () => 0).whisper).toBe(true)
+
+    // Only an explicit false disables whisper; junk values keep the default
+    writeState(root, "session-a", { preset: null, whisper: "nope" })
+    expect(resolveSessionConfig(root, "session-a", () => 0).whisper).toBe(true)
+  })
+
+  test("a state whisper of false disables whisper for the session", () => {
+    writeState(root, "session-a", { preset: "only-preset", whisper: false })
+
+    expect(resolveSessionConfig(root, "session-a", () => 0).whisper).toBe(false)
+  })
+
   test("state volume is clamped to 0-10", () => {
     writeState(root, "session-a", { preset: null, volume: 42 })
     expect(resolveSessionConfig(root, "session-a", () => 0).volume).toBe(10)

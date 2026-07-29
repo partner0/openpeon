@@ -102,7 +102,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 `claude/hook.js` is wired into all seven hook events in `~/.claude/settings.json` (`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PermissionRequest`, `PreToolUse`, `PostToolUse`) with the same async command; the adapter dispatches on `hook_event_name`. Trigger translation: SessionStart (startup/resume/clear) > `openpeon.startup`, SessionStart (compact) > state upkeep only, UserPromptSubmit > `message.updated` role user, Stop > `session.idle`, PermissionRequest > `permission.asked`, Pre/PostToolUse > `tool.before`/`tool.after` with the tool name map in `TOOL_NAME_MAP` (unknown tools fall back to lowercase).
 
-Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores `{"preset": name | null, "volume": 0-10}` (volume key optional). The state file is created on the first event of EVERY session (preset rolled only when `randomPreset` is on), reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Volume precedence: state volume (clamped 0-10) > preset volume > base config volume. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
+Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores `{"preset": name | null, "volume": 0-10, "whisper": bool}` (volume and whisper keys optional; only an explicit `"whisper": false` disables mapping whisper flags for the session). The state file is created on the first event of EVERY session (preset rolled only when `randomPreset` is on), reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Volume precedence: state volume (clamped 0-10) > preset volume > base config volume. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
 
 The state file doubles as the per-session control surface for the `openpeon` skill (repo `skills/openpeon/SKILL.md`, deployed to `~/.claude/skills/openpeon/`): the skill finds the current session by newest mtime and merges `preset`/`volume` edits into it.
 
@@ -133,7 +133,8 @@ The state file doubles as the per-session control surface for the `openpeon` ski
   env; cwd intersection is the only reliable external mapping found.
 - Volume writes go to the state file AND the base `openpeon.json` (user
   decision: new sessions inherit until the next deploy overwrites it).
-  Preset writes are state-only so `randomPreset` keeps rolling new sessions.
+  Preset and whisper (`w` key) writes are state-only so `randomPreset` keeps
+  rolling new sessions and whisper resets to on per session.
 - Running OpenCode sessions are unreachable by design (in-memory config, no
   disk re-read); the popup shows an explanatory message for opencode panes.
 - bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`
