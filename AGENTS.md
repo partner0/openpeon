@@ -104,6 +104,8 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 Per-session state: `~/.claude/openpeon/state/<session_id>.json` stores `{"preset": name | null, "volume": 0-10, "whisper": bool}` (volume and whisper keys optional; only an explicit `"whisper": false` disables mapping whisper flags for the session). The state file is created on the first event of EVERY session (preset rolled only when `randomPreset` is on), reused afterwards, deleted on SessionEnd; SessionStart GCs state files older than 7 days. Volume precedence: state volume (clamped 0-10) > preset volume > base config volume. Config is re-resolved from disk on every event, so a fresh deploy applies to running sessions immediately.
 
+Agent SDK sessions are muted at the top of `main()`: when the inherited `CLAUDE_CODE_ENTRYPOINT` env var starts with `sdk` (`sdk-ts`/`sdk-py`; interactive/CLI runs get `cli`), the hook returns before doing anything, so SDK sessions play no sound and never create a state file (which would pollute the skill's newest-mtime session discovery).
+
 The state file doubles as the per-session control surface for the `openpeon` skill (repo `skills/openpeon/SKILL.md`, deployed to `~/.claude/skills/openpeon/`): the skill finds the current session by newest mtime and merges `preset`/`volume` edits into it.
 
 ### Gotchas (hard-won, do not regress)

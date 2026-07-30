@@ -57,6 +57,14 @@ export const TOOL_NAME_MAP = {
   Skill: "skill",
 }
 
+// Claude Code sets CLAUDE_CODE_ENTRYPOINT to "cli" for interactive/CLI runs
+// and "sdk-ts"/"sdk-py" for Agent SDK launches; the hook inherits it. SDK
+// sessions are muted entirely: no sound, and no state file either, so they
+// never become the "newest state file" the openpeon skill uses for discovery.
+export function isSdkEntrypoint(entrypoint) {
+  return typeof entrypoint === "string" && entrypoint.startsWith("sdk")
+}
+
 export function mapToolName(toolName) {
   if (typeof toolName !== "string" || toolName.length === 0) {
     return null
@@ -247,6 +255,11 @@ function readStdin() {
 }
 
 function main() {
+  if (isSdkEntrypoint(process.env.CLAUDE_CODE_ENTRYPOINT)) {
+    logDebug("sdk-mute", { entrypoint: process.env.CLAUDE_CODE_ENTRYPOINT })
+    return
+  }
+
   let payload = null
   try {
     payload = JSON.parse(readStdin())

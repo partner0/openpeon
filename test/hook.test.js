@@ -7,6 +7,7 @@ import {
   TOOL_NAME_MAP,
   deleteState,
   gcState,
+  isSdkEntrypoint,
   mapToolName,
   readState,
   resolveSessionConfig,
@@ -46,6 +47,19 @@ describe("mapToolName", () => {
     expect(openPeonTools).toEqual(
       ["bash", "edit", "glob", "grep", "question", "read", "skill", "task", "todowrite", "webfetch", "write"]
     )
+  })
+})
+
+describe("isSdkEntrypoint", () => {
+  test("matches Agent SDK entrypoints", () => {
+    expect(isSdkEntrypoint("sdk-ts")).toBe(true)
+    expect(isSdkEntrypoint("sdk-py")).toBe(true)
+  })
+
+  test("does not match CLI or missing entrypoints", () => {
+    expect(isSdkEntrypoint("cli")).toBe(false)
+    expect(isSdkEntrypoint("")).toBe(false)
+    expect(isSdkEntrypoint(undefined)).toBe(false)
   })
 })
 
