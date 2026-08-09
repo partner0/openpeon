@@ -39,15 +39,16 @@ export const OpenPeonPlugin = async ({ client }) => {
   let lastMessageId = null
   let lastPermissionRequestId = null
 
-  const isDarwin = process.platform === "darwin"
-  const afplayPath = Bun?.which?.("afplay") ?? "/usr/bin/afplay"
+  // afplay on macOS, pw-play (PipeWire) on Linux; other platforms stay muted.
+  const playerName = process.platform === "darwin" ? "afplay" : process.platform === "linux" ? "pw-play" : null
+  const playerPath = playerName ? (Bun?.which?.(playerName) ?? `/usr/bin/${playerName}`) : null
 
-  if (!isDarwin) {
+  if (!playerPath) {
     audioDisabled = true
-    logDebug("disabled", { reason: "non-macos" })
-  } else if (!existsSync(afplayPath)) {
+    logDebug("disabled", { reason: "unsupported-platform" })
+  } else if (!existsSync(playerPath)) {
     audioDisabled = true
-    logDebug("disabled", { reason: "afplay-missing", path: afplayPath })
+    logDebug("disabled", { reason: "player-missing", path: playerPath })
   }
 
   const playSound = (soundFile, whisper) => {
@@ -55,7 +56,7 @@ export const OpenPeonPlugin = async ({ client }) => {
       return
     }
 
-    corePlaySound(afplayPath, getSoundPath(soundFile), volume, whisper, (error, reason) => {
+    corePlaySound(playerPath, getSoundPath(soundFile), volume, whisper, (error, reason) => {
       audioDisabled = true
       logDebug(reason, { message: error?.message ?? "unknown" })
     })

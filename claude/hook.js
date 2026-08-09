@@ -40,7 +40,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // state, and debug log all live under it. OPENPEON_ROOT overrides it for tests.
 const ROOT = process.env.OPENPEON_ROOT || resolve(__dirname, "..")
 
-const AFPLAY_PATH = "/usr/bin/afplay"
+// Sound player per platform: afplay ships with macOS, pw-play with PipeWire
+// on Linux (both Omarchy and most modern distros). Anything else stays muted.
+const PLAYER_PATH =
+  process.platform === "darwin" ? "/usr/bin/afplay"
+  : process.platform === "linux" ? "/usr/bin/pw-play"
+  : null
 const STATE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
 
 export const TOOL_NAME_MAP = {
@@ -301,7 +306,7 @@ function main() {
     return
   }
 
-  if (process.platform !== "darwin" || !existsSync(AFPLAY_PATH)) {
+  if (!PLAYER_PATH || !existsSync(PLAYER_PATH)) {
     logDebug("audio-disabled", { platform: process.platform })
     return
   }
@@ -326,7 +331,7 @@ function main() {
 
       const effectiveWhisper = whisper && Boolean(mapping.whisper)
       logDebug("mapping-play", { name: mapping.name, soundFile, preset, volume, whisper: effectiveWhisper })
-      playSound(AFPLAY_PATH, resolve(ROOT, "sounds", soundFile), volume, effectiveWhisper, (error, reason) => {
+      playSound(PLAYER_PATH, resolve(ROOT, "sounds", soundFile), volume, effectiveWhisper, (error, reason) => {
         logDebug(reason, { message: error?.message ?? "unknown" })
       })
     }
