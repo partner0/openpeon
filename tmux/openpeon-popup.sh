@@ -29,7 +29,12 @@ set -u
 
 ROOT="${OPENPEON_ROOT:-$HOME/.claude/openpeon}"
 PROJECTS_DIR="${OPENPEON_PROJECTS_DIR:-$HOME/.claude/projects}"
-AFPLAY="/usr/bin/afplay"
+# afplay on macOS, pw-play (PipeWire) on Linux; previews stay silent elsewhere.
+if [[ "$(uname)" == "Darwin" ]]; then
+  PLAYER="/usr/bin/afplay" VOL_FLAG="-v"
+else
+  PLAYER="/usr/bin/pw-play" VOL_FLAG="--volume"
+fi
 TAB=$'\t'
 
 CMD="${1:-}"
@@ -39,6 +44,11 @@ self_path() {
     /*) printf '%s' "$0" ;;
     *) printf '%s/%s' "$(pwd)" "$0" ;;
   esac
+}
+
+# GNU stat spells mtime -c %Y, BSD stat -f %m.
+mtime() {
+  stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null
 }
 
 # ------------------------------------------------------------ resolution
@@ -54,7 +64,7 @@ resolve_cwd() {
     [[ -e "$sfile" ]] || continue
     id=$(basename "$sfile" .json)
     [[ -f "$dir/$id.jsonl" ]] || continue
-    m=$(stat -f %m "$dir/$id.jsonl" 2>/dev/null) || m=0
+    m=$(mtime "$dir/$id.jsonl") || m=0
     count=$((count + 1))
     if [[ "$m" -gt "$best_m" ]]; then
       best_m="$m"
@@ -89,8 +99,13 @@ resolve_pane() {
     printf 'err%scould not find the claude process in this window\n' "$TAB"
     return 0
   fi
-  # -F n prints the path on its own "n"-prefixed line (awk $NF breaks on spaces)
-  cwd=$(lsof -a -d cwd -p "$pid" -F n 2>/dev/null | sed -n 's/^n//p' | head -1)
+  # Linux: /proc has it directly. macOS: lsof, whose -F n prints the path on
+  # its own "n"-prefixed line (awk $NF breaks on spaces).
+  if [[ -e "/proc/$pid/cwd" ]]; then
+    cwd=$(readlink "/proc/$pid/cwd" 2>/dev/null)
+  else
+    cwd=$(lsof -a -d cwd -p "$pid" -F n 2>/dev/null | sed -n 's/^n//p' | head -1)
+  fi
   if [[ -z "$cwd" ]]; then
     printf 'err%scould not read the claude process working directory\n' "$TAB"
     return 0
@@ -137,11 +152,11 @@ play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
   [[ -n "$sounds" ]] || return 0
   n=$(printf '%s\n' "$sounds" | grep -c .)
   sound=$(printf '%s\n' "$sounds" | sed -n "$(( (RANDOM % n) + 1 ))p")
-  [[ -f "$ROOT/sounds/$sound" && -x "$AFPLAY" ]] || return 0
+  [[ -f "$ROOT/sounds/$sound" && -x "$PLAYER" ]] || return 0
   # Same perceptual curve as lib/core.js computeAfplayVolume
   afv=$(awk -v v="$2" 'BEGIN{printf "%.3f", (v/10)^2}')
   if [[ -n "$FEEDBACK_PID" ]]; then kill "$FEEDBACK_PID" 2>/dev/null; fi
-  "$AFPLAY" -v "$afv" "$ROOT/sounds/$sound" >/dev/null 2>&1 &
+  "$PLAYER" "$VOL_FLAG" "$afv" "$ROOT/sounds/$sound" >/dev/null 2>&1 &
   FEEDBACK_PID=$!
 }
 

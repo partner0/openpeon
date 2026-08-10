@@ -77,12 +77,13 @@ Restart OpenCode after deployment.
 # Create install directory
 mkdir -p ~/.claude/openpeon
 
-# Copy hook adapter, shared core, config, sounds, and presets
+# Copy hook adapter, shared core, config, sounds, presets, and the tmux popup
 cp -R claude ~/.claude/openpeon/
 cp -R lib ~/.claude/openpeon/
 cp openpeon.json ~/.claude/openpeon/
 cp -R sounds ~/.claude/openpeon/
 cp -R ui/presets ~/.claude/openpeon/presets
+cp -R tmux ~/.claude/openpeon/
 ```
 
 Then wire the hook into `~/.claude/settings.json`. Append the same entry to each of the seven events (`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PermissionRequest`, `PreToolUse`, `PostToolUse`), merging with any hooks you already have:
