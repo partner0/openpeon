@@ -117,6 +117,7 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 - Hook wiring changes in `settings.json` only apply to new Claude Code sessions; config/preset changes under `~/.claude/openpeon/` are live per event.
 - Runtime sound control: prefer the `peon_*` custom tools when the session has them; the `openpeon` skill's file-editing protocol is the fallback for sessions without them.
 - The hook touches the state file's mtime on every UserPromptSubmit. This is what makes "newest state file = current session" true for the skill's discovery heuristic, and it protects long-running sessions from the 7-day GC. Do not remove it.
+- Sound assets must be 16-bit PCM (or mp3): `pw-play` pads the end of 8-bit unsigned wav streams with the wrong silence value, producing an audible click at the end of every sound on Linux (afplay is unaffected, so it only shows there). All u8 rips were converted once; convert any newly imported 8-bit files before adding them.
 
 ## tmux popup (tmux/openpeon-popup.sh)
 
