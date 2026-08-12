@@ -62,6 +62,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 - `volume` (number, 0-10) - Default playback volume. Defaults to 5 if omitted. 0 is mute.
 - Converted to afplay volume using an exponential curve for perceptually linear loudness.
+- Precedence: mute prevails on whisper, whisper prevails on volume. At volume 0 the player is not spawned at all, even for whispered mappings.
 - Can be changed at runtime via the `peon_set_volume` tool or the config UI.
 
 ### Random Preset

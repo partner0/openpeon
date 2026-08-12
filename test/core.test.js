@@ -130,7 +130,12 @@ describe("computeAfplayVolume", () => {
 
   test("whisper overrides the volume with the whisper level", () => {
     expect(computeAfplayVolume(10, true)).toBeCloseTo(0.01)
-    expect(computeAfplayVolume(0, true)).toBeCloseTo(0.01)
+    expect(computeAfplayVolume(2, true)).toBeCloseTo(0.01)
+  })
+
+  test("mute wins over whisper", () => {
+    expect(computeAfplayVolume(0, true)).toBe(0)
+    expect(computeAfplayVolume(-1, true)).toBe(0)
   })
 })
 

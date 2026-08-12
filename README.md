@@ -155,7 +155,7 @@ The `openpeon.json` file maps triggers to sounds:
 
 ### Whisper
 
-Per-mapping `whisper` flag. When `true`, the mapping always plays at volume 1 regardless of the global volume setting. Useful for subtle background sounds on frequent triggers like tool executions.
+Per-mapping `whisper` flag. When `true`, the mapping plays at volume 1 regardless of the global volume setting, except when the volume is 0: mute prevails on whisper, which prevails on volume. Useful for subtle background sounds on frequent triggers like tool executions.
 
 ### Trigger Types
 
