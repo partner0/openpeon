@@ -12,7 +12,7 @@
 #   type = "popup"
 #   command = "zsh -ic '~/.claude/openpeon/tmux/openpeon-popup.sh popup-herdr'"
 #   width = 48
-#   height = "70%"
+#   height = 25  # presets + 6, like run_popup computes; overflow scrolls
 #
 # Subcommands:
 #   popup [client] [pane]  resolve the window's session, size and open the TUI
@@ -210,7 +210,14 @@ play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
 }
 
 draw_tui() { # uses caller's locals (dynamic scoping)
-  local i bar n row
+  local i bar n row last
+  # Herdr popups have a fixed configured size, so instead of sizing the popup
+  # to the list (as run_popup does for tmux), the list scrolls: keep the
+  # selection inside the LIST_H rows that fit between the fixed lines.
+  (( SEL < TOP )) && TOP=$SEL
+  (( SEL >= TOP + LIST_H )) && TOP=$((SEL - LIST_H + 1))
+  last=$((TOP + LIST_H - 1))
+  (( last >= ${#ROWS[@]} )) && last=$(( ${#ROWS[@]} - 1 ))
   printf '\033[H\033[2J'
   bar=""
   # ${bar} braces are required: bash 3.2 would otherwise parse "$bar▓" as a
@@ -220,7 +227,7 @@ draw_tui() { # uses caller's locals (dynamic scoping)
   done
   printf ' volume  %s %s\n' "$bar" "$VOL"
   printf ' whisper %s\n' "$WHIS"
-  for (( i = 0; i < ${#ROWS[@]}; i++ )); do
+  for (( i = TOP; i <= last; i++ )); do
     row="${ROWS[i]}"
     n=""
     [[ "$row" == "$CUR" ]] && n=" ●"
@@ -237,10 +244,17 @@ draw_tui() { # uses caller's locals (dynamic scoping)
 WHISPER_SOUNDS_FILTER='[.mappings[]? | select(.whisper == true) | .sounds[]] | .[]'
 
 run_tui() {
-  local SID="$1" STATE CUR VOL WHIS SEL ROWS
+  local SID="$1" STATE CUR VOL WHIS SEL ROWS TOP LIST_H
   local k k2 k3 i p fbv
   STATE="$ROOT/state/$SID.json"
   command -v jq >/dev/null 2>&1 || { printf ' jq is required'; IFS= read -rsn1 k; exit 0; }
+
+  TOP=0
+  LIST_H=$(tput lines 2>/dev/null)
+  [[ "$LIST_H" =~ ^[0-9]+$ ]] || LIST_H="${LINES:-24}"
+  # The volume, whisper, and help lines are always drawn.
+  LIST_H=$((LIST_H - 3))
+  (( LIST_H < 1 )) && LIST_H=1
 
   # Row 0 is "apply the base config" (preset null); the rest are preset names.
   ROWS=("")

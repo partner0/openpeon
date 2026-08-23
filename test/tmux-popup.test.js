@@ -169,6 +169,50 @@ describe("resolve-herdr", () => {
   })
 })
 
+describe("tui list viewport", () => {
+  // Herdr popups have a fixed configured height, so the preset list draws
+  // through a viewport of terminal-height minus the fixed lines and scrolls.
+  // TERM is invalid so the script falls back to LINES for the height.
+  function addPresets(n) {
+    mkdirSync(join(root, "presets"), { recursive: true })
+    for (let i = 1; i <= n; i++) writeFileSync(join(root, "presets", `preset-${i}.json`), "{}")
+  }
+
+  function runTui(lines) {
+    const result = spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: String(lines) },
+      input: "q",
+      encoding: "utf8",
+    })
+    return result.stdout.split("\n")
+  }
+
+  test("draws every list row when the terminal is tall enough", () => {
+    addPresets(6)
+    // volume + whisper + base row + 6 presets + help
+    expect(runTui(30).length).toBe(10)
+  })
+
+  test("scrolls the list when the terminal is shorter than the rows", () => {
+    addPresets(6)
+    // 8 lines - 3 fixed = 5 visible rows of the 7 list rows
+    expect(runTui(8).length).toBe(8)
+  })
+
+  test("follows the selection below the viewport", () => {
+    addPresets(6)
+    const result = spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: "8" },
+      input: "jjjjjjq",
+      encoding: "utf8",
+    })
+    const frames = result.stdout.split("\x1b[H\x1b[2J")
+    const lastFrame = frames[frames.length - 1]
+    expect(lastFrame).toContain("preset-6")
+    expect(lastFrame).not.toContain("(base config)")
+  })
+})
+
 describe("msg", () => {
   // The error popup has a 78-column width cap (76 interior); messages longer
   // than that must word-wrap onto extra rows instead of overwriting line 1.
