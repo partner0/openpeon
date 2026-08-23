@@ -24,6 +24,11 @@ function runResolveCwd(cwd) {
   return result.stdout.trim().split("\t")
 }
 
+function addPresets(n) {
+  mkdirSync(join(root, "presets"), { recursive: true })
+  for (let i = 1; i <= n; i++) writeFileSync(join(root, "presets", `preset-${i}.json`), "{}")
+}
+
 function addSession(id, projectSlug, transcriptAgeMs = 0) {
   writeFileSync(join(root, "state", `${id}.json`), JSON.stringify({ preset: null }))
   const dir = join(projects, projectSlug)
@@ -169,15 +174,76 @@ describe("resolve-herdr", () => {
   })
 })
 
-describe("tui list viewport", () => {
-  // Herdr popups have a fixed configured height, so the preset list draws
-  // through a viewport of terminal-height minus the fixed lines and scrolls.
-  // TERM is invalid so the script falls back to LINES for the height.
-  function addPresets(n) {
-    mkdirSync(join(root, "presets"), { recursive: true })
-    for (let i = 1; i <= n; i++) writeFileSync(join(root, "presets", `preset-${i}.json`), "{}")
+describe("popup-herdr", () => {
+  // The plugin action computes the popup geometry (like run_popup does for
+  // tmux) and execs `herdr plugin pane open`; the stub prints the call so the
+  // geometry and env passing can be asserted.
+  let bin = null
+
+  function stubHerdr(agents) {
+    const reply = JSON.stringify({ id: "cli:agent:list", result: { agents, type: "agent_list" } })
+    const stub = join(bin, "herdr")
+    writeFileSync(stub, `#!/bin/bash\nif [ "$1" = agent ]; then printf '%s\\n' '${reply}'; else echo "herdr $@"; fi\n`)
+    chmodSync(stub, 0o755)
   }
 
+  function runPopupHerdr() {
+    const result = spawnSync("/bin/bash", [SCRIPT, "popup-herdr"], {
+      env: {
+        ...process.env,
+        OPENPEON_ROOT: root,
+        OPENPEON_PROJECTS_DIR: projects,
+        PATH: `${bin}:${process.env.PATH}`,
+      },
+      encoding: "utf8",
+    })
+    return result.stdout.trim()
+  }
+
+  beforeEach(() => {
+    bin = mkdtempSync(join(tmpdir(), "openpeon-popup-bin-"))
+  })
+
+  afterEach(() => {
+    rmSync(bin, { recursive: true, force: true })
+  })
+
+  test("opens the pane entrypoint sized to the preset list", () => {
+    addSession("herdr-1", "-Users-me-repo")
+    addPresets(6)
+    stubHerdr([{ agent: "claude", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr()
+    expect(call).toContain("plugin pane open")
+    expect(call).toContain("--placement popup")
+    expect(call).toContain("--width 48")
+    expect(call).toContain("--height 12") // 6 presets + 6
+    expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
+  })
+
+  test("opens an error pane sized to the message", () => {
+    stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr()
+    // "no Claude Code session in the focused pane" is 42 chars: 46 wide, one
+    // folded line plus the border
+    expect(call).toContain("--width 46")
+    expect(call).toContain("--height 3")
+    expect(call).toContain("OPENPEON_POPUP_MSG=no Claude Code session in the focused pane")
+  })
+
+  test("pane body shows the message passed through the environment", () => {
+    const result = spawnSync("/bin/bash", [SCRIPT, "popup-herdr-pane"], {
+      env: { ...process.env, OPENPEON_POPUP_MSG: "some resolution error", TERM: "unknown-terminal", COLUMNS: "48" },
+      input: "q",
+      encoding: "utf8",
+    })
+    expect(result.stdout).toBe(" some resolution error")
+  })
+})
+
+describe("tui list viewport", () => {
+  // A terminal shorter than the popup clamps it, so the preset list draws
+  // through a viewport of terminal-height minus the fixed lines and scrolls.
+  // TERM is invalid so the script falls back to LINES for the height.
   function runTui(lines) {
     const result = spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
       env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: String(lines) },

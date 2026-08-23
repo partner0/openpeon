@@ -5,18 +5,24 @@
 #
 #   bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 #
-# In Herdr, bind a popup command to `popup-herdr` in config.toml:
+# In Herdr, static popup sizes cannot fit a preset list that varies, so the
+# integration is a plugin (herdr/ in the repo): its action resolves and sizes
+# the popup like run_popup does for tmux, then opens the plugin pane
+# entrypoint. Link it once per machine and bind the action:
+#
+#   herdr plugin link <repo>/herdr
 #
 #   [[keys.command]]
 #   key = "ctrl+n"
-#   type = "popup"
-#   command = "zsh -ic '~/.claude/openpeon/tmux/openpeon-popup.sh popup-herdr'"
-#   width = 48
-#   height = 25  # presets + 6, like run_popup computes; overflow scrolls
+#   type = "plugin_action"
+#   command = "openpeon.popup"
 #
 # Subcommands:
 #   popup [client] [pane]  resolve the window's session, size and open the TUI
-#   popup-herdr            resolve via the herdr CLI and run the TUI inline
+#   popup-herdr            the plugin action: resolve via the herdr CLI, size
+#                          the popup to its content, open the pane entrypoint
+#   popup-herdr-pane       the popup body: run the TUI (or the error message)
+#                          passed through OPENPEON_POPUP_SID/_MSG
 #   tui <session-id>       the interactive popup body (volume bar + presets)
 #   resolve <pane-id>      print the resolution for a pane (ok/err, tab-sep)
 #   resolve-herdr          same, for the pane under Herdr's focused agent
@@ -211,9 +217,9 @@ play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
 
 draw_tui() { # uses caller's locals (dynamic scoping)
   local i bar n row last
-  # Herdr popups have a fixed configured size, so instead of sizing the popup
-  # to the list (as run_popup does for tmux), the list scrolls: keep the
-  # selection inside the LIST_H rows that fit between the fixed lines.
+  # Popups are sized to the list, but a small terminal clamps them (tmux and
+  # herdr both); then the list scrolls: keep the selection inside the LIST_H
+  # rows that fit between the fixed lines.
   (( SEL < TOP )) && TOP=$SEL
   (( SEL >= TOP + LIST_H )) && TOP=$((SEL - LIST_H + 1))
   last=$((TOP + LIST_H - 1))
@@ -366,20 +372,47 @@ run_popup() {
     -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
 }
 
-# Herdr runs this inside the popup terminal it opened for the bound
-# [[keys.command]], so unlike run_popup there is no geometry to compute and
-# no exec into a second popup: resolve, then run the TUI (or the error) here.
+# The plugin action: mirror run_popup for Herdr. Resolve outside the popup,
+# size the popup to its content, then open the plugin pane entrypoint with
+# the result passed through the environment (popup sizes in config.toml are
+# static, only a plugin can size a popup at open time).
 run_popup_herdr() {
-  local res status rest
-  command -v jq >/dev/null 2>&1 || { show_msg 44 "jq is required"; exit 0; }
+  local res status rest sid n w h p
   res=$(resolve_herdr)
   status="${res%%$TAB*}"
   rest="${res#*$TAB}"
   if [[ "$status" != "ok" ]]; then
-    show_msg 44 "$rest"
+    w=$(( ${#rest} + 4 )); (( w > 78 )) && w=78
+    h=$(( $(printf '%s\n' "$rest" | fold -s -w $((w - 4)) | wc -l) + 2 ))
+    exec herdr plugin pane open --plugin openpeon --entrypoint popup \
+      --placement popup --width "$w" --height "$h" --focus \
+      --env "OPENPEON_POPUP_MSG=$rest"
+  fi
+  sid="${rest%%$TAB*}"
+  n=0
+  for p in "$ROOT/presets/"*.json; do
+    [[ -e "$p" ]] && n=$((n + 1))
+  done
+  h=$((n + 6))   # volume + whisper + base row + n presets + help + border
+  exec herdr plugin pane open --plugin openpeon --entrypoint popup \
+    --placement popup --width 48 --height "$h" --focus \
+    --env "OPENPEON_POPUP_SID=$sid"
+}
+
+# The popup body Herdr opens for run_popup_herdr's pane entrypoint.
+run_popup_herdr_pane() {
+  local cols
+  if [[ -n "${OPENPEON_POPUP_MSG:-}" ]]; then
+    cols=$(tput cols 2>/dev/null)
+    [[ "$cols" =~ ^[0-9]+$ ]] || cols="${COLUMNS:-48}"
+    show_msg $((cols - 2)) "$OPENPEON_POPUP_MSG"
     exit 0
   fi
-  run_tui "${rest%%$TAB*}"
+  if [[ -z "${OPENPEON_POPUP_SID:-}" ]]; then
+    show_msg 44 "missing OPENPEON_POPUP_SID: open this through the openpeon.popup plugin action"
+    exit 0
+  fi
+  run_tui "$OPENPEON_POPUP_SID"
 }
 
 case "$CMD" in
@@ -388,6 +421,7 @@ case "$CMD" in
   resolve-cwd) resolve_cwd "${2:-}" ;;
   popup) run_popup "$@" ;;
   popup-herdr) run_popup_herdr ;;
+  popup-herdr-pane) run_popup_herdr_pane ;;
   tui) run_tui "${2:-}" ;;
   msg) shift; fw="${1:-74}"; shift; show_msg "$fw" "$*" ;;
   *) exit 0 ;;
