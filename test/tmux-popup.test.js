@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { resolve, dirname, join } from "path"
 import { fileURLToPath } from "url"
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, utimesSync } from "fs"
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, utimesSync } from "fs"
 import { spawnSync } from "child_process"
 import { tmpdir } from "os"
 
@@ -98,6 +98,74 @@ describe("resolve-cwd", () => {
     writeFileSync(join(dir, "dead-session.jsonl"), "{}\n")
     const [status] = runResolveCwd("/Users/me/repo")
     expect(status).toBe("err")
+  })
+})
+
+describe("resolve-herdr", () => {
+  // The herdr half of the resolution: focused agent kind + cwd from
+  // `herdr agent list`, then the same resolve-cwd file intersection. A stub
+  // herdr binary on PATH stands in for the real CLI.
+  let bin = null
+
+  function stubHerdr(agents) {
+    const reply = JSON.stringify({ id: "cli:agent:list", result: { agents, type: "agent_list" } })
+    const stub = join(bin, "herdr")
+    writeFileSync(stub, `#!/bin/bash\nprintf '%s\\n' '${reply}'\n`)
+    chmodSync(stub, 0o755)
+  }
+
+  function runResolveHerdr() {
+    const result = spawnSync("/bin/bash", [SCRIPT, "resolve-herdr"], {
+      env: {
+        ...process.env,
+        OPENPEON_ROOT: root,
+        OPENPEON_PROJECTS_DIR: projects,
+        PATH: `${bin}:${process.env.PATH}`,
+      },
+      encoding: "utf8",
+    })
+    return result.stdout.trim().split("\t")
+  }
+
+  beforeEach(() => {
+    bin = mkdtempSync(join(tmpdir(), "openpeon-popup-bin-"))
+  })
+
+  afterEach(() => {
+    rmSync(bin, { recursive: true, force: true })
+  })
+
+  test("resolves the focused claude agent through its working directory", () => {
+    addSession("herdr-1", "-Users-me-repo")
+    stubHerdr([
+      { agent: "claude", focused: false, cwd: "/Users/me/other", foreground_cwd: "/Users/me/other" },
+      { agent: "claude", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" },
+    ])
+    const [status, id, count] = runResolveHerdr()
+    expect(status).toBe("ok")
+    expect(id).toBe("herdr-1")
+    expect(count).toBe("1")
+  })
+
+  test("points OpenCode at chat control", () => {
+    stubHerdr([{ agent: "opencode", focused: true, cwd: "/Users/me/repo" }])
+    const [status, message] = runResolveHerdr()
+    expect(status).toBe("err")
+    expect(message).toContain("peon_set_volume")
+  })
+
+  test("errors when no agent pane is focused", () => {
+    stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
+    const [status, message] = runResolveHerdr()
+    expect(status).toBe("err")
+    expect(message).toContain("no Claude Code session")
+  })
+
+  test("errors on a focused non-claude agent", () => {
+    stubHerdr([{ agent: "codex", focused: true, cwd: "/Users/me/repo" }])
+    const [status, message] = runResolveHerdr()
+    expect(status).toBe("err")
+    expect(message).toContain("no Claude Code session")
   })
 })
 

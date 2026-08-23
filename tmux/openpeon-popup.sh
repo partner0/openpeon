@@ -1,20 +1,34 @@
 #!/bin/bash
-# openpeon-popup: tmux popup to control OpenPeon volume and preset for the
-# Claude Code session running in the current window. Bind a key to `popup`:
+# openpeon-popup: popup to control OpenPeon volume and preset for the
+# Claude Code session running in the current window, from tmux or Herdr.
+# In tmux, bind a key to `popup`:
 #
 #   bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 #
+# In Herdr, bind a popup command to `popup-herdr` in config.toml:
+#
+#   [[keys.command]]
+#   key = "ctrl+n"
+#   type = "popup"
+#   command = "zsh -ic '~/.claude/openpeon/tmux/openpeon-popup.sh popup-herdr'"
+#   width = 48
+#   height = "70%"
+#
 # Subcommands:
 #   popup [client] [pane]  resolve the window's session, size and open the TUI
+#   popup-herdr            resolve via the herdr CLI and run the TUI inline
 #   tui <session-id>       the interactive popup body (volume bar + presets)
 #   resolve <pane-id>      print the resolution for a pane (ok/err, tab-sep)
+#   resolve-herdr          same, for the pane under Herdr's focused agent
 #   resolve-cwd <cwd>      pure file-based resolution half, used by tests
 #   msg <w> <text...>      print a message wrapped at w columns, wait for a key
 #
-# Session resolution: the window's active pane -> its tty -> the claude
-# process on it (ps -t) -> its cwd (lsof) -> ~/.claude/projects/<cwd-slug>/
-# transcript ids intersected with live state files under $ROOT/state/. With
-# several live sessions from the same directory, the newest transcript wins.
+# Session resolution. tmux: the window's active pane -> its tty -> the claude
+# process on it (ps -t) -> its cwd (lsof). Herdr: the focused agent's kind and
+# cwd from `herdr agent list`. Both halves end in resolve_cwd:
+# ~/.claude/projects/<cwd-slug>/ transcript ids intersected with live state
+# files under $ROOT/state/. With several live sessions from the same
+# directory, the newest transcript wins.
 #
 # Volume changes persist to the session state file AND the base openpeon.json
 # (so new sessions inherit them until the next deploy); preset and whisper
@@ -108,6 +122,41 @@ resolve_pane() {
   fi
   if [[ -z "$cwd" ]]; then
     printf 'err%scould not read the claude process working directory\n' "$TAB"
+    return 0
+  fi
+  resolve_cwd "$cwd"
+}
+
+# Herdr half: the focused agent's kind and cwd from `herdr agent list`.
+# Herdr popups overlay the panes without taking pane focus, so the agent
+# focused when the popup key was pressed is still the focused one here.
+resolve_herdr() {
+  local agent kind cwd
+  command -v herdr >/dev/null 2>&1 || {
+    printf 'err%sherdr CLI not found\n' "$TAB"
+    return 0
+  }
+  agent=$(herdr agent list 2>/dev/null |
+    jq -c '[.result.agents[] | select(.focused)] | first // empty' 2>/dev/null)
+  if [[ -z "$agent" ]]; then
+    printf 'err%sno Claude Code session in the focused pane\n' "$TAB"
+    return 0
+  fi
+  kind=$(printf '%s' "$agent" | jq -r '.agent // empty')
+  case "$kind" in
+    opencode)
+      printf 'err%sOpenCode holds its sound config in memory: ask in chat (peon_set_volume, peon_switch_preset)\n' "$TAB"
+      return 0
+      ;;
+    claude) ;;
+    *)
+      printf 'err%sno Claude Code session in the focused pane\n' "$TAB"
+      return 0
+      ;;
+  esac
+  cwd=$(printf '%s' "$agent" | jq -r '.foreground_cwd // .cwd // empty')
+  if [[ -z "$cwd" ]]; then
+    printf 'err%scould not read the claude pane working directory\n' "$TAB"
     return 0
   fi
   resolve_cwd "$cwd"
@@ -270,6 +319,14 @@ run_tui() {
 
 # ----------------------------------------------------------------- popup
 
+show_msg() { # show_msg <width> <text>
+  local out k
+  # No trailing newline: with exactly enough rows it would scroll line 1 away.
+  out=$(printf '%s\n' "$2" | fold -s -w "$1" | sed 's/^/ /')
+  printf '%s' "$out"
+  IFS= read -rsn1 k
+}
+
 run_popup() {
   local client="${2:-}" pane="${3:-}" res status rest sid n w h self
   command -v tmux >/dev/null 2>&1 || exit 0
@@ -295,15 +352,29 @@ run_popup() {
     -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
 }
 
+# Herdr runs this inside the popup terminal it opened for the bound
+# [[keys.command]], so unlike run_popup there is no geometry to compute and
+# no exec into a second popup: resolve, then run the TUI (or the error) here.
+run_popup_herdr() {
+  local res status rest
+  command -v jq >/dev/null 2>&1 || { show_msg 44 "jq is required"; exit 0; }
+  res=$(resolve_herdr)
+  status="${res%%$TAB*}"
+  rest="${res#*$TAB}"
+  if [[ "$status" != "ok" ]]; then
+    show_msg 44 "$rest"
+    exit 0
+  fi
+  run_tui "${rest%%$TAB*}"
+}
+
 case "$CMD" in
   resolve) resolve_pane "${2:-}" ;;
+  resolve-herdr) resolve_herdr ;;
   resolve-cwd) resolve_cwd "${2:-}" ;;
   popup) run_popup "$@" ;;
+  popup-herdr) run_popup_herdr ;;
   tui) run_tui "${2:-}" ;;
-  msg) shift; fw="${1:-74}"; shift
-    # No trailing newline: with exactly enough rows it would scroll line 1 away.
-    out=$(printf '%s\n' "$*" | fold -s -w "$fw" | sed 's/^/ /')
-    printf '%s' "$out"
-    IFS= read -rsn1 k ;;
+  msg) shift; fw="${1:-74}"; shift; show_msg "$fw" "$*" ;;
   *) exit 0 ;;
 esac
