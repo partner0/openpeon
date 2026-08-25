@@ -1,10 +1,10 @@
 # OpenPeon Plugin
 
-An OpenCode plugin and Claude Code hook adapter that plays Warcraft II sounds in response to various events during your coding session.
+An OpenCode plugin, Claude Code hook adapter, and pi extension that plays Blizzard RTS sounds in response to coding-session events.
 
 ## Overview
 
-OpenPeon hooks into OpenCode events (long-lived in-process plugin) and Claude Code hook events (a fresh `claude/hook.js` process per event) to play sound effects:
+OpenPeon hooks into OpenCode events, Claude Code hook events, and pi extension events to play sound effects:
 - **Acknowledge sounds** - Play when you send a message, execute a command, or reply to a permission prompt
 - **Work complete sound** - Plays when the session goes idle (agent finished working)
 - **Permission asked sound** - Plays when a permission prompt appears or the question tool is invoked
@@ -16,6 +16,8 @@ openpeon/
   index.js              # OpenCode plugin (event glue + peon_* custom tools)
   lib/core.js           # Shared core: config, presets, tier weighting, trigger matching, volume curve, afplay
   claude/hook.js        # Claude Code hook adapter (stdin JSON in, sound out)
+  pi/index.ts           # pi extension event glue and peon_* custom tools
+  pi/events.ts          # pi event and tool-name translation
   openpeon.json         # Config file mapping triggers to sounds
   package.json          # NPM package metadata
   sounds/               # Sound assets
@@ -33,7 +35,7 @@ openpeon/
   README.md             # User-facing documentation
 ```
 
-`lib/core.js` must stay dependency-free (no `@opencode-ai/plugin`, no Bun-only APIs): the Claude hook runs it under whatever runtime the hook command uses (bun or node).
+`lib/core.js` must stay dependency-free, with no agent SDK or Bun-only APIs. The Claude hook runs it under bun or node, and the pi extension imports it through pi's TypeScript loader.
 
 ## Config Format
 
@@ -81,7 +83,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 
 ### Trigger Types
 
-- `event` - OpenCode events with optional filters (e.g., `role: user` for `message.updated`)
+- `event` - Shared lifecycle events with optional filters (e.g., `role: user` for `message.updated`)
 - `tool.before` - Fires before a tool executes, filtered by tool name
 - `tool.after` - Fires after a tool executes, filtered by tool name
 
@@ -120,6 +122,14 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 - The hook touches the state file's mtime on every UserPromptSubmit. This is what makes "newest state file = current session" true for the skill's discovery heuristic, and it protects long-running sessions from the 7-day GC. Do not remove it.
 - Sound assets must be 16-bit PCM (or mp3): `pw-play` pads the end of 8-bit unsigned wav streams with the wrong silence value, producing an audible click at the end of every sound on Linux (afplay is unaffected, so it only shows there). All u8 rips were converted once; convert any newly imported 8-bit files before adding them.
 
+## pi support
+
+`pi/index.ts` is a native extension. It translates `session_start`, `input`, `agent_settled`, `user_bash`, and tool execution events into the shared trigger vocabulary. Question tools emit both permission semantics and tool triggers, with one sound per mapping. `find` maps to `glob`, `subagent` maps to `task`, and question tool variants map to `question`.
+
+The selected random or manual preset is stored in `openpeon-state` custom session entries, so `/reload` and resume do not roll again. JSON and print sessions must stay fully muted and must not register `peon_*` tools. This prevents subagent child processes from duplicating the parent session's sounds. TUI and RPC sessions remain enabled.
+
+Package installs use `ui/presets/`; UI deployments copy presets to `<root>/presets/`. Keep the fallback in `pi/index.ts`. Do not combine `pi install .` with the UI pi deployment because pi deduplicates by resolved extension path, not package identity, and would load both copies.
+
 ## tmux popup (tmux/openpeon-popup.sh)
 
 - Root binding `C-n` (user's deliberate choice; it steals readline
@@ -154,18 +164,19 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 
 ## Deployment
 
-The repo is the source of truth. Deployment produces two independent, self-contained installs:
+The repo is the source of truth. Deployment produces three independent, self-contained installs:
 
 | Target | Location |
 |--------|----------|
 | `opencode` | `~/.config/opencode/plugins/openpeon/` (+ loader `~/.config/opencode/plugins/openpeon.js`) |
 | `claude` | `~/.claude/openpeon/` |
+| `pi` | `~/.pi/agent/openpeon/` (+ loader `~/.pi/agent/extensions/openpeon.ts`) |
 
-Preferred: `bun run ui`, pick the target (OpenCode, Claude, or both), Deploy Plugin. Or POST `{"target": "opencode" | "claude" | "all"}` to `http://localhost:3456/api/deploy`.
+Preferred: `bun run ui`, pick OpenCode, Claude, pi, or all three, then Deploy Plugin. The API accepts `{"target": "opencode" | "claude" | "pi" | "all"}` at `http://localhost:3456/api/deploy`.
 
-Both targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` > `presets/`; opencode adds `index.js` + the loader, claude adds `claude/` and `tmux/` and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. The claude deploy must never touch `~/.claude/openpeon/state/` (live session presets and volume overrides). The two deployed configs drift between deploys by design; re-deploy the other target after UI changes if you want them in sync.
+All targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` to `presets/`. OpenCode adds `index.js` and its loader. Claude adds `claude/` and `tmux/`, and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. Pi adds `pi/` and its loader. The Claude deploy must never touch `~/.claude/openpeon/state/`. Deployed configs drift by design between deploys.
 
-Manual copy steps for both targets are in README.md. Restart OpenCode after an opencode deploy; Claude sessions pick up a claude deploy on their next event.
+Manual copy steps are in README.md. Restart OpenCode after deployment. Claude sessions read changes on their next event. Run `/reload` in pi.
 
 ## Config UI
 
@@ -181,7 +192,7 @@ Open http://localhost:3456 to:
 - Browse and preview sounds
 - Save/load presets
 - Export config to `openpeon.json`
-- Deploy to OpenCode, Claude Code, or both
+- Deploy to OpenCode, Claude Code, pi, or all three
 
 ## Testing
 
@@ -189,7 +200,7 @@ Open http://localhost:3456 to:
 bun test
 ```
 
-Covers `lib/core.js` (weighted preset picking with injected random, config/preset fallbacks, trigger matching, volume curve) and `claude/hook.js` (event translation, tool name map, session id sanitization, state round-trip/GC, session config resolution). Claude payload fixtures live in `test/fixtures/claude/` and double as manual pipe-test inputs: `OPENPEON_ROOT=<root> bun claude/hook.js < test/fixtures/claude/stop.json`.
+Covers `lib/core.js`, `claude/hook.js`, the tmux popup, and pi event translation in `test/pi-events.test.js`. Claude payload fixtures live in `test/fixtures/claude/` and double as manual pipe-test inputs: `OPENPEON_ROOT=<root> bun claude/hook.js < test/fixtures/claude/stop.json`.
 
 ## Debug Mode
 
@@ -198,17 +209,19 @@ Enable debug logging:
 ```bash
 OPENPEON_DEBUG=1 opencode
 OPENPEON_DEBUG=1 claude
+OPENPEON_DEBUG=1 pi
 ```
 
-OpenCode logs to `~/.config/opencode/openpeon-debug.log`; the Claude hook logs to `~/.claude/openpeon/debug.log`.
+OpenCode logs to `~/.config/opencode/openpeon-debug.log`. Claude logs to `~/.claude/openpeon/debug.log`. UI-deployed pi logs to `~/.pi/agent/openpeon/debug.log`.
 
 ## Custom Tools
 
-The plugin provides custom tools that can be called from within OpenCode:
+The OpenCode plugin and pi extension provide custom tools:
 
 - `peon_list_presets` - List available sound presets
 - `peon_switch_preset` - Switch to a different preset (takes `preset` argument)
 - `peon_current_config` - Show current configuration and active mappings
+- `peon_set_volume` - Set volume from 0 to 10
 
 Example usage in chat:
 ```
@@ -219,7 +232,7 @@ The agent will use the `peon_switch_preset` tool to change the active sound conf
 
 ## Notes
 
-- Audio playback uses `afplay` (macOS only)
+- Audio playback uses `afplay` on macOS and `pw-play` on Linux
 - Sounds can overlap (no single-flight guard)
-- Plugin auto-disables on non-macOS or if `afplay` is missing
+- OpenPeon disables audio when no supported player exists
 - Preset switching is live (no restart required)

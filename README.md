@@ -1,6 +1,6 @@
 # OpenPeon
 
-An [OpenCode](https://opencode.ai) plugin and [Claude Code](https://claude.com/claude-code) hook that plays Blizzard RTS sound effects during your coding sessions.
+An [OpenCode](https://opencode.ai) plugin, [Claude Code](https://claude.com/claude-code) hook, and [pi](https://github.com/earendil-works/pi) extension that plays Blizzard RTS sound effects during your coding sessions.
 
 Hear "Work complete!" when the agent finishes, peon acknowledgements when you send a message, and building sounds as tools run in the background.
 
@@ -24,7 +24,7 @@ Four presets are included out of the box:
 | `wc3-peasant` | Warcraft III Peasant |
 | `scbw-scv` | StarCraft: Brood War SCV |
 
-Switch presets live from within OpenCode:
+Switch presets live from within OpenCode or pi:
 
 ```
 Switch to the wc2-ogre-mage preset
@@ -32,14 +32,14 @@ Switch to the wc2-ogre-mage preset
 
 The agent uses the `peon_switch_preset` tool, no restart required.
 
-Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. On Claude Code, the preset is rolled once per session and remembered for its whole lifetime; the same "switch to the ogre-mage preset" request works there through the bundled `openpeon` skill.
+Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. OpenCode and pi expose tools to switch it. Claude Code remembers the rolled preset for the session and uses the bundled `openpeon` skill for changes.
 
 ## Installation
 
 ### Requirements
 
-- macOS (uses `afplay` for audio playback)
-- [Bun](https://bun.sh) (for the config UI)
+- macOS with `afplay`, or Linux with PipeWire's `pw-play`
+- [Bun](https://bun.sh) for the config UI
 
 ### Deploy with the UI (recommended)
 
@@ -47,7 +47,7 @@ Set `"randomPreset": true` in `openpeon.json` to load a random preset each sessi
 bun run ui
 ```
 
-Open http://localhost:3456, pick a target (OpenCode, Claude, or both), and click Deploy Plugin. Each target gets its own fully self-contained install; neither references the other.
+Open http://localhost:3456, pick OpenCode, Claude Code, pi, or all three, and click Deploy Plugin. Each target gets its own self-contained install.
 
 ### Manual deploy to OpenCode
 
@@ -108,6 +108,16 @@ Then wire the hook into `~/.claude/settings.json`. Append the same entry to each
 
 Hook changes apply to new Claude Code sessions; config and preset changes under `~/.claude/openpeon/` are picked up live on the next event.
 
+### Manual deploy to pi
+
+Choose one pi install method. To register the repository as a local pi package:
+
+```bash
+pi install .
+```
+
+Or use the config UI's pi target. It copies a self-contained install to `~/.pi/agent/openpeon/` and writes the extension loader at `~/.pi/agent/extensions/openpeon.ts`. Do not use both methods at once. Pi treats them as separate extension paths and would load OpenPeon twice. Run `/reload` in existing pi sessions after deploying.
+
 ## Config UI
 
 A web-based UI for managing your sound configuration:
@@ -126,7 +136,7 @@ Open http://localhost:3456 to:
 - Toggle whisper mode per mapping
 - Browse and preview all available sounds
 - Save and load presets
-- Deploy to OpenCode, Claude Code, or both
+- Deploy to OpenCode, Claude Code, pi, or all three
 
 ## Configuration
 
@@ -161,7 +171,7 @@ Per-mapping `whisper` flag. When `true`, the mapping plays at volume 1 regardles
 
 | Type | Description |
 |------|-------------|
-| `event` | OpenCode lifecycle events, with optional filters |
+| `event` | Coding-agent lifecycle events, with optional filters |
 | `tool.before` | Fires before a tool executes |
 | `tool.after` | Fires after a tool executes |
 
@@ -197,6 +207,22 @@ Tool names are mapped (`Bash` > `bash`, `AskUserQuestion` > `question`, `WebFetc
 
 The state file is also the per-session control surface. It accepts a `volume` override (`{"preset": "wc2-peon", "volume": 2}`) with precedence state volume > preset volume > base volume, so a session can be turned down or muted without touching any shared file. A `"whisper": false` key disables mapping `whisper` flags for the session, so whispered sounds (the working-hard mappings) play at the normal session volume instead of the fixed quiet whisper volume. The deploy installs an `openpeon` skill at `~/.claude/skills/openpeon/` that teaches Claude how to do this, so requests like "switch to the peasant preset" or "mute the sounds for this session" just work in chat.
 
+## pi support
+
+Pi loads `pi/index.ts` as a native extension. The adapter keeps OpenPeon's existing trigger names, so the same config and presets work across all supported agents.
+
+| pi event | OpenPeon trigger |
+|----------|------------------|
+| `session_start` | `openpeon.startup` |
+| `input` | `message.updated` with role `user` |
+| `agent_settled` | `session.idle` |
+| `user_bash` | `command.executed` and `tui.command.execute` |
+| `tool_execution_start` / `tool_execution_end` | `tool.before` / `tool.after` |
+
+Pi has no general permission event. OpenPeon treats question tool start and completion as `permission.asked` and `permission.replied`. This covers pi's interactive question tools, but not authorization dialogs outside pi's extension API.
+
+The extension registers `peon_list_presets`, `peon_switch_preset`, `peon_current_config`, and `peon_set_volume`. Random presets are picked on `session_start`. A `/reload` refreshes config without replaying the startup sound. JSON and print sessions stay muted, so pi subagents do not duplicate the parent session's sounds.
+
 ## tmux popup
 
 A tmux key can pop up a small volume/preset control for the Claude Code
@@ -227,29 +253,30 @@ its config in memory): the popup tells you to use `peon_set_volume` /
 
 ## Custom Tools
 
-The plugin registers tools usable from within OpenCode chat:
+The OpenCode plugin and pi extension register these chat tools:
 
 | Tool | Description |
 |------|-------------|
 | `peon_list_presets` | List available sound presets |
 | `peon_switch_preset` | Switch to a different preset |
 | `peon_current_config` | Show current config and active mappings |
-| `peon_set_volume` | Set volume (1-10) |
+| `peon_set_volume` | Set volume (0-10) |
 
-On Claude Code the same requests are handled by the `openpeon` skill (installed by the deploy), which edits the session's state file instead.
+On Claude Code the bundled `openpeon` skill handles the same requests by editing the session state file.
 
 ## Debug Mode
 
 ```bash
 OPENPEON_DEBUG=1 opencode
 OPENPEON_DEBUG=1 claude
+OPENPEON_DEBUG=1 pi
 ```
 
-OpenCode logs to `~/.config/opencode/openpeon-debug.log`; the Claude Code hook logs to `~/.claude/openpeon/debug.log`.
+OpenCode logs to `~/.config/opencode/openpeon-debug.log`. Claude Code logs to `~/.claude/openpeon/debug.log`. A UI-deployed pi extension logs to `~/.pi/agent/openpeon/debug.log`.
 
 ## Notes
 
-- Audio playback uses `afplay` (macOS only), plugin auto-disables on other platforms
+- Audio playback uses `afplay` on macOS and `pw-play` on Linux. OpenPeon disables audio if neither player is available.
 - Sounds can overlap (no single-flight guard)
 - Preset switching is live, no restart required
 

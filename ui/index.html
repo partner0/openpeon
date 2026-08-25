@@ -639,9 +639,10 @@
         <button class="btn-ghost" onclick="loadConfig()">Reload</button>
         <button class="btn-ghost" onclick="showSavePresetModal()">Save Preset</button>
         <select id="deploy-target" style="margin-left: auto;">
-          <option value="all">OpenCode + Claude</option>
+          <option value="all">OpenCode + Claude + pi</option>
           <option value="opencode">OpenCode only</option>
           <option value="claude">Claude only</option>
+          <option value="pi">pi only</option>
         </select>
         <button class="btn-secondary" onclick="deployPlugin()">Deploy Plugin</button>
       </div>
@@ -1075,7 +1076,11 @@
         if (result.success) {
           const hint = target === "claude"
             ? "Claude Code sessions pick it up on their next event."
-            : "Restart OpenCode to apply changes."
+            : target === "pi"
+              ? "Run /reload in pi to apply changes."
+              : target === "opencode"
+                ? "Restart OpenCode to apply changes."
+                : "Restart OpenCode and run /reload in pi to apply changes."
           showToast(`Deployed (${target})! ${hint}`, "success")
         } else {
           showToast(`Deploy failed: ${result.error}`, "error")

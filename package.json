@@ -1,7 +1,7 @@
 {
   "name": "openpeon",
   "version": "1.0.0",
-  "description": "OpenCode plugin that plays Warcraft II peon sounds on user commands and task completion",
+  "description": "OpenCode, Claude Code, and pi integration that plays Blizzard RTS sounds during coding sessions",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -11,6 +11,8 @@
   "keywords": [
     "opencode",
     "opencode-plugin",
+    "pi-package",
+    "pi-coding-agent",
     "warcraft",
     "peon",
     "sounds"
@@ -21,10 +23,20 @@
     "index.js",
     "claude/",
     "lib/",
+    "openpeon.json",
+    "pi/",
     "skills/",
-    "sounds/"
+    "sounds/",
+    "ui/presets/"
   ],
   "peerDependencies": {
-    "@opencode-ai/plugin": "*"
+    "@earendil-works/pi-coding-agent": "*",
+    "@opencode-ai/plugin": "*",
+    "typebox": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./pi/index.ts"
+    ]
   }
 }

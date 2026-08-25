@@ -12,6 +12,8 @@ const DEPLOY_DIR = resolve(homedir(), ".config", "opencode", "plugins", "openpeo
 const DEPLOY_LOADER = resolve(homedir(), ".config", "opencode", "plugins", "openpeon.js")
 const CLAUDE_DEPLOY_DIR = resolve(homedir(), ".claude", "openpeon")
 const CLAUDE_SKILL_DIR = resolve(homedir(), ".claude", "skills", "openpeon")
+const PI_DEPLOY_DIR = resolve(homedir(), ".pi", "agent", "openpeon")
+const PI_EXTENSION_LOADER = resolve(homedir(), ".pi", "agent", "extensions", "openpeon.ts")
 
 if (!existsSync(PRESETS_DIR)) {
   mkdirSync(PRESETS_DIR, { recursive: true })
@@ -198,9 +200,21 @@ function deployClaude() {
   copyDirReplacing(resolve(ROOT, "skills", "openpeon"), CLAUDE_SKILL_DIR)
 }
 
+function deployPi() {
+  mkdirSync(PI_DEPLOY_DIR, { recursive: true })
+  mkdirSync(resolve(PI_EXTENSION_LOADER, ".."), { recursive: true })
+
+  cpSync(CONFIG_PATH, resolve(PI_DEPLOY_DIR, "openpeon.json"))
+  copyDirReplacing(resolve(ROOT, "pi"), resolve(PI_DEPLOY_DIR, "pi"))
+  copyDirReplacing(resolve(ROOT, "lib"), resolve(PI_DEPLOY_DIR, "lib"))
+  copyDirReplacing(SOUNDS_DIR, resolve(PI_DEPLOY_DIR, "sounds"))
+  copyDirReplacing(PRESETS_DIR, resolve(PI_DEPLOY_DIR, "presets"))
+  writeFileSync(PI_EXTENSION_LOADER, 'export { default } from "../openpeon/pi/index.ts"\n')
+}
+
 function deployPlugin(target = "all") {
-  const targets = target === "all" ? ["opencode", "claude"] : [target]
-  if (!targets.every((t) => t === "opencode" || t === "claude")) {
+  const targets = target === "all" ? ["opencode", "claude", "pi"] : [target]
+  if (!targets.every((t) => t === "opencode" || t === "claude" || t === "pi")) {
     return { success: false, error: `Unknown deploy target: ${target}` }
   }
 
@@ -213,6 +227,10 @@ function deployPlugin(target = "all") {
     if (targets.includes("claude")) {
       deployClaude()
       paths.push(CLAUDE_DEPLOY_DIR)
+    }
+    if (targets.includes("pi")) {
+      deployPi()
+      paths.push(PI_DEPLOY_DIR)
     }
 
     return { success: true, paths }
