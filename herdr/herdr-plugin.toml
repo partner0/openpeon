@@ -1,20 +1,20 @@
 id = "openpeon"
 name = "OpenPeon"
-version = "0.1.0"
+version = "0.2.0"
 min_herdr_version = "0.8.0"
-description = "Volume and preset popup for the OpenPeon sounds of the focused Claude Code session"
+description = "Volume and preset popup for the focused Claude Code or pi session"
 platforms = ["macos", "linux"]
 
-# Both commands run the deployed script, not the repo copy, so the popup
-# always matches the deployed presets and state under ~/.claude/openpeon.
+# Prefer the pi-deployed script because it can resolve both pi and Claude.
+# Fall back to the Claude deployment for machines without the pi target.
 # The action resolves the session and sizes the popup, then opens the pane.
 [[actions]]
 id = "popup"
 title = "OpenPeon: volume / preset popup"
-command = ["bash", "-c", "exec bash \"$HOME/.claude/openpeon/tmux/openpeon-popup.sh\" popup-herdr"]
+command = ["bash", "-c", "script=\"$HOME/.pi/agent/openpeon/tmux/openpeon-popup.sh\"; [ -f \"$script\" ] || script=\"$HOME/.claude/openpeon/tmux/openpeon-popup.sh\"; exec bash \"$script\" popup-herdr"]
 
 [[panes]]
 id = "popup"
 title = " openpeon "
 placement = "popup"
-command = ["bash", "-c", "exec bash \"$HOME/.claude/openpeon/tmux/openpeon-popup.sh\" popup-herdr-pane"]
+command = ["bash", "-c", "script=\"$HOME/.pi/agent/openpeon/tmux/openpeon-popup.sh\"; [ -f \"$script\" ] || script=\"$HOME/.claude/openpeon/tmux/openpeon-popup.sh\"; exec bash \"$script\" popup-herdr-pane"]

@@ -29,6 +29,11 @@ function addPresets(n) {
   for (let i = 1; i <= n; i++) writeFileSync(join(root, "presets", `preset-${i}.json`), "{}")
 }
 
+function addPackagePresets(n) {
+  mkdirSync(join(root, "ui", "presets"), { recursive: true })
+  for (let i = 1; i <= n; i++) writeFileSync(join(root, "ui", "presets", `preset-${i}.json`), "{}")
+}
+
 function addSession(id, projectSlug, transcriptAgeMs = 0) {
   writeFileSync(join(root, "state", `${id}.json`), JSON.stringify({ preset: null }))
   const dir = join(projects, projectSlug)
@@ -37,6 +42,13 @@ function addSession(id, projectSlug, transcriptAgeMs = 0) {
   writeFileSync(transcript, "{}\n")
   const when = new Date(Date.now() - transcriptAgeMs)
   utimesSync(transcript, when, when)
+}
+
+function addPiSession(id, cwd, stateAgeMs = 0, assetRoot = root) {
+  const state = join(root, "state", `${id}.json`)
+  writeFileSync(state, JSON.stringify({ preset: null, cwd, root: assetRoot }))
+  const when = new Date(Date.now() - stateAgeMs)
+  utimesSync(state, when, when)
 }
 
 beforeEach(() => {
@@ -152,6 +164,27 @@ describe("resolve-herdr", () => {
     expect(count).toBe("1")
   })
 
+  test("resolves the focused pi agent through its live state", () => {
+    addPiSession("pi-herdr-1", "/Users/me/repo", 0, "/asset-root")
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
+    const [status, id, count, assetRoot, stateRoot] = runResolveHerdr()
+    expect(status).toBe("ok")
+    expect(id).toBe("pi-herdr-1")
+    expect(count).toBe("1")
+    expect(assetRoot).toBe("/asset-root")
+    expect(stateRoot).toBe(root)
+  })
+
+  test("uses the newest pi state when sessions share a directory", () => {
+    addPiSession("old-pi", "/Users/me/repo", 60_000)
+    addPiSession("active-pi", "/Users/me/repo")
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
+    const [status, id, count] = runResolveHerdr()
+    expect(status).toBe("ok")
+    expect(id).toBe("active-pi")
+    expect(count).toBe("2")
+  })
+
   test("points OpenCode at chat control", () => {
     stubHerdr([{ agent: "opencode", focused: true, cwd: "/Users/me/repo" }])
     const [status, message] = runResolveHerdr()
@@ -163,14 +196,14 @@ describe("resolve-herdr", () => {
     stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
     const [status, message] = runResolveHerdr()
     expect(status).toBe("err")
-    expect(message).toContain("no Claude Code session")
+    expect(message).toContain("no supported agent session")
   })
 
-  test("errors on a focused non-claude agent", () => {
+  test("errors on a focused unsupported agent", () => {
     stubHerdr([{ agent: "codex", focused: true, cwd: "/Users/me/repo" }])
     const [status, message] = runResolveHerdr()
     expect(status).toBe("err")
-    expect(message).toContain("no Claude Code session")
+    expect(message).toContain("no supported agent session")
   })
 })
 
@@ -218,16 +251,36 @@ describe("popup-herdr", () => {
     expect(call).toContain("--width 48")
     expect(call).toContain("--height 12") // 6 presets + 6
     expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
+    expect(call).toContain(`OPENPEON_ROOT=${root}`)
+    expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
+  })
+
+  test("opens the focused pi session with its asset root", () => {
+    addPiSession("pi-herdr-1", "/Users/me/repo")
+    addPresets(2)
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr()
+    expect(call).toContain("--height 8")
+    expect(call).toContain("OPENPEON_POPUP_SID=pi-herdr-1")
+    expect(call).toContain(`OPENPEON_ROOT=${root}`)
+    expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
+  })
+
+  test("uses package presets when the asset root has no deployed presets directory", () => {
+    addPiSession("pi-herdr-1", "/Users/me/repo")
+    addPackagePresets(3)
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr()
+    expect(call).toContain("--height 9")
   })
 
   test("opens an error pane sized to the message", () => {
     stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
     const call = runPopupHerdr()
-    // "no Claude Code session in the focused pane" is 42 chars: 46 wide, one
-    // folded line plus the border
-    expect(call).toContain("--width 46")
+    // The 46-character message gets two columns of padding on each side.
+    expect(call).toContain("--width 50")
     expect(call).toContain("--height 3")
-    expect(call).toContain("OPENPEON_POPUP_MSG=no Claude Code session in the focused pane")
+    expect(call).toContain("OPENPEON_POPUP_MSG=no supported agent session in the focused pane")
   })
 
   test("pane body shows the message passed through the environment", () => {

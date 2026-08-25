@@ -27,6 +27,7 @@
     "pi/",
     "skills/",
     "sounds/",
+    "tmux/",
     "ui/presets/"
   ],
   "peerDependencies": {

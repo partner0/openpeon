@@ -1,4 +1,5 @@
 import { appendFileSync, existsSync, writeFileSync } from "node:fs"
+import { homedir } from "node:os"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent"
@@ -15,6 +16,13 @@ import {
   playSound as playCoreSound,
 } from "../lib/core.js"
 import { shouldEnablePiSession, type PiSoundAction, translatePiEvent } from "./events.js"
+import {
+  deletePiState,
+  gcPiState,
+  type PiRuntimeState,
+  readPiState,
+  writePiState,
+} from "./state.js"
 
 interface OpenPeonTrigger {
   type: "event" | "tool.before" | "tool.after"
@@ -43,6 +51,9 @@ interface PiSessionState {
 
 const EXTENSION_DIR = dirname(fileURLToPath(import.meta.url))
 const ROOT = process.env.OPENPEON_ROOT || resolve(EXTENSION_DIR, "..")
+const PI_STATE_ROOT = process.env.OPENPEON_PI_STATE_ROOT
+  || process.env.OPENPEON_ROOT
+  || resolve(homedir(), ".pi", "agent", "openpeon")
 const CONFIG_PATH = resolve(ROOT, "openpeon.json")
 const DEPLOYED_PRESETS_DIR = resolve(ROOT, "presets")
 const PRESETS_DIR = existsSync(DEPLOYED_PRESETS_DIR)
@@ -71,6 +82,8 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
   let mappings: OpenPeonMapping[] = baseMappings
   let volume: number = baseVolume
   let currentPreset: string | null = null
+  let sessionId: string | null = null
+  let isWhisperEnabled: boolean = true
   let isSessionEnabled: boolean = false
   let areToolsRegistered: boolean = false
 
@@ -104,14 +117,14 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
       name: mapping.name ?? null,
       soundFile,
       source,
-      whisper: Boolean(mapping.whisper),
+      whisper: isWhisperEnabled && Boolean(mapping.whisper),
       volume,
     })
     playCoreSound(
       PLAYER_PATH,
       resolve(SOUNDS_DIR, soundFile),
       volume,
-      Boolean(mapping.whisper),
+      isWhisperEnabled && Boolean(mapping.whisper),
       (error: unknown, reason: string) => {
         audioDisabled = true
         logDebug(reason, { message: getErrorMessage(error) })
@@ -135,11 +148,16 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
     }))
   }
 
-  function fireAction(action: PiSoundAction | null, source: string): void {
+  function fireAction(
+    action: PiSoundAction | null,
+    source: string,
+    shouldPersistPreset: boolean = false,
+  ): void {
     if (!isSessionEnabled || !action) {
       return
     }
 
+    syncRuntimeState(shouldPersistPreset)
     for (const mapping of mappings) {
       if (matchesAction(mapping, action)) {
         playMappingSound(mapping, source)
@@ -216,6 +234,42 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
     }
   }
 
+  function syncRuntimeState(shouldPersistPreset: boolean): void {
+    let state: PiRuntimeState | null
+    let previousPreset: string | null
+    let hasValidPreset: boolean
+
+    state = readPiState(PI_STATE_ROOT, sessionId)
+    if (!state) {
+      return
+    }
+
+    previousPreset = currentPreset
+    hasValidPreset = typeof state.preset === "string" || state.preset === null
+    mappings = baseMappings
+    volume = baseVolume
+    currentPreset = null
+    if (typeof state.preset === "string" && !activatePreset(state.preset)) {
+      logDebug("preset-missing", { preset: state.preset })
+    }
+    if (typeof state.volume === "number") {
+      volume = Math.max(0, Math.min(10, state.volume))
+    }
+    isWhisperEnabled = state.whisper !== false
+
+    if (shouldPersistPreset && hasValidPreset && previousPreset !== currentPreset) {
+      pi.appendEntry<PiSessionState>("openpeon-state", { preset: currentPreset })
+    }
+  }
+
+  function writeCurrentState(patch: PiRuntimeState): void {
+    if (!sessionId) {
+      return
+    }
+
+    writePiState(PI_STATE_ROOT, sessionId, patch)
+  }
+
   function switchPreset(presetName: string): string {
     let mappingNames: string
     let availablePresets: string[]
@@ -226,12 +280,15 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
     }
 
     pi.appendEntry<PiSessionState>("openpeon-state", { preset: presetName })
+    writeCurrentState({ preset: presetName })
     mappingNames = mappings.map((mapping) => mapping.name ?? "unnamed").join(", ")
     return `Switched to preset "${presetName}". Active mappings: ${mappingNames}`
   }
 
   pi.on("session_start", (event, ctx) => {
     let savedPreset: string | null | undefined
+    let diskState: PiRuntimeState | null
+    let sessionFile: string | undefined
 
     isSessionEnabled = shouldEnablePiSession(ctx.mode)
     if (!isSessionEnabled) {
@@ -240,16 +297,29 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
     }
 
     registerTools()
-    savedPreset = getSessionPreset(ctx)
+    sessionId = ctx.sessionManager.getSessionId()
+    sessionFile = ctx.sessionManager.getSessionFile()
+    gcPiState(PI_STATE_ROOT)
+    diskState = readPiState(PI_STATE_ROOT, sessionId)
+    savedPreset = diskState && (typeof diskState.preset === "string" || diskState.preset === null)
+      ? diskState.preset
+      : getSessionPreset(ctx)
     loadActiveConfig(savedPreset)
     if (savedPreset === undefined && baseConfig.randomPreset) {
       pi.appendEntry<PiSessionState>("openpeon-state", { preset: currentPreset })
     }
+    writeCurrentState({
+      preset: currentPreset,
+      cwd: ctx.cwd,
+      root: ROOT,
+      ...(sessionFile ? { sessionFile } : {}),
+    })
     fireAction(translatePiEvent("session_start", event), `session_start:${event.reason}`)
   })
 
-  pi.on("input", (event) => {
-    fireAction(translatePiEvent("input"), `input:${event.source}`)
+  pi.on("input", (event, ctx) => {
+    fireAction(translatePiEvent("input"), `input:${event.source}`, true)
+    writeCurrentState({ preset: currentPreset, cwd: ctx.cwd, root: ROOT })
   })
 
   pi.on("agent_settled", () => {
@@ -266,6 +336,12 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
 
   pi.on("tool_execution_end", (event) => {
     fireAction(translatePiEvent("tool_execution_end", event), `tool.after:${event.toolName}`)
+  })
+
+  pi.on("session_shutdown", (event) => {
+    if (isSessionEnabled && event.reason !== "reload") {
+      deletePiState(PI_STATE_ROOT, sessionId)
+    }
   })
 
   function registerTools(): void {
@@ -359,6 +435,7 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
         volume = Math.round(Math.max(0, Math.min(10, params.level)))
         baseVolume = volume
         baseConfig.volume = volume
+        writeCurrentState({ volume })
 
         try {
           writeFileSync(CONFIG_PATH, `${JSON.stringify(baseConfig, null, 2)}\n`)

@@ -18,6 +18,7 @@ openpeon/
   claude/hook.js        # Claude Code hook adapter (stdin JSON in, sound out)
   pi/index.ts           # pi extension event glue and peon_* custom tools
   pi/events.ts          # pi event and tool-name translation
+  pi/state.ts           # pi disk control state for the Herdr popup
   openpeon.json         # Config file mapping triggers to sounds
   package.json          # NPM package metadata
   sounds/               # Sound assets
@@ -25,7 +26,7 @@ openpeon/
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
   skills/openpeon/      # Claude Code skill (session preset/volume control), deployed to ~/.claude/skills/
-  tmux/                 # tmux popup (volume/preset control for the window's Claude session)
+  tmux/                 # Herdr popup implementation plus legacy Claude tmux entry point
   test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
   ui/                   # Config management UI
     server.js           # Bun server for the UI (also owns deployment)
@@ -126,25 +127,26 @@ The state file doubles as the per-session control surface for the `openpeon` ski
 
 `pi/index.ts` is a native extension. It translates `session_start`, `input`, `agent_settled`, `user_bash`, and tool execution events into the shared trigger vocabulary. Question tools emit both permission semantics and tool triggers, with one sound per mapping. `find` maps to `glob`, `subagent` maps to `task`, and question tool variants map to `question`.
 
-The selected random or manual preset is stored in `openpeon-state` custom session entries, so `/reload` and resume do not roll again. JSON and print sessions must stay fully muted and must not register `peon_*` tools. This prevents subagent child processes from duplicating the parent session's sounds. TUI and RPC sessions remain enabled.
+The selected random or manual preset is stored in `openpeon-state` custom session entries, so `/reload` and resume do not roll again. Interactive sessions also expose a disk control file at `~/.pi/agent/openpeon/state/<session-id>.json` for Herdr. It stores preset, optional volume and whisper overrides, cwd, asset root, and session file. The extension re-reads it before sounds, touches it on input, preserves it across reload, and deletes it on other shutdowns. JSON and print sessions must stay fully muted and must not create state or register `peon_*` tools. TUI and RPC sessions remain enabled.
 
 Package installs use `ui/presets/`; UI deployments copy presets to `<root>/presets/`. Keep the fallback in `pi/index.ts`. Do not combine `pi install .` with the UI pi deployment because pi deduplicates by resolved extension path, not package identity, and would load both copies.
 
-## tmux popup (tmux/openpeon-popup.sh)
+## Herdr popup and tmux fallback (tmux/openpeon-popup.sh)
 
-- Root binding `C-n` (user's deliberate choice; it steals readline
-  next-history inside tmux) runs `popup '#{client_name}' '#{pane_id}'`,
-  which resolves the WINDOW's session, then opens the TUI in a top-right
-  `display-popup` sized before opening (popups cannot resize).
-- Window → session resolution chain: pane `#{pane_tty}` → the claude process
-  on that tty (`ps -t`, skip `<defunct>`) → its cwd (`lsof -a -d cwd -F n`;
-  the `-F n` form survives spaces in paths) → `~/.claude/projects/<slug>/`
-  transcripts intersected with live state files. Slug rule:
-  `[^A-Za-z0-9-]` → `-`. Several live sessions from one directory: newest
-  transcript mtime wins, silently (no in-popup header; the popup title comes
-  from `display-popup -T`, which needs tmux >= 3.3). The claude
-  process holds NO open fd to its transcript and has no session id in its
-  env; cwd intersection is the only reliable external mapping found.
+- Herdr `C-n` invokes `openpeon.popup`. The plugin action inspects the focused
+  agent through `herdr agent list`, resolves the session, sizes the popup, and
+  passes session id, asset root, and writable state root to the pane entrypoint. The manifest
+  prefers the pi-deployed script and falls back to the Claude deployment; both
+  script copies resolve Claude and pi. Re-run `herdr plugin link herdr` after
+  manifest changes because Herdr caches linked action commands.
+- Claude resolution maps focused cwd through `~/.claude/projects/<slug>/`
+  transcripts intersected with live state files. Pi resolution matches focused
+  cwd against `~/.pi/agent/openpeon/state/*.json`. Several sessions from one
+  directory use the newest transcript or state mtime. The pi extension touches
+  its state on every input, which makes the focused session win.
+- The older tmux binding remains Claude-only. It resolves pane tty to the
+  Claude process, reads cwd through `/proc` or `lsof -F n`, then uses the same
+  Claude transcript intersection. Root `C-n` was the user's deliberate choice.
 - Volume writes go to the state file AND the base `openpeon.json` (user
   decision: new sessions inherit until the next deploy overwrites it).
   Preset and whisper (`w` key) writes are state-only so `randomPreset` keeps
@@ -158,9 +160,9 @@ Package installs use `ui/presets/`; UI deployments copy presets to `<root>/prese
   `lib/core.js`; the previous feedback pid is killed first so arrow-key
   repeats do not stack sounds. Requires `jq` (the only bash/jq component in
   an otherwise JS repo).
-- Tests (`test/tmux-popup.test.js`) cover only the pure `resolve-cwd` half
-  via `OPENPEON_ROOT`/`OPENPEON_PROJECTS_DIR` overrides; the tty/ps/lsof
-  half was verified live and has no headless harness.
+- Tests (`test/tmux-popup.test.js`) cover Claude cwd resolution, pi state
+  resolution, Herdr popup geometry and root passing, and TUI behavior. The
+  tmux tty/ps/lsof half was verified live and has no headless harness.
 
 ## Deployment
 
@@ -174,7 +176,7 @@ The repo is the source of truth. Deployment produces three independent, self-con
 
 Preferred: `bun run ui`, pick OpenCode, Claude, pi, or all three, then Deploy Plugin. The API accepts `{"target": "opencode" | "claude" | "pi" | "all"}` at `http://localhost:3456/api/deploy`.
 
-All targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` to `presets/`. OpenCode adds `index.js` and its loader. Claude adds `claude/` and `tmux/`, and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. Pi adds `pi/` and its loader. The Claude deploy must never touch `~/.claude/openpeon/state/`. Deployed configs drift by design between deploys.
+All targets copy `lib/`, `openpeon.json`, `sounds/`, and `ui/presets/` to `presets/`. OpenCode adds `index.js` and its loader. Claude adds `claude/` and `tmux/`, and installs `skills/openpeon/` to `~/.claude/skills/openpeon/`. Pi adds `pi/`, `tmux/`, and its loader. Neither Claude nor pi deployment may replace its live `state/` directory. Deployed configs drift by design between deploys.
 
 Manual copy steps are in README.md. Restart OpenCode after deployment. Claude sessions read changes on their next event. Run `/reload` in pi.
 
@@ -200,7 +202,7 @@ Open http://localhost:3456 to:
 bun test
 ```
 
-Covers `lib/core.js`, `claude/hook.js`, the tmux popup, and pi event translation in `test/pi-events.test.js`. Claude payload fixtures live in `test/fixtures/claude/` and double as manual pipe-test inputs: `OPENPEON_ROOT=<root> bun claude/hook.js < test/fixtures/claude/stop.json`.
+Covers `lib/core.js`, `claude/hook.js`, Herdr and tmux popup behavior, pi event translation, and pi disk state. Claude payload fixtures live in `test/fixtures/claude/` and double as manual pipe-test inputs: `OPENPEON_ROOT=<root> bun claude/hook.js < test/fixtures/claude/stop.json`.
 
 ## Debug Mode
 

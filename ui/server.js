@@ -209,6 +209,7 @@ function deployPi() {
   copyDirReplacing(resolve(ROOT, "lib"), resolve(PI_DEPLOY_DIR, "lib"))
   copyDirReplacing(SOUNDS_DIR, resolve(PI_DEPLOY_DIR, "sounds"))
   copyDirReplacing(PRESETS_DIR, resolve(PI_DEPLOY_DIR, "presets"))
+  copyDirReplacing(resolve(ROOT, "tmux"), resolve(PI_DEPLOY_DIR, "tmux"))
   writeFileSync(PI_EXTENSION_LOADER, 'export { default } from "../openpeon/pi/index.ts"\n')
 }
 

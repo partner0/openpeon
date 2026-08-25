@@ -116,7 +116,7 @@ Choose one pi install method. To register the repository as a local pi package:
 pi install .
 ```
 
-Or use the config UI's pi target. It copies a self-contained install to `~/.pi/agent/openpeon/` and writes the extension loader at `~/.pi/agent/extensions/openpeon.ts`. Do not use both methods at once. Pi treats them as separate extension paths and would load OpenPeon twice. Run `/reload` in existing pi sessions after deploying.
+Or use the config UI's pi target. It copies a self-contained install, including the Herdr popup script, to `~/.pi/agent/openpeon/` and writes the extension loader at `~/.pi/agent/extensions/openpeon.ts`. Do not use both methods at once. Pi treats them as separate extension paths and would load OpenPeon twice. Run `/reload` in existing pi sessions after deploying. The Herdr popup needs the UI deployment or an equivalent copy of `tmux/` under the pi install root.
 
 ## Config UI
 
@@ -223,33 +223,32 @@ Pi has no general permission event. OpenPeon treats question tool start and comp
 
 The extension registers `peon_list_presets`, `peon_switch_preset`, `peon_current_config`, and `peon_set_volume`. Random presets are picked on `session_start`. A `/reload` refreshes config without replaying the startup sound. JSON and print sessions stay muted, so pi subagents do not duplicate the parent session's sounds.
 
-## tmux popup
+## Herdr popup
 
-A tmux key can pop up a small volume/preset control for the Claude Code
-session running in the current window, without typing anything into the
-session. Add to `~/.tmux.conf` (requires `jq`):
+The Herdr `Ctrl+N` action opens a volume and preset popup for the focused Claude Code or pi pane. Deploy OpenPeon to the agents you use, link the plugin, and bind its action:
+
+```bash
+herdr plugin link ./herdr
+```
+
+```toml
+[[keys.command]]
+key = "ctrl+n"
+type = "plugin_action"
+command = "openpeon.popup"
+```
+
+The popup shows a volume bar, whisper state, and preset list. Left and right adjust volume, `m` mutes, `w` toggles whisper, up and down choose a preset, Enter applies it, and `q` closes. Every change plays a sample and applies to the next sound.
+
+The pi extension writes live control state under `~/.pi/agent/openpeon/state/`. Herdr matches the focused pi pane by working directory and uses the newest live session when several sessions share that directory. Claude keeps its transcript and state-file matching. Volume changes also update the base `openpeon.json`; preset and whisper changes stay session-scoped.
+
+OpenCode holds its config in memory, so the popup directs OpenCode users to `peon_set_volume` and `peon_switch_preset` in chat.
+
+The older tmux entry point remains available for Claude Code:
 
 ```
 bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
 ```
-
-The popup shows a volume bar, the whisper state, and the preset list: ←/→
-(or h/l) adjust the volume, `m` mutes, `w` toggles whisper (off = whispered
-working sounds play at full session volume), ↑/↓ (or k/j) and Enter switch
-presets, `q` closes. Every change plays a sample sound so you hear what you
-set, and applies on the session's very next sound (the hook re-reads config
-per event).
-
-Volume changes persist to the session state file AND the base
-`openpeon.json`, so new sessions inherit them (until the next deploy);
-preset and whisper changes are session-scoped so `randomPreset` keeps
-rolling fresh sessions and whisper resets to on. The window's session is found via the claude process's working
-directory matched against live state files; with several live sessions from
-the same directory, the newest transcript wins.
-
-Running OpenCode sessions cannot be controlled this way (the plugin holds
-its config in memory): the popup tells you to use `peon_set_volume` /
-`peon_switch_preset` in chat instead.
 
 ## Custom Tools
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # openpeon-popup: popup to control OpenPeon volume and preset for the
-# Claude Code session running in the current window, from tmux or Herdr.
+# Claude Code or pi session focused in Herdr. The tmux path remains Claude-only.
 # In tmux, bind a key to `popup`:
 #
 #   bind-key -n C-n run-shell -b "$HOME/.claude/openpeon/tmux/openpeon-popup.sh popup '#{client_name}' '#{pane_id}'"
@@ -29,12 +29,10 @@
 #   resolve-cwd <cwd>      pure file-based resolution half, used by tests
 #   msg <w> <text...>      print a message wrapped at w columns, wait for a key
 #
-# Session resolution. tmux: the window's active pane -> its tty -> the claude
-# process on it (ps -t) -> its cwd (lsof). Herdr: the focused agent's kind and
-# cwd from `herdr agent list`. Both halves end in resolve_cwd:
-# ~/.claude/projects/<cwd-slug>/ transcript ids intersected with live state
-# files under $ROOT/state/. With several live sessions from the same
-# directory, the newest transcript wins.
+# Session resolution. tmux uses the pane tty, Claude process cwd, transcript,
+# and live state intersection. Herdr reads the focused agent kind and cwd.
+# Claude uses the same transcript intersection. Pi matches cwd metadata in its
+# live state files. With several sessions in one directory, newest mtime wins.
 #
 # Volume changes persist to the session state file AND the base openpeon.json
 # (so new sessions inherit them until the next deploy); preset and whisper
@@ -47,7 +45,13 @@
 
 set -u
 
-ROOT="${OPENPEON_ROOT:-$HOME/.claude/openpeon}"
+ROOT_OVERRIDE="${OPENPEON_ROOT:-}"
+CLAUDE_ROOT="${OPENPEON_CLAUDE_ROOT:-${ROOT_OVERRIDE:-$HOME/.claude/openpeon}}"
+PI_STATE_ROOT="${OPENPEON_PI_STATE_ROOT:-${ROOT_OVERRIDE:-$HOME/.pi/agent/openpeon}}"
+ROOT="$CLAUDE_ROOT"
+STATE_ROOT="${OPENPEON_STATE_ROOT:-$ROOT}"
+PRESETS_DIR="$ROOT/presets"
+[[ -d "$PRESETS_DIR" ]] || PRESETS_DIR="$ROOT/ui/presets"
 PROJECTS_DIR="${OPENPEON_PROJECTS_DIR:-$HOME/.claude/projects}"
 # afplay on macOS, pw-play (PipeWire) on Linux; previews stay silent elsewhere.
 if [[ "$(uname)" == "Darwin" ]]; then
@@ -94,7 +98,32 @@ resolve_cwd() {
   if [[ "$count" -eq 0 ]]; then
     printf 'err%scould not match this window to a live session\n' "$TAB"
   else
-    printf 'ok%s%s%s%s\n' "$TAB" "$best_id" "$TAB" "$count"
+    printf 'ok%s%s%s%s%s%s%s%s\n' "$TAB" "$best_id" "$TAB" "$count" "$TAB" "$ROOT" "$TAB" "$ROOT"
+  fi
+}
+
+resolve_pi_cwd() {
+  local cwd="$1" sfile id state_cwd state_root m count best_id best_root best_m
+  count=0; best_id=""; best_root=""; best_m=0
+  for sfile in "$PI_STATE_ROOT/state/"*.json; do
+    [[ -e "$sfile" ]] || continue
+    state_cwd=$(jq -r '.cwd // empty' "$sfile" 2>/dev/null)
+    [[ "$state_cwd" == "$cwd" ]] || continue
+    id=$(basename "$sfile" .json)
+    state_root=$(jq -r '.root // empty' "$sfile" 2>/dev/null)
+    [[ -n "$state_root" ]] || state_root="$PI_STATE_ROOT"
+    m=$(mtime "$sfile") || m=0
+    count=$((count + 1))
+    if [[ "$m" -gt "$best_m" ]]; then
+      best_m="$m"
+      best_id="$id"
+      best_root="$state_root"
+    fi
+  done
+  if [[ "$count" -eq 0 ]]; then
+    printf 'err%scould not match this pane to a live pi session\n' "$TAB"
+  else
+    printf 'ok%s%s%s%s%s%s%s%s\n' "$TAB" "$best_id" "$TAB" "$count" "$TAB" "$best_root" "$TAB" "$PI_STATE_ROOT"
   fi
 }
 
@@ -145,7 +174,7 @@ resolve_herdr() {
   agent=$(herdr agent list 2>/dev/null |
     jq -c '[.result.agents[] | select(.focused)] | first // empty' 2>/dev/null)
   if [[ -z "$agent" ]]; then
-    printf 'err%sno Claude Code session in the focused pane\n' "$TAB"
+    printf 'err%sno supported agent session in the focused pane\n' "$TAB"
     return 0
   fi
   kind=$(printf '%s' "$agent" | jq -r '.agent // empty')
@@ -154,18 +183,23 @@ resolve_herdr() {
       printf 'err%sOpenCode holds its sound config in memory: ask in chat (peon_set_volume, peon_switch_preset)\n' "$TAB"
       return 0
       ;;
-    claude) ;;
+    claude) ROOT="$CLAUDE_ROOT" ;;
+    pi) ;;
     *)
-      printf 'err%sno Claude Code session in the focused pane\n' "$TAB"
+      printf 'err%sno supported agent session in the focused pane\n' "$TAB"
       return 0
       ;;
   esac
   cwd=$(printf '%s' "$agent" | jq -r '.foreground_cwd // .cwd // empty')
   if [[ -z "$cwd" ]]; then
-    printf 'err%scould not read the claude pane working directory\n' "$TAB"
+    printf 'err%scould not read the focused pane working directory\n' "$TAB"
     return 0
   fi
-  resolve_cwd "$cwd"
+  if [[ "$kind" == "pi" ]]; then
+    resolve_pi_cwd "$cwd"
+  else
+    resolve_cwd "$cwd"
+  fi
 }
 
 # ------------------------------------------------------------------- tui
@@ -175,7 +209,7 @@ effective_volume() { # effective_volume <state-file> <preset-name-or-empty>
   local v
   v=$(jq -r '.volume // empty' "$1" 2>/dev/null)
   if [[ -z "$v" && -n "$2" ]]; then
-    v=$(jq -r '.volume // empty' "$ROOT/presets/$2.json" 2>/dev/null)
+    v=$(jq -r '.volume // empty' "$PRESETS_DIR/$2.json" 2>/dev/null)
   fi
   if [[ -z "$v" ]]; then
     v=$(jq -r '.volume // empty' "$ROOT/openpeon.json" 2>/dev/null)
@@ -202,7 +236,7 @@ FEEDBACK_PID=""
 play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
   local src sounds n sound afv
   (( $2 > 0 )) || return 0
-  if [[ -n "$1" ]]; then src="$ROOT/presets/$1.json"; else src="$ROOT/openpeon.json"; fi
+  if [[ -n "$1" ]]; then src="$PRESETS_DIR/$1.json"; else src="$ROOT/openpeon.json"; fi
   sounds=$(jq -r "${3:-.mappings[0].sounds[]}" "$src" 2>/dev/null)
   [[ -n "$sounds" ]] || return 0
   n=$(printf '%s\n' "$sounds" | grep -c .)
@@ -252,7 +286,7 @@ WHISPER_SOUNDS_FILTER='[.mappings[]? | select(.whisper == true) | .sounds[]] | .
 run_tui() {
   local SID="$1" STATE CUR VOL WHIS SEL ROWS TOP LIST_H
   local k k2 k3 i p fbv
-  STATE="$ROOT/state/$SID.json"
+  STATE="$STATE_ROOT/state/$SID.json"
   command -v jq >/dev/null 2>&1 || { printf ' jq is required'; IFS= read -rsn1 k; exit 0; }
 
   TOP=0
@@ -264,7 +298,7 @@ run_tui() {
 
   # Row 0 is "apply the base config" (preset null); the rest are preset names.
   ROWS=("")
-  for p in "$ROOT/presets/"*.json; do
+  for p in "$PRESETS_DIR/"*.json; do
     [[ -e "$p" ]] || continue
     ROWS+=("$(basename "$p" .json)")
   done
@@ -363,7 +397,7 @@ run_popup() {
   fi
   sid="${rest%%$TAB*}"
   n=0
-  for p in "$ROOT/presets/"*.json; do
+  for p in "$PRESETS_DIR/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
   h=$((n + 6))   # volume + whisper + base row + n presets + help + border
@@ -377,7 +411,7 @@ run_popup() {
 # the result passed through the environment (popup sizes in config.toml are
 # static, only a plugin can size a popup at open time).
 run_popup_herdr() {
-  local res status rest sid n w h p
+  local res status rest sid count_and_roots roots popup_root popup_state_root n w h p
   res=$(resolve_herdr)
   status="${res%%$TAB*}"
   rest="${res#*$TAB}"
@@ -389,14 +423,29 @@ run_popup_herdr() {
       --env "OPENPEON_POPUP_MSG=$rest"
   fi
   sid="${rest%%$TAB*}"
+  count_and_roots="${rest#*$TAB}"
+  roots="${count_and_roots#*$TAB}"
+  popup_root="${roots%%$TAB*}"
+  popup_state_root="${roots#*$TAB}"
+  if [[ -n "$popup_root" ]]; then
+    ROOT="$popup_root"
+    PRESETS_DIR="$ROOT/presets"
+    [[ -d "$PRESETS_DIR" ]] || PRESETS_DIR="$ROOT/ui/presets"
+  fi
+  if [[ "$popup_state_root" != "$roots" && -n "$popup_state_root" ]]; then
+    STATE_ROOT="$popup_state_root"
+  else
+    STATE_ROOT="$ROOT"
+  fi
   n=0
-  for p in "$ROOT/presets/"*.json; do
+  for p in "$PRESETS_DIR/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
   h=$((n + 6))   # volume + whisper + base row + n presets + help + border
   exec herdr plugin pane open --plugin openpeon --entrypoint popup \
     --placement popup --width 48 --height "$h" --focus \
-    --env "OPENPEON_POPUP_SID=$sid"
+    --env "OPENPEON_POPUP_SID=$sid" --env "OPENPEON_ROOT=$ROOT" \
+    --env "OPENPEON_STATE_ROOT=$STATE_ROOT"
 }
 
 # The popup body Herdr opens for run_popup_herdr's pane entrypoint.
