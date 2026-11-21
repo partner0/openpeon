@@ -75,7 +75,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 - The preset's mappings and volume override the base config for the session.
 - Selection is weighted by the preset's `tier` field (see below).
 - Can be toggled via the config UI.
-- `enabledGames` (string array) - Games the random roll draws from. A preset's game is its name prefix before the first `-` (`wc2`, `wc3`, `scbw`, `sc2`). Omitted means every game, including future ones; once set, a new game stays out until added. An empty array rolls nothing, so sessions keep the base config. Manual preset switches ignore it.
+- `enabledGames` (string array) - Games the random roll draws from. A preset's game is its name prefix before the first `-` (`wc2`, `wc3`, `scbw`, `sc2`). Omitted means every game, including future ones; once set, a new game stays out until added. An empty array rolls nothing, so sessions keep the base config. Manual preset switches ignore it. The config UI sets it with the "Random games" toggles. Loading a preset into the UI editor replaces the whole config, so the UI carries `enabledGames` over explicitly and keeps it out of saved presets.
 
 ### Tier (Preset Weighting)
 

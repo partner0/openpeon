@@ -666,6 +666,10 @@
           <span class="toggle-track"></span>
         </label>
       </div>
+      <div class="toggle-control" style="margin-bottom: 16px; flex-wrap: wrap;">
+        <span class="toggle-label">Random games</span>
+        <div id="game-toggles" class="toggle-control" style="gap: 20px; flex-wrap: wrap;"></div>
+      </div>
       <div class="volume-control">
         <span class="toggle-label">Volume</span>
         <input type="range" id="volume-slider" class="volume-slider" min="0" max="10" step="1" value="5" oninput="updateVolume(this.value)">
@@ -736,6 +740,8 @@
     let selectedSoundDir = "."
     let selectedSoundFiles = new Set()
     let allSoundFiles = []
+    let presetNames = []
+    const GAME_NAMES = { wc2: "Warcraft II", wc3: "Warcraft III", scbw: "StarCraft: Brood War", sc2: "StarCraft II" }
 
     async function init() {
       const metaRes = await fetch("/api/meta")
@@ -749,6 +755,31 @@
       document.getElementById("volume-slider").value = vol
       document.getElementById("volume-value").textContent = `${vol} / 10`
       document.getElementById("random-preset-toggle").checked = Boolean(config.randomPreset)
+      renderGameToggles()
+    }
+
+    function listGames() {
+      return [...new Set(presetNames.map(name => name.split("-")[0]))].sort()
+    }
+
+    function isGameEnabled(game) {
+      return !Array.isArray(config.enabledGames) || config.enabledGames.includes(game)
+    }
+
+    function renderGameToggles() {
+      document.getElementById("game-toggles").innerHTML = listGames().map(game => `
+        <div class="toggle-control" style="gap: 8px;">
+          <span class="toggle-label" style="font-size: 12px;">${GAME_NAMES[game] || game}</span>
+          <label class="toggle-switch">
+            <input type="checkbox" ${isGameEnabled(game) ? 'checked' : ''} onchange="updateEnabledGame('${game}', this.checked)">
+            <span class="toggle-track"></span>
+          </label>
+        </div>`
+      ).join("")
+    }
+
+    function updateEnabledGame(game, checked) {
+      config.enabledGames = listGames().filter(g => g === game ? checked : isGameEnabled(g))
     }
 
     function updateVolume(value) {
@@ -791,6 +822,8 @@
       const res = await fetch("/api/presets")
       const presets = await res.json()
       const container = document.getElementById("preset-list")
+      presetNames = presets
+      renderGameToggles()
       if (presets.length === 0) {
         container.innerHTML = '<span style="color: var(--text-muted); font-size: 14px;">No presets saved yet</span>'
       } else {
@@ -825,7 +858,8 @@
     async function loadPreset(name) {
       const res = await fetch(`/api/presets/${encodeURIComponent(name)}`)
       if (res.ok) {
-        config = await res.json()
+        const enabledGames = config.enabledGames
+        config = { ...await res.json(), enabledGames }
         if (typeof config.volume !== "number") {
           config.volume = 5
         }
@@ -858,7 +892,7 @@
       const res = await fetch(`/api/presets/${encodeURIComponent(name)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
+        body: JSON.stringify({ ...config, enabledGames: undefined }),
       })
 
       if (res.ok) {

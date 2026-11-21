@@ -131,7 +131,7 @@ bun run ui
 Open http://localhost:3456 to:
 
 - Adjust volume (1-10)
-- Toggle random preset on startup
+- Toggle random preset on startup, and pick the games it draws from
 - Add, remove, and edit mappings (triggers and sounds)
 - Toggle whisper mode per mapping
 - Browse and preview all available sounds
