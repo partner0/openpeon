@@ -335,9 +335,9 @@ describe("tui list viewport", () => {
 describe("tui random games", () => {
   // g opens the games list; Enter flips the selected game in the base
   // config's enabledGames, which shapes the roll of the next sessions.
-  function runTui(input) {
+  function runTui(input, lines = 30) {
     return spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
-      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: "30" },
+      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: String(lines) },
       input,
       encoding: "utf8",
     }).stdout
@@ -370,6 +370,15 @@ describe("tui random games", () => {
     const output = runTui("gj\nq")
     expect(output).toContain("○sc2 ○wc2 ●wc3")
     expect(readEnabledGames()).toEqual(["wc2", "wc3"])
+  })
+
+  test("scrolls the games list to keep the selection visible", () => {
+    writeBaseConfig({})
+    // 6 lines - 4 fixed = 2 visible rows of the 3 games
+    const frames = runTui("gjjq", 6).split("\x1b[H\x1b[2J")
+    const lastFrame = frames[frames.length - 1]
+    expect(lastFrame).toContain("● wc3")
+    expect(lastFrame).not.toContain("● sc2")
   })
 })
 

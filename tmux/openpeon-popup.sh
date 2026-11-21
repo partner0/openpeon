@@ -256,7 +256,7 @@ game_dot() { # game_dot <game>: ● when the random roll draws from it, ○ othe
 }
 
 draw_tui() { # uses caller's locals (dynamic scoping)
-  local i bar n row last game games
+  local i bar n row last game games first
   # Popups are sized to the list, but a small terminal clamps them (tmux and
   # herdr both); then the list scrolls: keep the selection inside the LIST_H
   # rows that fit between the fixed lines.
@@ -279,7 +279,9 @@ draw_tui() { # uses caller's locals (dynamic scoping)
   printf ' whisper %s\n' "$WHIS"
   printf ' games  %s  \033[2mg\033[0m\n' "$games"
   if [[ "$MODE" == games ]]; then
-    for (( i = 0; i < ${#GAMES[@]} && i < LIST_H; i++ )); do
+    first=0
+    (( GSEL >= LIST_H )) && first=$((GSEL - LIST_H + 1))
+    for (( i = first; i < ${#GAMES[@]} && i < first + LIST_H; i++ )); do
       row="$(game_dot "${GAMES[i]}") ${GAMES[i]}"
       if (( i == GSEL )); then
         printf ' \033[7m%s\033[0m\n' "$row"
