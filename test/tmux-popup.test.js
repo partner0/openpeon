@@ -322,8 +322,8 @@ describe("tui list viewport", () => {
 })
 
 describe("tui random games", () => {
-  // g opens the games list; Enter flips the selected game in the base
-  // config's enabledGames, which shapes the roll of the next sessions.
+  // g opens the games list; Enter flips the selected game in the install
+  // configs' enabledGames and redraws the open sessions from the games left.
   function runTui(input, lines = 30) {
     return spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
       env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: String(lines) },
