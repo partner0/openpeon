@@ -348,6 +348,40 @@ describe("tui random games", () => {
     expect(readEnabledGames()).toEqual(["wc2", "wc3"])
   })
 
+  test("redraws every open Claude and pi session from the games left", () => {
+    const piRoot = mkdtempSync(join(tmpdir(), "openpeon-popup-pi-"))
+    mkdirSync(join(piRoot, "state"))
+    mkdirSync(join(piRoot, "presets"))
+    writeFileSync(join(piRoot, "presets", "wc3-grunt.json"), "{}")
+    writeFileSync(join(piRoot, "openpeon.json"), JSON.stringify({ randomPreset: true, mappings: [] }))
+    writeFileSync(join(piRoot, "state", "pi-1.json"), JSON.stringify({ preset: "wc2-peon", root: piRoot }))
+    writeBaseConfig({ randomPreset: true, enabledGames: ["wc2", "wc3"] })
+    writeFileSync(join(root, "state", "sess-1.json"), JSON.stringify({ preset: "wc2-peon" }))
+    writeFileSync(join(root, "state", "sess-2.json"), JSON.stringify({ preset: "wc2-peon", volume: 4 }))
+
+    // Enter on the first game turns wc2 off, leaving only wc3
+    spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, OPENPEON_PI_STATE_ROOT: piRoot, TERM: "unknown-terminal", LINES: "30" },
+      input: "g\nq",
+      encoding: "utf8",
+    })
+    const readJson = (path) => JSON.parse(readFileSync(path, "utf8"))
+
+    expect(readJson(join(root, "state", "sess-1.json")).preset).toMatch(/^wc3-/)
+    expect(readJson(join(root, "state", "sess-2.json"))).toMatchObject({ volume: 4, preset: expect.stringMatching(/^wc3-/) })
+    expect(readJson(join(piRoot, "state", "pi-1.json")).preset).toBe("wc3-grunt")
+    expect(readJson(join(piRoot, "openpeon.json")).enabledGames).toEqual(["wc3"])
+    rmSync(piRoot, { recursive: true, force: true })
+  })
+
+  test("leaves sessions alone when the install does not roll random presets", () => {
+    writeBaseConfig({ randomPreset: false, enabledGames: ["wc2", "wc3"] })
+    writeFileSync(join(root, "state", "sess-1.json"), JSON.stringify({ preset: "wc2-peon" }))
+    runTui("g\nq")
+    expect(JSON.parse(readFileSync(join(root, "state", "sess-1.json"), "utf8")).preset).toBe("wc2-peon")
+    expect(readEnabledGames()).toEqual(["wc3"])
+  })
+
   test("scrolls the games list to keep the selection visible", () => {
     writeBaseConfig({})
     // 6 lines - 4 fixed = 2 visible rows of the 3 games

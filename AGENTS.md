@@ -153,9 +153,12 @@ Package installs use `ui/presets/`; UI deployments copy presets to `<root>/prese
   decision: new sessions inherit until the next deploy overwrites it).
   Preset and whisper (`w` key) writes are state-only so `randomPreset` keeps
   rolling new sessions and whisper resets to on per session. Game toggles
-  (`g` list) write only `enabledGames` in the base `openpeon.json` of the
-  session's agent (Claude and pi installs each have their own); the roll
-  happens once per session, so they affect the next sessions only.
+  (`g` list) write `enabledGames` to every Claude and pi install config,
+  so the game selection is global, then redraw the preset of
+  every open session whose install has `randomPreset` on, by writing a new
+  `preset` into its state file. The bash roll mirrors the core tier weights
+  and reads tiers with grep, because one jq call per preset made each toggle
+  take about a second.
 - Running OpenCode sessions are unreachable by design (in-memory config, no
   disk re-read); the popup shows an explanatory message for opencode panes.
 - bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`

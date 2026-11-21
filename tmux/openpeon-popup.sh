@@ -37,10 +37,10 @@
 # Volume changes persist to the session state file AND the base openpeon.json
 # (so new sessions inherit them until the next deploy); preset and whisper
 # changes are session-scoped only, so randomPreset keeps rolling fresh
-# sessions and whisper resets to on. Game toggles (g) only write enabledGames
-# to the base openpeon.json: they shape the roll of the next sessions. Every
-# volume, preset, and whisper change plays a feedback sound so you hear what
-# you set. Requires jq.
+# sessions and whisper resets to on. Game toggles (g) write enabledGames to
+# the Claude and pi base configs and redraw the preset of every open session
+# that rolls random presets. Every change plays a feedback sound so you hear
+# what you set. Requires jq.
 #
 # OpenCode sessions cannot be controlled from outside (the plugin holds its
 # config in memory); the popup explains that instead.
@@ -327,9 +327,89 @@ move_selection() { # move_selection <-1|1>; uses caller's locals
   draw_tui
 }
 
-# Flip the selected game and write the full enabledGames list to the base
-# config. A config without enabledGames draws from every game, so the first
-# toggle turns that implicit list into an explicit one.
+presets_dir_of() { # presets_dir_of <asset-root>: deployed presets, else the package ones
+  if [[ -d "$1/presets" ]]; then printf '%s' "$1/presets"; else printf '%s' "$1/ui/presets"; fi
+}
+
+# Weighted random preset among the ENABLED games, with the tier weights of
+# lib/core.js pickWeightedPreset. Tiers are read once per presets directory,
+# with one grep pass: a jq call per preset costs about a second per toggle.
+# A preset without a "tier": N field gets the default weight, as in the core.
+ROLL_DIR="" ROLL_NAMES=() ROLL_WEIGHTS=()
+roll_preset() { # roll_preset <presets-dir>: prints a preset name, or nothing
+  local p name tiers total=0 roll i NL=$'\n'
+  if [[ "$1" != "$ROLL_DIR" ]]; then
+    ROLL_DIR="$1" ROLL_NAMES=() ROLL_WEIGHTS=()
+    # "<dir>/wc3-peon.json:"tier": 1" -> "wc3-peon 1"
+    tiers=$(grep -o -H -E '"tier"[[:space:]]*:[[:space:]]*[0-9]+' "$1/"*.json 2>/dev/null |
+      sed -E 's#^.*/([^/]+)\.json:"tier"[^0-9]*([0-9]+)$#\1 \2#')
+    for p in "$1/"*.json; do
+      [[ -e "$p" ]] || continue
+      name=$(basename "$p" .json)
+      ROLL_NAMES+=("$name")
+      case "${NL}${tiers}${NL}" in
+        *"${NL}${name} 1${NL}"*) ROLL_WEIGHTS+=(3) ;;
+        *"${NL}${name} 3${NL}"*) ROLL_WEIGHTS+=(1) ;;
+        *) ROLL_WEIGHTS+=(2) ;;
+      esac
+    done
+  fi
+  for (( i = 0; i < ${#ROLL_NAMES[@]}; i++ )); do
+    name="${ROLL_NAMES[i]}"
+    [[ "$ENABLED" == *" ${name%%-*} "* ]] && total=$((total + ROLL_WEIGHTS[i]))
+  done
+  (( total > 0 )) || return 0
+  roll=$((RANDOM % total))
+  for (( i = 0; i < ${#ROLL_NAMES[@]}; i++ )); do
+    name="${ROLL_NAMES[i]}"
+    [[ "$ENABLED" == *" ${name%%-*} "* ]] || continue
+    roll=$((roll - ROLL_WEIGHTS[i]))
+    if (( roll < 0 )); then printf '%s' "$name"; return 0; fi
+  done
+}
+
+# Write enabledGames to every Claude and pi install, then redraw the preset of
+# every open session whose install rolls random presets, so the change is
+# heard at once. Claude states live under the Claude root and read its
+# presets; pi states name their asset root. Running OpenCode sessions keep
+# their in-memory roll.
+redraw_open_sessions() { # redraw_open_sessions <enabled-json>; uses caller's locals
+  local sfile root roots picked state_files=() NL=$'\n'
+  for sfile in "$CLAUDE_ROOT/state/"*.json; do
+    [[ -e "$sfile" ]] && state_files+=("$sfile")
+  done
+  if [[ ! "$PI_STATE_ROOT" -ef "$CLAUDE_ROOT" ]]; then
+    for sfile in "$PI_STATE_ROOT/state/"*.json; do
+      [[ -e "$sfile" ]] && state_files+=("$sfile")
+    done
+  fi
+  # Install roots, newline-delimited on both ends for whole-path matching.
+  roots="${NL}${CLAUDE_ROOT}${NL}"
+  [[ "$roots" == *"${NL}${PI_STATE_ROOT}${NL}"* ]] || roots="${roots}${PI_STATE_ROOT}${NL}"
+  for sfile in ${state_files[@]+"${state_files[@]}"}; do
+    root=$(jq -r '.root // empty' "$sfile" 2>/dev/null)
+    [[ -z "$root" || "$roots" == *"${NL}${root}${NL}"* ]] || roots="${roots}${root}${NL}"
+  done
+  while IFS= read -r root; do
+    [[ -f "$root/openpeon.json" ]] && write_state "$root/openpeon.json" ".enabledGames = $1"
+  done <<< "$roots"
+  for sfile in ${state_files[@]+"${state_files[@]}"}; do
+    root=$(jq -r '.root // empty' "$sfile" 2>/dev/null)
+    [[ -n "$root" ]] || root="$CLAUDE_ROOT"
+    [[ "$(jq -r '.randomPreset' "$root/openpeon.json" 2>/dev/null)" == "true" ]] || continue
+    picked=$(roll_preset "$(presets_dir_of "$root")")
+    if [[ -n "$picked" ]]; then
+      write_state "$sfile" ".preset = \"$picked\""
+    else
+      write_state "$sfile" ".preset = null"
+    fi
+    [[ "$sfile" -ef "$STATE" ]] && CUR="$picked"
+  done
+}
+
+# Flip the selected game, then apply the new enabledGames everywhere. A config
+# without enabledGames draws from every game, so the first toggle turns that
+# implicit list into an explicit one.
 toggle_game() { # uses caller's locals
   local g game="${GAMES[GSEL]}" enabled_json
   if [[ "$ENABLED" == *" $game "* ]]; then
@@ -340,7 +420,7 @@ toggle_game() { # uses caller's locals
   enabled_json=$(for g in "${GAMES[@]}"; do
     [[ "$ENABLED" == *" $g "* ]] && printf '%s\n' "$g"
   done | jq -Rsc 'split("\n") | map(select(length > 0))')
-  write_state "$ROOT/openpeon.json" ".enabledGames = $enabled_json"
+  redraw_open_sessions "$enabled_json"
 }
 
 run_tui() {
@@ -437,8 +517,12 @@ run_tui() {
       "") # Enter: toggle the selected game, or apply the selected preset
         # (row 0 = back to base config)
         if [[ "$MODE" == games ]]; then
-          (( ${#GAMES[@]} > 0 )) && toggle_game
-          draw_tui; continue
+          (( ${#GAMES[@]} > 0 )) || continue
+          toggle_game
+          if [[ -z "$(jq -r '.volume // empty' "$STATE" 2>/dev/null)" ]]; then
+            VOL=$(effective_volume "$STATE" "$CUR")
+          fi
+          draw_tui; play_feedback "$CUR" "$VOL"; continue
         fi
         CUR="${ROWS[SEL]}"
         if [[ -n "$CUR" ]]; then
