@@ -1,0 +1,71 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/goblin-zeppelin-ready-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/goblin-zeppelin-acknowledge-1.wav",
+        "wc3-neutral/goblin-zeppelin-acknowledge-2.wav",
+        "wc3-neutral/goblin-zeppelin-acknowledge-3.wav",
+        "wc3-neutral/goblin-zeppelin-acknowledge-4.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/goblin-zeppelin-annoyed-1.wav",
+        "wc3-neutral/goblin-zeppelin-annoyed-2.wav",
+        "wc3-neutral/goblin-zeppelin-annoyed-3.wav",
+        "wc3-neutral/goblin-zeppelin-annoyed-4.wav",
+        "wc3-neutral/goblin-zeppelin-annoyed-5.wav",
+        "wc3-neutral/goblin-zeppelin-annoyed-6.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/goblin-zeppelin-selected-1.wav",
+        "wc3-neutral/goblin-zeppelin-selected-2.wav",
+        "wc3-neutral/goblin-zeppelin-selected-3.wav",
+        "wc3-neutral/goblin-zeppelin-selected-4.wav"
+      ]
+    }
+  ]
+}

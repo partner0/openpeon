@@ -25,6 +25,7 @@ openpeon/
     *.wav               # Root-level sounds (legacy peon sounds)
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
+    wc3-<race>/         # Warcraft III voice lines (human, orc, undead, nightelf, neutral), named <unit>-<category>-<n>.wav
   skills/openpeon/      # Claude Code skill (session preset/volume control), deployed to ~/.claude/skills/
   tmux/                 # Herdr popup implementation plus legacy Claude tmux entry point
   test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
