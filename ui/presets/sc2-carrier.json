@@ -1,0 +1,128 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/carrier-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/carrier-yes00.mp3",
+        "sc2-protoss/carrier-yes01.mp3",
+        "sc2-protoss/carrier-yes02.mp3",
+        "sc2-protoss/carrier-yes03.mp3",
+        "sc2-protoss/carrier-yes04.mp3",
+        "sc2-protoss/carrier-yes05.mp3",
+        "sc2-protoss/carrier-yes06.mp3",
+        "sc2-protoss/carrier-yes07.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/carrier-pissed00.mp3",
+        "sc2-protoss/carrier-pissed01.mp3",
+        "sc2-protoss/carrier-pissed02.mp3",
+        "sc2-protoss/carrier-pissed03.mp3",
+        "sc2-protoss/carrier-pissed04.mp3",
+        "sc2-protoss/carrier-pissed05.mp3",
+        "sc2-protoss/carrier-pissed06.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/carrier-what00.mp3",
+        "sc2-protoss/carrier-what01.mp3",
+        "sc2-protoss/carrier-what02.mp3",
+        "sc2-protoss/carrier-what03.mp3",
+        "sc2-protoss/carrier-what04.mp3",
+        "sc2-protoss/carrier-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/carrier-attack00.mp3",
+        "sc2-protoss/carrier-attack01.mp3",
+        "sc2-protoss/carrier-attack02.mp3",
+        "sc2-protoss/carrier-attack03.mp3",
+        "sc2-protoss/carrier-attack04.mp3",
+        "sc2-protoss/carrier-attack05.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

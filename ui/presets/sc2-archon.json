@@ -1,0 +1,123 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/archon-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/archon-yes00.mp3",
+        "sc2-protoss/archon-yes01.mp3",
+        "sc2-protoss/archon-yes02.mp3",
+        "sc2-protoss/archon-yes03.mp3",
+        "sc2-protoss/archon-yes04.mp3",
+        "sc2-protoss/archon-yes05.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/archon-pissed00.mp3",
+        "sc2-protoss/archon-pissed01.mp3",
+        "sc2-protoss/archon-pissed02.mp3",
+        "sc2-protoss/archon-pissed03.mp3",
+        "sc2-protoss/archon-pissed04.mp3",
+        "sc2-protoss/archon-pissed05.mp3",
+        "sc2-protoss/archon-pissed06.mp3",
+        "sc2-protoss/archon-pissed07.mp3",
+        "sc2-protoss/archon-pissed08.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/archon-what00.mp3",
+        "sc2-protoss/archon-what01.mp3",
+        "sc2-protoss/archon-what02.mp3",
+        "sc2-protoss/archon-what03.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/archon-attack00.mp3",
+        "sc2-protoss/archon-attack01.mp3",
+        "sc2-protoss/archon-attack02.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

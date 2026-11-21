@@ -1,0 +1,138 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/scv-ready00.mp3",
+        "sc2-terran/scv-ready01.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/scv-yes00.mp3",
+        "sc2-terran/scv-yes01.mp3",
+        "sc2-terran/scv-yes02.mp3",
+        "sc2-terran/scv-yes03.mp3",
+        "sc2-terran/scv-yes04.mp3",
+        "sc2-terran/scv-yes05.mp3",
+        "sc2-terran/scv-yes06.mp3",
+        "sc2-terran/scv-yes07.mp3",
+        "sc2-terran/scv-yes08.mp3",
+        "sc2-terran/scv-yes09.mp3",
+        "sc2-terran/scv-yes10.mp3",
+        "sc2-terran/scv-yes11.mp3",
+        "sc2-terran/scv-yes12.mp3",
+        "sc2-terran/scv-yes13.mp3",
+        "sc2-terran/scv-yes14.mp3",
+        "sc2-terran/scv-yes15.mp3",
+        "sc2-terran/scv-yes16.mp3",
+        "sc2-terran/scv-yes17.mp3",
+        "sc2-terran/scv-yes18.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/scv-pissed00.mp3",
+        "sc2-terran/scv-pissed02.mp3",
+        "sc2-terran/scv-pissed03.mp3",
+        "sc2-terran/scv-pissed04.mp3",
+        "sc2-terran/scv-pissed05.mp3",
+        "sc2-terran/scv-pissed06.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/scv-what00.mp3",
+        "sc2-terran/scv-what01.mp3",
+        "sc2-terran/scv-what02.mp3",
+        "sc2-terran/scv-what03.mp3",
+        "sc2-terran/scv-what04.mp3",
+        "sc2-terran/scv-what05.mp3",
+        "sc2-terran/scv-what06.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/scv-attack00.mp3",
+        "sc2-terran/scv-attack01.mp3",
+        "sc2-terran/scv-attack02.mp3",
+        "sc2-terran/scv-attack03.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

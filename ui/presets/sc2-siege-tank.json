@@ -1,0 +1,145 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/siegetank-ready00.mp3",
+        "sc2-terran/siegetank-ready01.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/siegetank-yes00.mp3",
+        "sc2-terran/siegetank-yes01.mp3",
+        "sc2-terran/siegetank-yes02.mp3",
+        "sc2-terran/siegetank-yes03.mp3",
+        "sc2-terran/siegetank-yes04.mp3",
+        "sc2-terran/siegetank-yes05.mp3",
+        "sc2-terran/siegetank-yes06.mp3",
+        "sc2-terran/siegetank-yes07.mp3",
+        "sc2-terran/siegetank-yes08.mp3",
+        "sc2-terran/siegetank-yes09.mp3",
+        "sc2-terran/siegetank-yes10.mp3",
+        "sc2-terran/siegetank-yes11.mp3",
+        "sc2-terran/siegetank-yes12.mp3",
+        "sc2-terran/siegetank-yes13.mp3",
+        "sc2-terran/siegetank-yes14.mp3",
+        "sc2-terran/siegetank-yes15.mp3",
+        "sc2-terran/siegetank-yes16.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/siegetank-pissed00.mp3",
+        "sc2-terran/siegetank-pissed01.mp3",
+        "sc2-terran/siegetank-pissed02.mp3",
+        "sc2-terran/siegetank-pissed03.mp3",
+        "sc2-terran/siegetank-pissed04.mp3",
+        "sc2-terran/siegetank-pissed05.mp3",
+        "sc2-terran/siegetank-pissed07.mp3",
+        "sc2-terran/siegetank-pissed08.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/siegetank-what00.mp3",
+        "sc2-terran/siegetank-what01.mp3",
+        "sc2-terran/siegetank-what02.mp3",
+        "sc2-terran/siegetank-what03.mp3",
+        "sc2-terran/siegetank-what04.mp3",
+        "sc2-terran/siegetank-what05.mp3",
+        "sc2-terran/siegetank-what06.mp3",
+        "sc2-terran/siegetank-what07.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/siegetank-attack00.mp3",
+        "sc2-terran/siegetank-attack01.mp3",
+        "sc2-terran/siegetank-attack02.mp3",
+        "sc2-terran/siegetank-attack03.mp3",
+        "sc2-terran/siegetank-attack04.mp3",
+        "sc2-terran/siegetank-attack05.mp3",
+        "sc2-terran/siegetank-attack06.mp3",
+        "sc2-terran/siegetank-attack07.mp3",
+        "sc2-terran/siegetank-attack08.mp3",
+        "sc2-terran/siegetank-attack09.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

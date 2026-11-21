@@ -1,0 +1,137 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/reaper-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/reaper-yes00.mp3",
+        "sc2-terran/reaper-yes01.mp3",
+        "sc2-terran/reaper-yes02.mp3",
+        "sc2-terran/reaper-yes03.mp3",
+        "sc2-terran/reaper-yes04.mp3",
+        "sc2-terran/reaper-yes05.mp3",
+        "sc2-terran/reaper-yes06.mp3",
+        "sc2-terran/reaper-yes07.mp3",
+        "sc2-terran/reaper-yes08.mp3",
+        "sc2-terran/reaper-yes09.mp3",
+        "sc2-terran/reaper-yes10.mp3",
+        "sc2-terran/reaper-yes11.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/reaper-pissed01.mp3",
+        "sc2-terran/reaper-pissed02.mp3",
+        "sc2-terran/reaper-pissed03.mp3",
+        "sc2-terran/reaper-pissed04.mp3",
+        "sc2-terran/reaper-pissed05.mp3",
+        "sc2-terran/reaper-pissed06.mp3",
+        "sc2-terran/reaper-pissed07.mp3",
+        "sc2-terran/reaper-pissed08.mp3",
+        "sc2-terran/reaper-pissed09.mp3",
+        "sc2-terran/reaper-pissed10.mp3",
+        "sc2-terran/reaper-pissed11.mp3",
+        "sc2-terran/reaper-pissed12.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/reaper-what01.mp3",
+        "sc2-terran/reaper-what02.mp3",
+        "sc2-terran/reaper-what03.mp3",
+        "sc2-terran/reaper-what04.mp3",
+        "sc2-terran/reaper-what05.mp3",
+        "sc2-terran/reaper-what06.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/reaper-attack00.mp3",
+        "sc2-terran/reaper-attack01.mp3",
+        "sc2-terran/reaper-attack02.mp3",
+        "sc2-terran/reaper-attack04.mp3",
+        "sc2-terran/reaper-attack05.mp3",
+        "sc2-terran/reaper-attack06.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}
