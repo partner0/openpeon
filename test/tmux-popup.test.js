@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { resolve, dirname, join } from "path"
 import { fileURLToPath } from "url"
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, utimesSync } from "fs"
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, utimesSync } from "fs"
 import { spawnSync } from "child_process"
 import { tmpdir } from "os"
 
@@ -249,7 +249,7 @@ describe("popup-herdr", () => {
     expect(call).toContain("plugin pane open")
     expect(call).toContain("--placement popup")
     expect(call).toContain("--width 48")
-    expect(call).toContain("--height 12") // 6 presets + 6
+    expect(call).toContain("--height 13") // 6 presets + 7
     expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
     expect(call).toContain(`OPENPEON_ROOT=${root}`)
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
@@ -260,7 +260,7 @@ describe("popup-herdr", () => {
     addPresets(2)
     stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
     const call = runPopupHerdr()
-    expect(call).toContain("--height 8")
+    expect(call).toContain("--height 9")
     expect(call).toContain("OPENPEON_POPUP_SID=pi-herdr-1")
     expect(call).toContain(`OPENPEON_ROOT=${root}`)
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
@@ -271,7 +271,7 @@ describe("popup-herdr", () => {
     addPackagePresets(3)
     stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
     const call = runPopupHerdr()
-    expect(call).toContain("--height 9")
+    expect(call).toContain("--height 10")
   })
 
   test("opens an error pane sized to the message", () => {
@@ -308,13 +308,13 @@ describe("tui list viewport", () => {
 
   test("draws every list row when the terminal is tall enough", () => {
     addPresets(6)
-    // volume + whisper + base row + 6 presets + help
-    expect(runTui(30).length).toBe(10)
+    // volume + whisper + games + base row + 6 presets + help
+    expect(runTui(30).length).toBe(11)
   })
 
   test("scrolls the list when the terminal is shorter than the rows", () => {
     addPresets(6)
-    // 8 lines - 3 fixed = 5 visible rows of the 7 list rows
+    // 8 lines - 4 fixed = 4 visible rows of the 7 list rows
     expect(runTui(8).length).toBe(8)
   })
 
@@ -329,6 +329,47 @@ describe("tui list viewport", () => {
     const lastFrame = frames[frames.length - 1]
     expect(lastFrame).toContain("preset-6")
     expect(lastFrame).not.toContain("(base config)")
+  })
+})
+
+describe("tui random games", () => {
+  // g opens the games list; Enter flips the selected game in the base
+  // config's enabledGames, which shapes the roll of the next sessions.
+  function runTui(input) {
+    return spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: "30" },
+      input,
+      encoding: "utf8",
+    }).stdout
+  }
+
+  function writeBaseConfig(config) {
+    writeFileSync(join(root, "openpeon.json"), JSON.stringify({ volume: 3, mappings: [], ...config }))
+  }
+
+  function readEnabledGames() {
+    return JSON.parse(readFileSync(join(root, "openpeon.json"), "utf8")).enabledGames
+  }
+
+  beforeEach(() => {
+    mkdirSync(join(root, "presets"), { recursive: true })
+    for (const name of ["wc2-peon", "wc3-peon", "wc3-wisp", "sc2-marine"]) {
+      writeFileSync(join(root, "presets", `${name}.json`), "{}")
+    }
+  })
+
+  test("the first toggle turns the implicit all-games list into an explicit one", () => {
+    writeBaseConfig({})
+    const output = runTui("g\nq")
+    expect(output).toContain("●sc2 ●wc2 ●wc3")
+    expect(readEnabledGames()).toEqual(["wc2", "wc3"])
+  })
+
+  test("enables a game missing from enabledGames", () => {
+    writeBaseConfig({ enabledGames: ["wc3"] })
+    const output = runTui("gj\nq")
+    expect(output).toContain("○sc2 ○wc2 ●wc3")
+    expect(readEnabledGames()).toEqual(["wc2", "wc3"])
   })
 })
 

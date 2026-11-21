@@ -152,7 +152,10 @@ Package installs use `ui/presets/`; UI deployments copy presets to `<root>/prese
 - Volume writes go to the state file AND the base `openpeon.json` (user
   decision: new sessions inherit until the next deploy overwrites it).
   Preset and whisper (`w` key) writes are state-only so `randomPreset` keeps
-  rolling new sessions and whisper resets to on per session.
+  rolling new sessions and whisper resets to on per session. Game toggles
+  (`g` list) write only `enabledGames` in the base `openpeon.json` of the
+  session's agent (Claude and pi installs each have their own); the roll
+  happens once per session, so they affect the next sessions only.
 - Running OpenCode sessions are unreachable by design (in-memory config, no
   disk re-read); the popup shows an explanatory message for opencode panes.
 - bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`

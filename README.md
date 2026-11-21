@@ -238,7 +238,7 @@ type = "plugin_action"
 command = "openpeon.popup"
 ```
 
-The popup shows a volume bar, whisper state, and preset list. Left and right adjust volume, `m` mutes, `w` toggles whisper, up and down choose a preset, Enter applies it, and `q` closes. Every change plays a sample and applies to the next sound.
+The popup shows a volume bar, whisper state, the games the random preset draws from, and the preset list. Left and right adjust volume, `m` mutes, `w` toggles whisper, up and down choose a preset, Enter applies it, and `q` closes. Every change plays a sample and applies to the next sound. `g` opens the games list, where Enter turns a game on or off for the random roll of the next sessions, and `g` or Esc goes back.
 
 The pi extension writes live control state under `~/.pi/agent/openpeon/state/`. Herdr matches the focused pi pane by working directory and uses the newest live session when several sessions share that directory. Claude keeps its transcript and state-file matching. Volume changes also update the base `openpeon.json`; preset and whisper changes stay session-scoped.
 

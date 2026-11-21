@@ -37,8 +37,10 @@
 # Volume changes persist to the session state file AND the base openpeon.json
 # (so new sessions inherit them until the next deploy); preset and whisper
 # changes are session-scoped only, so randomPreset keeps rolling fresh
-# sessions and whisper resets to on. Every change plays a feedback sound so
-# you hear what you set. Requires jq.
+# sessions and whisper resets to on. Game toggles (g) only write enabledGames
+# to the base openpeon.json: they shape the roll of the next sessions. Every
+# volume, preset, and whisper change plays a feedback sound so you hear what
+# you set. Requires jq.
 #
 # OpenCode sessions cannot be controlled from outside (the plugin holds its
 # config in memory); the popup explains that instead.
@@ -249,8 +251,12 @@ play_feedback() { # play_feedback <preset-or-empty> <volume> [jq-sounds-filter]
   FEEDBACK_PID=$!
 }
 
+game_dot() { # game_dot <game>: ● when the random roll draws from it, ○ otherwise
+  if [[ "$ENABLED" == *" $1 "* ]]; then printf '●'; else printf '○'; fi
+}
+
 draw_tui() { # uses caller's locals (dynamic scoping)
-  local i bar n row last
+  local i bar n row last game games
   # Popups are sized to the list, but a small terminal clamps them (tmux and
   # herdr both); then the list scrolls: keep the selection inside the LIST_H
   # rows that fit between the fixed lines.
@@ -265,8 +271,25 @@ draw_tui() { # uses caller's locals (dynamic scoping)
   for (( i = 1; i <= 10; i++ )); do
     if (( i <= VOL )); then bar="${bar}▓"; else bar="${bar}░"; fi
   done
+  games=""
+  for game in ${GAMES[@]+"${GAMES[@]}"}; do
+    games="${games} $(game_dot "$game")${game}"
+  done
   printf ' volume  %s %s\n' "$bar" "$VOL"
   printf ' whisper %s\n' "$WHIS"
+  printf ' games  %s  \033[2mg\033[0m\n' "$games"
+  if [[ "$MODE" == games ]]; then
+    for (( i = 0; i < ${#GAMES[@]} && i < LIST_H; i++ )); do
+      row="$(game_dot "${GAMES[i]}") ${GAMES[i]}"
+      if (( i == GSEL )); then
+        printf ' \033[7m%s\033[0m\n' "$row"
+      else
+        printf ' %s\n' "$row"
+      fi
+    done
+    printf '\033[2m ⏎ toggle random game  g/esc back  q quit\033[0m'
+    return
+  fi
   for (( i = TOP; i <= last; i++ )); do
     row="${ROWS[i]}"
     n=""
@@ -283,17 +306,42 @@ draw_tui() { # uses caller's locals (dynamic scoping)
 # Sounds of whispered mappings, for whisper-toggle feedback.
 WHISPER_SOUNDS_FILTER='[.mappings[]? | select(.whisper == true) | .sounds[]] | .[]'
 
+move_selection() { # move_selection <-1|1>; uses caller's locals
+  if [[ "$MODE" == games ]]; then
+    (( GSEL + $1 >= 0 && GSEL + $1 < ${#GAMES[@]} )) && GSEL=$((GSEL + $1))
+  else
+    (( SEL + $1 >= 0 && SEL + $1 < ${#ROWS[@]} )) && SEL=$((SEL + $1))
+  fi
+  draw_tui
+}
+
+# Flip the selected game and write the full enabledGames list to the base
+# config. A config without enabledGames draws from every game, so the first
+# toggle turns that implicit list into an explicit one.
+toggle_game() { # uses caller's locals
+  local g game="${GAMES[GSEL]}" enabled_json
+  if [[ "$ENABLED" == *" $game "* ]]; then
+    ENABLED="${ENABLED/ $game / }"
+  else
+    ENABLED="${ENABLED}${game} "
+  fi
+  enabled_json=$(for g in "${GAMES[@]}"; do
+    [[ "$ENABLED" == *" $g "* ]] && printf '%s\n' "$g"
+  done | jq -Rsc 'split("\n") | map(select(length > 0))')
+  write_state "$ROOT/openpeon.json" ".enabledGames = $enabled_json"
+}
+
 run_tui() {
-  local SID="$1" STATE CUR VOL WHIS SEL ROWS TOP LIST_H
-  local k k2 k3 i p fbv
+  local SID="$1" STATE CUR VOL WHIS SEL ROWS TOP LIST_H MODE GAMES GSEL ENABLED
+  local k k2 k3 i p fbv game
   STATE="$STATE_ROOT/state/$SID.json"
   command -v jq >/dev/null 2>&1 || { printf ' jq is required'; IFS= read -rsn1 k; exit 0; }
 
   TOP=0
   LIST_H=$(tput lines 2>/dev/null)
   [[ "$LIST_H" =~ ^[0-9]+$ ]] || LIST_H="${LINES:-24}"
-  # The volume, whisper, and help lines are always drawn.
-  LIST_H=$((LIST_H - 3))
+  # The volume, whisper, games, and help lines are always drawn.
+  LIST_H=$((LIST_H - 4))
   (( LIST_H < 1 )) && LIST_H=1
 
   # Row 0 is "apply the base config" (preset null); the rest are preset names.
@@ -302,6 +350,21 @@ run_tui() {
     [[ -e "$p" ]] || continue
     ROWS+=("$(basename "$p" .json)")
   done
+
+  # A game is a preset name prefix ("wc3-peasant" -> "wc3"). ENABLED holds the
+  # games the random roll draws from, space-delimited on both ends for
+  # whole-word matching.
+  MODE=presets
+  GSEL=0
+  GAMES=()
+  while IFS= read -r game; do
+    GAMES+=("$game")
+  done < <(for (( i = 1; i < ${#ROWS[@]}; i++ )); do printf '%s\n' "${ROWS[i]%%-*}"; done | sort -u)
+  if jq -e '.enabledGames | type == "array"' "$ROOT/openpeon.json" >/dev/null 2>&1; then
+    ENABLED=" $(jq -r '.enabledGames | join(" ")' "$ROOT/openpeon.json" 2>/dev/null) "
+  else
+    ENABLED=" ${GAMES[*]-} "
+  fi
 
   CUR=$(jq -r '.preset // empty' "$STATE" 2>/dev/null)
   VOL=$(effective_volume "$STATE" "$CUR")
@@ -320,20 +383,26 @@ run_tui() {
     case "$k" in
       $'\e')
         k2=""
-        IFS= read -rsn1 -t 1 k2 || exit 0
+        if ! IFS= read -rsn1 -t 1 k2; then
+          # A lone esc leaves the games list, or quits from the preset list.
+          [[ "$MODE" == games ]] || exit 0
+          MODE=presets; draw_tui; continue
+        fi
         [[ "$k2" == "[" || "$k2" == "O" ]] || continue
         IFS= read -rsn1 k3 || continue
         case "$k3" in
-          A) (( SEL > 0 )) && SEL=$((SEL - 1)); draw_tui ;;
-          B) (( SEL < ${#ROWS[@]} - 1 )) && SEL=$((SEL + 1)); draw_tui ;;
+          A) move_selection -1 ;;
+          B) move_selection 1 ;;
           D) k="h" ;;  # left arrow falls through to volume down
           C) k="l" ;;  # right arrow falls through to volume up
         esac
         ;;
     esac
     case "$k" in
-      k) (( SEL > 0 )) && SEL=$((SEL - 1)); draw_tui ;;
-      j) (( SEL < ${#ROWS[@]} - 1 )) && SEL=$((SEL + 1)); draw_tui ;;
+      k) move_selection -1 ;;
+      j) move_selection 1 ;;
+      g) if [[ "$MODE" == games ]]; then MODE=presets; else MODE=games; fi
+        draw_tui ;;
       h|-) (( VOL > 0 )) && VOL=$((VOL - 1))
         write_state "$STATE" ".volume = $VOL"
         write_state "$ROOT/openpeon.json" ".volume = $VOL"
@@ -353,7 +422,12 @@ run_tui() {
         # (1 = WHISPER_VOLUME in lib/core.js)
         fbv=$VOL; [[ "$WHIS" == "on" ]] && fbv=1
         draw_tui; play_feedback "$CUR" "$fbv" "$WHISPER_SOUNDS_FILTER" ;;
-      "") # Enter: apply the selected preset (row 0 = back to base config)
+      "") # Enter: toggle the selected game, or apply the selected preset
+        # (row 0 = back to base config)
+        if [[ "$MODE" == games ]]; then
+          (( ${#GAMES[@]} > 0 )) && toggle_game
+          draw_tui; continue
+        fi
         CUR="${ROWS[SEL]}"
         if [[ -n "$CUR" ]]; then
           write_state "$STATE" ".preset = \"$CUR\""
@@ -400,7 +474,7 @@ run_popup() {
   for p in "$PRESETS_DIR/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
-  h=$((n + 6))   # volume + whisper + base row + n presets + help + border
+  h=$((n + 7))   # volume + whisper + games + base row + n presets + help + border
   w=48
   exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
     -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
@@ -441,7 +515,7 @@ run_popup_herdr() {
   for p in "$PRESETS_DIR/"*.json; do
     [[ -e "$p" ]] && n=$((n + 1))
   done
-  h=$((n + 6))   # volume + whisper + base row + n presets + help + border
+  h=$((n + 7))   # volume + whisper + games + base row + n presets + help + border
   exec herdr plugin pane open --plugin openpeon --entrypoint popup \
     --placement popup --width 48 --height "$h" --focus \
     --env "OPENPEON_POPUP_SID=$sid" --env "OPENPEON_ROOT=$ROOT" \
