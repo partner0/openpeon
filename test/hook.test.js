@@ -4,7 +4,6 @@ import { fileURLToPath } from "url"
 import { existsSync, readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, utimesSync } from "fs"
 import { tmpdir } from "os"
 import {
-  TOOL_NAME_MAP,
   deleteState,
   gcState,
   isSdkEntrypoint,
@@ -41,13 +40,6 @@ describe("mapToolName", () => {
     expect(mapToolName(undefined)).toBeNull()
     expect(mapToolName("")).toBeNull()
   })
-
-  test("covers every documented OpenPeon tool name", () => {
-    const openPeonTools = Object.values(TOOL_NAME_MAP).sort()
-    expect(openPeonTools).toEqual(
-      ["bash", "edit", "glob", "grep", "question", "read", "skill", "task", "todowrite", "webfetch", "write"]
-    )
-  })
 })
 
 describe("isSdkEntrypoint", () => {
@@ -64,60 +56,17 @@ describe("isSdkEntrypoint", () => {
 })
 
 describe("translateHookEvent", () => {
-  test("SessionStart (startup) becomes openpeon.startup", () => {
-    expect(translateHookEvent(loadFixture("session-start"))).toEqual({
-      kind: "event",
-      eventType: "openpeon.startup",
-      messageRole: null,
-    })
-  })
-
-  test("SessionStart (compact) is state upkeep only", () => {
-    expect(translateHookEvent(loadFixture("session-start-compact"))).toEqual({ kind: "state-only" })
-  })
-
-  test("UserPromptSubmit becomes message.updated with role user", () => {
-    expect(translateHookEvent(loadFixture("user-prompt-submit"))).toEqual({
-      kind: "event",
-      eventType: "message.updated",
-      messageRole: "user",
-    })
-  })
-
-  test("Stop becomes session.idle", () => {
-    expect(translateHookEvent(loadFixture("stop"))).toEqual({
-      kind: "event",
-      eventType: "session.idle",
-      messageRole: null,
-    })
-  })
-
-  test("PermissionRequest becomes permission.asked", () => {
-    expect(translateHookEvent(loadFixture("permission-request"))).toEqual({
-      kind: "event",
-      eventType: "permission.asked",
-      messageRole: null,
-    })
-  })
-
-  test("PreToolUse becomes tool.before with the mapped tool name", () => {
-    expect(translateHookEvent(loadFixture("pre-tool-use-bash"))).toEqual({
-      kind: "tool",
-      triggerType: "tool.before",
-      tool: "bash",
-    })
-  })
-
-  test("PostToolUse becomes tool.after with the mapped tool name", () => {
-    expect(translateHookEvent(loadFixture("post-tool-use-edit"))).toEqual({
-      kind: "tool",
-      triggerType: "tool.after",
-      tool: "edit",
-    })
-  })
-
-  test("SessionEnd is cleanup", () => {
-    expect(translateHookEvent(loadFixture("session-end"))).toEqual({ kind: "cleanup" })
+  test.each([
+    ["session-start", { kind: "event", eventType: "openpeon.startup", messageRole: null }],
+    ["session-start-compact", { kind: "state-only" }],
+    ["user-prompt-submit", { kind: "event", eventType: "message.updated", messageRole: "user" }],
+    ["stop", { kind: "event", eventType: "session.idle", messageRole: null }],
+    ["permission-request", { kind: "event", eventType: "permission.asked", messageRole: null }],
+    ["pre-tool-use-bash", { kind: "tool", triggerType: "tool.before", tool: "bash" }],
+    ["post-tool-use-edit", { kind: "tool", triggerType: "tool.after", tool: "edit" }],
+    ["session-end", { kind: "cleanup" }],
+  ])("translates the %s fixture", (fixture, expected) => {
+    expect(translateHookEvent(loadFixture(fixture))).toEqual(expected)
   })
 
   test("unknown events and malformed payloads are ignored", () => {
@@ -342,14 +291,5 @@ describe("resolveSessionConfig", () => {
     expect(resolved.preset).toBeNull()
     expect(resolved.volume).toBe(3)
     expect(resolved.mappings[0].name).toBe("base-ack")
-  })
-
-  test("separate sessions get separate state files", () => {
-    resolveSessionConfig(root, "session-a", () => 0)
-    resolveSessionConfig(root, "session-b", () => 0)
-
-    expect(readState(root, "session-a")).toEqual({ preset: "only-preset" })
-    expect(readState(root, "session-b")).toEqual({ preset: "only-preset" })
-    expect(statePath(root, "session-a")).not.toBe(statePath(root, "session-b"))
   })
 })

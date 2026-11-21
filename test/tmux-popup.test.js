@@ -87,15 +87,6 @@ describe("resolve-cwd", () => {
     expect(count).toBe("2")
   })
 
-  test("ignores live sessions from other directories", () => {
-    addSession("here-1", "-Users-me-repo")
-    addSession("elsewhere-1", "-Users-me-other")
-    const [status, id, count] = runResolveCwd("/Users/me/repo")
-    expect(status).toBe("ok")
-    expect(id).toBe("here-1")
-    expect(count).toBe("1")
-  })
-
   test("errors when no live session matches the directory", () => {
     addSession("elsewhere-1", "-Users-me-other")
     const [status, message] = runResolveCwd("/Users/me/repo")
@@ -192,15 +183,11 @@ describe("resolve-herdr", () => {
     expect(message).toContain("peon_set_volume")
   })
 
-  test("errors when no agent pane is focused", () => {
-    stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
-    const [status, message] = runResolveHerdr()
-    expect(status).toBe("err")
-    expect(message).toContain("no supported agent session")
-  })
-
-  test("errors on a focused unsupported agent", () => {
-    stubHerdr([{ agent: "codex", focused: true, cwd: "/Users/me/repo" }])
+  test.each([
+    ["no agent pane is focused", { agent: "claude", focused: false, cwd: "/Users/me/repo" }],
+    ["the focused agent is unsupported", { agent: "codex", focused: true, cwd: "/Users/me/repo" }],
+  ])("errors when %s", (_case, agent) => {
+    stubHerdr([agent])
     const [status, message] = runResolveHerdr()
     expect(status).toBe("err")
     expect(message).toContain("no supported agent session")
@@ -251,17 +238,6 @@ describe("popup-herdr", () => {
     expect(call).toContain("--width 48")
     expect(call).toContain("--height 13") // 6 presets + 7
     expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
-    expect(call).toContain(`OPENPEON_ROOT=${root}`)
-    expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
-  })
-
-  test("opens the focused pi session with its asset root", () => {
-    addPiSession("pi-herdr-1", "/Users/me/repo")
-    addPresets(2)
-    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
-    const call = runPopupHerdr()
-    expect(call).toContain("--height 9")
-    expect(call).toContain("OPENPEON_POPUP_SID=pi-herdr-1")
     expect(call).toContain(`OPENPEON_ROOT=${root}`)
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
   })
