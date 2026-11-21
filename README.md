@@ -9,7 +9,7 @@ Hear "Work complete!" when the agent finishes, peon acknowledgements when you se
 Includes sounds from multiple Blizzard RTS games:
 
 - **Warcraft II** - Horde and Alliance units, buildings, and UI sounds
-- **Warcraft III** - Peasant voice lines
+- **Warcraft III** - Hero, worker, and unit voice lines from all four races and neutrals
 - **StarCraft: Brood War** - Terran, Protoss, and Zerg units
 - **StarCraft 2** - Terran, Protoss, and Zerg units
 
