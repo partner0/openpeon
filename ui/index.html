@@ -741,7 +741,8 @@
     let selectedSoundFiles = new Set()
     let allSoundFiles = []
     let presetNames = []
-    const GAME_NAMES = { wc2: "Warcraft II", wc3: "Warcraft III", scbw: "StarCraft: Brood War", sc2: "StarCraft II" }
+    const GAME_NAMES = { wc2: "Warcraft II", scbw: "StarCraft: Brood War", wc3: "Warcraft III", sc2: "StarCraft II" }
+    const GAME_ORDER = Object.keys(GAME_NAMES)
 
     async function init() {
       const metaRes = await fetch("/api/meta")
@@ -758,8 +759,11 @@
       renderGameToggles()
     }
 
+    // Release order for known games, then any other game alphabetically.
     function listGames() {
-      return [...new Set(presetNames.map(name => name.split("-")[0]))].sort()
+      const games = [...new Set(presetNames.map(name => name.split("-")[0]))]
+      const rank = game => GAME_ORDER.includes(game) ? GAME_ORDER.indexOf(game) : GAME_ORDER.length
+      return games.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
     }
 
     function isGameEnabled(game) {

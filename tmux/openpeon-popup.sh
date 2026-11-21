@@ -308,6 +308,16 @@ draw_tui() { # uses caller's locals (dynamic scoping)
 # Sounds of whispered mappings, for whisper-toggle feedback.
 WHISPER_SOUNDS_FILTER='[.mappings[]? | select(.whisper == true) | .sounds[]] | .[]'
 
+# Unique game ids from stdin, known games in release order, then the rest
+# alphabetically (same order as the config UI).
+GAME_ORDER="wc2 scbw wc3 sc2"
+sort_games() {
+  sort -u | awk -v order="$GAME_ORDER" '
+    BEGIN { n = split(order, games, " "); for (i = 1; i <= n; i++) rank[games[i]] = i }
+    { printf "%d\t%s\n", ($0 in rank) ? rank[$0] : n + 1, $0 }' |
+    sort -t "$TAB" -k1,1n -k2,2 | cut -f2
+}
+
 move_selection() { # move_selection <-1|1>; uses caller's locals
   if [[ "$MODE" == games ]]; then
     (( GSEL + $1 >= 0 && GSEL + $1 < ${#GAMES[@]} )) && GSEL=$((GSEL + $1))
@@ -361,7 +371,7 @@ run_tui() {
   GAMES=()
   while IFS= read -r game; do
     GAMES+=("$game")
-  done < <(for (( i = 1; i < ${#ROWS[@]}; i++ )); do printf '%s\n' "${ROWS[i]%%-*}"; done | sort -u)
+  done < <(for (( i = 1; i < ${#ROWS[@]}; i++ )); do printf '%s\n' "${ROWS[i]%%-*}"; done | sort_games)
   if jq -e '.enabledGames | type == "array"' "$ROOT/openpeon.json" >/dev/null 2>&1; then
     ENABLED=" $(jq -r '.enabledGames | join(" ")' "$ROOT/openpeon.json" 2>/dev/null) "
   else

@@ -337,14 +337,14 @@ describe("tui random games", () => {
   test("the first toggle turns the implicit all-games list into an explicit one", () => {
     writeBaseConfig({})
     const output = runTui("g\nq")
-    expect(output).toContain("●sc2 ●wc2 ●wc3")
-    expect(readEnabledGames()).toEqual(["wc2", "wc3"])
+    expect(output).toContain("●wc2 ●wc3 ●sc2")
+    expect(readEnabledGames()).toEqual(["wc3", "sc2"])
   })
 
   test("enables a game missing from enabledGames", () => {
     writeBaseConfig({ enabledGames: ["wc3"] })
-    const output = runTui("gj\nq")
-    expect(output).toContain("○sc2 ○wc2 ●wc3")
+    const output = runTui("g\nq")
+    expect(output).toContain("○wc2 ●wc3 ○sc2")
     expect(readEnabledGames()).toEqual(["wc2", "wc3"])
   })
 
@@ -353,8 +353,8 @@ describe("tui random games", () => {
     // 6 lines - 4 fixed = 2 visible rows of the 3 games
     const frames = runTui("gjjq", 6).split("\x1b[H\x1b[2J")
     const lastFrame = frames[frames.length - 1]
-    expect(lastFrame).toContain("● wc3")
-    expect(lastFrame).not.toContain("● sc2")
+    expect(lastFrame).toContain("● sc2")
+    expect(lastFrame).not.toContain("● wc2")
   })
 })
 
