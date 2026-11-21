@@ -50,7 +50,10 @@ set -u
 ROOT_OVERRIDE="${OPENPEON_ROOT:-}"
 CLAUDE_ROOT="${OPENPEON_CLAUDE_ROOT:-${ROOT_OVERRIDE:-$HOME/.claude/openpeon}}"
 PI_STATE_ROOT="${OPENPEON_PI_STATE_ROOT:-${ROOT_OVERRIDE:-$HOME/.pi/agent/openpeon}}"
-ROOT="$CLAUDE_ROOT"
+# The session's asset root. The Herdr pane gets it through OPENPEON_ROOT, and
+# the install roots above separately, so a pi session root does not hide the
+# Claude install from the game redraw.
+ROOT="${ROOT_OVERRIDE:-$CLAUDE_ROOT}"
 STATE_ROOT="${OPENPEON_STATE_ROOT:-$ROOT}"
 PRESETS_DIR="$ROOT/presets"
 [[ -d "$PRESETS_DIR" ]] || PRESETS_DIR="$ROOT/ui/presets"
@@ -335,9 +338,12 @@ presets_dir_of() { # presets_dir_of <asset-root>: deployed presets, else the pac
 # lib/core.js pickWeightedPreset. Tiers are read once per presets directory,
 # with one grep pass: a jq call per preset costs about a second per toggle.
 # A preset without a "tier": N field gets the default weight, as in the core.
-ROLL_DIR="" ROLL_NAMES=() ROLL_WEIGHTS=()
-roll_preset() { # roll_preset <presets-dir>: prints a preset name, or nothing
+# Sets ROLLED instead of printing it: a $(...) call would run in a subshell
+# and drop the cache with it.
+ROLL_DIR="" ROLL_NAMES=() ROLL_WEIGHTS=() ROLLED=""
+roll_preset() { # roll_preset <presets-dir>: sets ROLLED to a preset name, or ""
   local p name tiers total=0 roll i NL=$'\n'
+  ROLLED=""
   if [[ "$1" != "$ROLL_DIR" ]]; then
     ROLL_DIR="$1" ROLL_NAMES=() ROLL_WEIGHTS=()
     # "<dir>/wc3-peon.json:"tier": 1" -> "wc3-peon 1"
@@ -345,7 +351,8 @@ roll_preset() { # roll_preset <presets-dir>: prints a preset name, or nothing
       sed -E 's#^.*/([^/]+)\.json:"tier"[^0-9]*([0-9]+)$#\1 \2#')
     for p in "$1/"*.json; do
       [[ -e "$p" ]] || continue
-      name=$(basename "$p" .json)
+      name="${p##*/}"
+      name="${name%.json}"
       ROLL_NAMES+=("$name")
       case "${NL}${tiers}${NL}" in
         *"${NL}${name} 1${NL}"*) ROLL_WEIGHTS+=(3) ;;
@@ -364,7 +371,7 @@ roll_preset() { # roll_preset <presets-dir>: prints a preset name, or nothing
     name="${ROLL_NAMES[i]}"
     [[ "$ENABLED" == *" ${name%%-*} "* ]] || continue
     roll=$((roll - ROLL_WEIGHTS[i]))
-    if (( roll < 0 )); then printf '%s' "$name"; return 0; fi
+    if (( roll < 0 )); then ROLLED="$name"; return 0; fi
   done
 }
 
@@ -374,7 +381,7 @@ roll_preset() { # roll_preset <presets-dir>: prints a preset name, or nothing
 # presets; pi states name their asset root. Running OpenCode sessions keep
 # their in-memory roll.
 redraw_open_sessions() { # redraw_open_sessions <enabled-json>; uses caller's locals
-  local sfile root roots picked state_files=() NL=$'\n'
+  local sfile root roots mtime_ref state_files=() NL=$'\n'
   for sfile in "$CLAUDE_ROOT/state/"*.json; do
     [[ -e "$sfile" ]] && state_files+=("$sfile")
   done
@@ -393,18 +400,24 @@ redraw_open_sessions() { # redraw_open_sessions <enabled-json>; uses caller's lo
   while IFS= read -r root; do
     [[ -f "$root/openpeon.json" ]] && write_state "$root/openpeon.json" ".enabledGames = $1"
   done <<< "$roots"
+  # State mtimes mark session activity (newest = current session for the
+  # popup and the skill), so the redraw puts each one back after its write.
+  mtime_ref=$(mktemp)
   for sfile in ${state_files[@]+"${state_files[@]}"}; do
     root=$(jq -r '.root // empty' "$sfile" 2>/dev/null)
     [[ -n "$root" ]] || root="$CLAUDE_ROOT"
     [[ "$(jq -r '.randomPreset' "$root/openpeon.json" 2>/dev/null)" == "true" ]] || continue
-    picked=$(roll_preset "$(presets_dir_of "$root")")
-    if [[ -n "$picked" ]]; then
-      write_state "$sfile" ".preset = \"$picked\""
+    roll_preset "$(presets_dir_of "$root")"
+    touch -r "$sfile" "$mtime_ref"
+    if [[ -n "$ROLLED" ]]; then
+      write_state "$sfile" ".preset = \"$ROLLED\""
     else
       write_state "$sfile" ".preset = null"
     fi
-    [[ "$sfile" -ef "$STATE" ]] && CUR="$picked"
+    touch -r "$mtime_ref" "$sfile"
+    [[ "$sfile" -ef "$STATE" ]] && CUR="$ROLLED"
   done
+  rm -f "$mtime_ref"
 }
 
 # Flip the selected game, then apply the new enabledGames everywhere. A config
@@ -615,7 +628,9 @@ run_popup_herdr() {
   exec herdr plugin pane open --plugin openpeon --entrypoint popup \
     --placement popup --width 48 --height "$h" --focus \
     --env "OPENPEON_POPUP_SID=$sid" --env "OPENPEON_ROOT=$ROOT" \
-    --env "OPENPEON_STATE_ROOT=$STATE_ROOT"
+    --env "OPENPEON_STATE_ROOT=$STATE_ROOT" \
+    --env "OPENPEON_CLAUDE_ROOT=$CLAUDE_ROOT" \
+    --env "OPENPEON_PI_STATE_ROOT=$PI_STATE_ROOT"
 }
 
 # The popup body Herdr opens for run_popup_herdr's pane entrypoint.

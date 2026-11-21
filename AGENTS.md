@@ -156,9 +156,13 @@ Package installs use `ui/presets/`; UI deployments copy presets to `<root>/prese
   (`g` list) write `enabledGames` to every Claude and pi install config,
   so the game selection is global, then redraw the preset of
   every open session whose install has `randomPreset` on, by writing a new
-  `preset` into its state file. The bash roll mirrors the core tier weights
-  and reads tiers with grep, because one jq call per preset made each toggle
-  take about a second.
+  `preset` into its state file. The redraw restores each state file's mtime,
+  since newest mtime is how the popup (pi) and the skill find the current
+  session. The Herdr action passes the Claude and pi install roots to the
+  pane next to the session's asset root, or the redraw would only see the
+  focused agent. The bash roll mirrors the core tier weights and reads tiers
+  with grep, because one jq call per preset made each toggle take about a
+  second.
 - Running OpenCode sessions are unreachable by design (in-memory config, no
   disk re-read); the popup shows an explanatory message for opencode panes.
 - bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`

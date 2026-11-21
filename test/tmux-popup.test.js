@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { resolve, dirname, join } from "path"
 import { fileURLToPath } from "url"
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, utimesSync } from "fs"
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync, utimesSync } from "fs"
 import { spawnSync } from "child_process"
 import { tmpdir } from "os"
 
@@ -207,13 +207,14 @@ describe("popup-herdr", () => {
     chmodSync(stub, 0o755)
   }
 
-  function runPopupHerdr() {
+  function runPopupHerdr(env = {}) {
     const result = spawnSync("/bin/bash", [SCRIPT, "popup-herdr"], {
       env: {
         ...process.env,
         OPENPEON_ROOT: root,
         OPENPEON_PROJECTS_DIR: projects,
         PATH: `${bin}:${process.env.PATH}`,
+        ...env,
       },
       encoding: "utf8",
     })
@@ -240,6 +241,18 @@ describe("popup-herdr", () => {
     expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
     expect(call).toContain(`OPENPEON_ROOT=${root}`)
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
+  })
+
+  test("passes both install roots next to the pi session asset root", () => {
+    // The pane's game redraw must reach Claude sessions too, although
+    // OPENPEON_ROOT now names the pi session's asset root.
+    const assetRoot = "/opt/pi-package/openpeon"
+    addPiSession("pi-herdr-1", "/Users/me/repo", 0, assetRoot)
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr({ OPENPEON_CLAUDE_ROOT: "/claude/openpeon", OPENPEON_PI_STATE_ROOT: root })
+    expect(call).toContain(`OPENPEON_ROOT=${assetRoot}`)
+    expect(call).toContain("OPENPEON_CLAUDE_ROOT=/claude/openpeon")
+    expect(call).toContain(`OPENPEON_PI_STATE_ROOT=${root}`)
   })
 
   test("uses package presets when the asset root has no deployed presets directory", () => {
@@ -358,6 +371,8 @@ describe("tui random games", () => {
     writeBaseConfig({ randomPreset: true, enabledGames: ["wc2", "wc3"] })
     writeFileSync(join(root, "state", "sess-1.json"), JSON.stringify({ preset: "wc2-peon" }))
     writeFileSync(join(root, "state", "sess-2.json"), JSON.stringify({ preset: "wc2-peon", volume: 4 }))
+    const hourAgo = new Date(Date.now() - 3600 * 1000)
+    utimesSync(join(root, "state", "sess-2.json"), hourAgo, hourAgo)
 
     // Enter on the first game turns wc2 off, leaving only wc3
     spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
@@ -369,6 +384,8 @@ describe("tui random games", () => {
 
     expect(readJson(join(root, "state", "sess-1.json")).preset).toMatch(/^wc3-/)
     expect(readJson(join(root, "state", "sess-2.json"))).toMatchObject({ volume: 4, preset: expect.stringMatching(/^wc3-/) })
+    // Session discovery picks the newest state file: the redraw keeps mtimes
+    expect(Math.abs(statSync(join(root, "state", "sess-2.json")).mtimeMs - hourAgo.getTime())).toBeLessThan(1000)
     expect(readJson(join(piRoot, "state", "pi-1.json")).preset).toBe("wc3-grunt")
     expect(readJson(join(piRoot, "openpeon.json")).enabledGames).toEqual(["wc3"])
     rmSync(piRoot, { recursive: true, force: true })
