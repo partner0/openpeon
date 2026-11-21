@@ -1,0 +1,117 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc3-orc/far-seer-ready-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc3-orc/far-seer-acknowledge-1.wav",
+        "wc3-orc/far-seer-acknowledge-2.wav",
+        "wc3-orc/far-seer-acknowledge-3.wav",
+        "wc3-orc/far-seer-acknowledge-4.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc3-orc/far-seer-annoyed-1.wav",
+        "wc3-orc/far-seer-annoyed-2.wav",
+        "wc3-orc/far-seer-annoyed-3.wav",
+        "wc3-orc/far-seer-annoyed-4.wav",
+        "wc3-orc/far-seer-annoyed-5.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc3-orc/far-seer-selected-1.wav",
+        "wc3-orc/far-seer-selected-2.wav",
+        "wc3-orc/far-seer-selected-3.wav",
+        "wc3-orc/far-seer-selected-4.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc3-orc/far-seer-attack-1.wav",
+        "wc3-orc/far-seer-attack-2.wav",
+        "wc3-orc/far-seer-attack-3.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

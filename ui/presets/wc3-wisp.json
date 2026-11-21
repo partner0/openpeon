@@ -1,0 +1,66 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc3-nightelf/wisp-ready-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc3-nightelf/wisp-acknowledge-1.wav",
+        "wc3-nightelf/wisp-acknowledge-2.wav",
+        "wc3-nightelf/wisp-acknowledge-3.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc3-nightelf/wisp-annoyed-1.wav",
+        "wc3-nightelf/wisp-annoyed-2.wav",
+        "wc3-nightelf/wisp-annoyed-3.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc3-nightelf/wisp-selected-1.wav",
+        "wc3-nightelf/wisp-selected-2.wav",
+        "wc3-nightelf/wisp-selected-3.wav"
+      ]
+    }
+  ]
+}

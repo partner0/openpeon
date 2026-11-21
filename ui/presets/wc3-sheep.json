@@ -1,0 +1,63 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/sheep-acknowledge-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/sheep-acknowledge-1.wav",
+        "wc3-neutral/sheep-acknowledge-2.wav",
+        "wc3-neutral/sheep-acknowledge-3.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/sheep-death-1.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc3-neutral/sheep-selected-1.wav",
+        "wc3-neutral/sheep-selected-2.wav"
+      ]
+    }
+  ]
+}
