@@ -248,6 +248,16 @@ describe("resolveSessionConfig", () => {
     expect(readState(root, "session-a")).toEqual({ preset: "only-preset" })
   })
 
+  test("does not roll a preset from a game missing from enabledGames", () => {
+    writeFileSync(resolve(root, "openpeon.json"), JSON.stringify({ ...BASE_CONFIG, enabledGames: ["wc3"] }))
+
+    const resolved = resolveSessionConfig(root, "session-a", () => 0)
+
+    expect(resolved.preset).toBeNull()
+    expect(resolved.mappings[0].name).toBe("base-ack")
+    expect(readState(root, "session-a")).toEqual({ preset: null })
+  })
+
   test("later events reuse the persisted preset instead of re-rolling", () => {
     writeState(root, "session-a", { preset: "only-preset" })
 

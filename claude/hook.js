@@ -15,7 +15,7 @@ import {
   DEFAULT_CONFIG,
   getRandomSound,
   loadConfig,
-  listPresets,
+  listRandomPresets,
   loadPreset,
   pickWeightedPreset,
   matchesEventTrigger,
@@ -217,7 +217,7 @@ export function resolveSessionConfig(root, sessionId, random = Math.random) {
   if (!state && sanitizeSessionId(sessionId)) {
     const presetsDir = resolve(root, "presets")
     const picked = config.randomPreset
-      ? pickWeightedPreset(presetsDir, listPresets(presetsDir), random)
+      ? pickWeightedPreset(presetsDir, listRandomPresets(presetsDir, config.enabledGames), random)
       : null
     state = { preset: picked }
     writeState(root, sessionId, state)

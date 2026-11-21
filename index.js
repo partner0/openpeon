@@ -8,6 +8,7 @@ import {
   getRandomSound,
   loadConfig,
   listPresets,
+  listRandomPresets,
   loadPreset,
   pickWeightedPreset,
   matchesEventTrigger,
@@ -70,7 +71,7 @@ export const OpenPeonPlugin = async ({ client }) => {
   let currentPreset = null
 
   if (config.randomPreset) {
-    const presets = listPresets(presetsDir)
+    const presets = listRandomPresets(presetsDir, config.enabledGames)
     if (presets.length > 0) {
       const picked = pickWeightedPreset(presetsDir, presets)
       const presetConfig = picked ? loadPreset(presetsDir, picked) : null

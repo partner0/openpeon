@@ -6,6 +6,7 @@ import {
   computeAfplayVolume,
   getRandomSound,
   listPresets,
+  listRandomPresets,
   loadConfig,
   loadPreset,
   matchesEventTrigger,
@@ -62,6 +63,20 @@ describe("loadPreset", () => {
 
   test("returns null on invalid JSON", () => {
     expect(loadPreset(PRESETS_DIR, "broken")).toBeNull()
+  })
+})
+
+describe("listRandomPresets", () => {
+  test("keeps every preset when enabledGames is not an array", () => {
+    expect(listRandomPresets(PRESETS_DIR, undefined).sort()).toEqual(["broken", "no-tier", "tier1", "tier3"])
+  })
+
+  test("keeps only presets whose name prefix is an enabled game", () => {
+    expect(listRandomPresets(PRESETS_DIR, ["no", "tier1"]).sort()).toEqual(["no-tier", "tier1"])
+  })
+
+  test("returns no presets when no game is enabled", () => {
+    expect(listRandomPresets(PRESETS_DIR, [])).toEqual([])
   })
 })
 

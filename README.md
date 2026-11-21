@@ -32,7 +32,7 @@ Switch to the wc2-ogre-mage preset
 
 The agent uses the `peon_switch_preset` tool, no restart required.
 
-Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. OpenCode and pi expose tools to switch it. Claude Code remembers the rolled preset for the session and uses the bundled `openpeon` skill for changes.
+Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. Limit the roll to some games with `"enabledGames": ["wc2", "wc3"]` (the preset name prefix); leave it out to draw from every game. OpenCode and pi expose tools to switch it. Claude Code remembers the rolled preset for the session and uses the bundled `openpeon` skill for changes.
 
 ## Installation
 
