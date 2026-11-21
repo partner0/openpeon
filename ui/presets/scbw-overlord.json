@@ -1,0 +1,115 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/overlord-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/overlord-yes00.wav",
+        "scbw-zerg/overlord-yes01.wav",
+        "scbw-zerg/overlord-yes02.wav",
+        "scbw-zerg/overlord-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/overlord-pss00.wav",
+        "scbw-zerg/overlord-pss01.wav",
+        "scbw-zerg/overlord-pss02.wav",
+        "scbw-zerg/overlord-pss03.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/overlord-wht00.wav",
+        "scbw-zerg/overlord-wht01.wav",
+        "scbw-zerg/overlord-wht02.wav",
+        "scbw-zerg/overlord-wht03.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "scbw-misc/zovtra00.wav",
+        "scbw-misc/zovtra01.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

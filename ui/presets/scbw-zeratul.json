@@ -1,0 +1,69 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "scbw-protoss/zeratul-yes00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "scbw-protoss/zeratul-yes00.wav",
+        "scbw-protoss/zeratul-yes01.wav",
+        "scbw-protoss/zeratul-yes02.wav",
+        "scbw-protoss/zeratul-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "scbw-protoss/zeratul-pss00.wav",
+        "scbw-protoss/zeratul-pss01.wav",
+        "scbw-protoss/zeratul-pss02.wav",
+        "scbw-protoss/zeratul-pss03.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "scbw-protoss/zeratul-wht00.wav",
+        "scbw-protoss/zeratul-wht01.wav",
+        "scbw-protoss/zeratul-wht02.wav",
+        "scbw-protoss/zeratul-wht03.wav"
+      ]
+    }
+  ]
+}
