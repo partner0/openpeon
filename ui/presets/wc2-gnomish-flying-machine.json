@@ -37,11 +37,8 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/gnomish-flying-machine-annoyed-1.wav",
-        "wc2-alliance/gnomish-flying-machine-annoyed-2.wav",
-        "wc2-alliance/gnomish-flying-machine-annoyed-3.wav",
-        "wc2-alliance/gnomish-flying-machine-annoyed-4.wav",
-        "wc2-alliance/gnomish-flying-machine-annoyed-5.wav"
+        "wc2-alliance/gnomish-flying-machine-acknowledge-1.wav",
+        "wc2-alliance/gnomish-flying-machine-other-ready.wav"
       ]
     },
     {

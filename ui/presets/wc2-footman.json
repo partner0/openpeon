@@ -40,13 +40,19 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/basic-human-voices-annoyed-1.wav",
-        "wc2-alliance/basic-human-voices-annoyed-2.wav",
-        "wc2-alliance/basic-human-voices-annoyed-3.wav",
-        "wc2-alliance/basic-human-voices-annoyed-4.wav",
-        "wc2-alliance/basic-human-voices-annoyed-5.wav",
-        "wc2-alliance/basic-human-voices-annoyed-6.wav",
-        "wc2-alliance/basic-human-voices-annoyed-7.wav"
+        "wc2-alliance/basic-human-voices-acknowledge-1.wav",
+        "wc2-alliance/basic-human-voices-acknowledge-2.wav",
+        "wc2-alliance/basic-human-voices-acknowledge-3.wav",
+        "wc2-alliance/basic-human-voices-acknowledge-4.wav",
+        "wc2-alliance/basic-human-voices-other-death.wav",
+        "wc2-alliance/basic-human-voices-other-ready.wav",
+        "wc2-alliance/basic-human-voices-other-work-complete.wav",
+        "wc2-alliance/basic-human-voices-selected-1.wav",
+        "wc2-alliance/basic-human-voices-selected-2.wav",
+        "wc2-alliance/basic-human-voices-selected-3.wav",
+        "wc2-alliance/basic-human-voices-selected-4.wav",
+        "wc2-alliance/basic-human-voices-selected-5.wav",
+        "wc2-alliance/basic-human-voices-selected-6.wav"
       ]
     },
     {

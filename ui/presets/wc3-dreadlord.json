@@ -40,11 +40,20 @@
         }
       ],
       "sounds": [
-        "wc3-undead/dreadlord-annoyed-1.wav",
-        "wc3-undead/dreadlord-annoyed-3.wav",
-        "wc3-undead/dreadlord-annoyed-4.wav",
-        "wc3-undead/dreadlord-annoyed-6.wav",
-        "wc3-undead/dreadlord-annoyed-7.wav"
+        "wc3-undead/dreadlord-acknowledge-1.wav",
+        "wc3-undead/dreadlord-acknowledge-2.wav",
+        "wc3-undead/dreadlord-acknowledge-3.wav",
+        "wc3-undead/dreadlord-acknowledge-4.wav",
+        "wc3-undead/dreadlord-attack-1.wav",
+        "wc3-undead/dreadlord-attack-2.wav",
+        "wc3-undead/dreadlord-attack-3.wav",
+        "wc3-undead/dreadlord-death-1.wav",
+        "wc3-undead/dreadlord-ready-1.wav",
+        "wc3-undead/dreadlord-selected-1.wav",
+        "wc3-undead/dreadlord-selected-2.wav",
+        "wc3-undead/dreadlord-selected-3.wav",
+        "wc3-undead/dreadlord-selected-4.wav",
+        "wc3-undead/dreadlord-warcry-1.wav"
       ]
     },
     {

@@ -40,10 +40,20 @@
         }
       ],
       "sounds": [
-        "wc3-human/archmage-annoyed-1.wav",
-        "wc3-human/archmage-annoyed-2.wav",
-        "wc3-human/archmage-annoyed-3.wav",
-        "wc3-human/archmage-annoyed-4.wav"
+        "wc3-human/archmage-acknowledge-1.wav",
+        "wc3-human/archmage-acknowledge-2.wav",
+        "wc3-human/archmage-acknowledge-3.wav",
+        "wc3-human/archmage-acknowledge-4.wav",
+        "wc3-human/archmage-attack-1.wav",
+        "wc3-human/archmage-attack-2.wav",
+        "wc3-human/archmage-attack-3.wav",
+        "wc3-human/archmage-death-1.wav",
+        "wc3-human/archmage-ready-1.wav",
+        "wc3-human/archmage-selected-1.wav",
+        "wc3-human/archmage-selected-2.wav",
+        "wc3-human/archmage-selected-3.wav",
+        "wc3-human/archmage-selected-4.wav",
+        "wc3-human/archmage-warcry-1.wav"
       ]
     },
     {

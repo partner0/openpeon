@@ -44,15 +44,28 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/mothership-pissed00.mp3",
-        "sc2-protoss/mothership-pissed01.mp3",
-        "sc2-protoss/mothership-pissed02.mp3",
-        "sc2-protoss/mothership-pissed03.mp3",
-        "sc2-protoss/mothership-pissed04.mp3",
-        "sc2-protoss/mothership-pissed05.mp3",
-        "sc2-protoss/mothership-pissed06.mp3",
-        "sc2-protoss/mothership-pissed07.mp3",
-        "sc2-protoss/mothership-pissed08.mp3"
+        "sc2-protoss/mothership-attack00.mp3",
+        "sc2-protoss/mothership-attack01.mp3",
+        "sc2-protoss/mothership-attack02.mp3",
+        "sc2-protoss/mothership-attack04.mp3",
+        "sc2-protoss/mothership-attack05.mp3",
+        "sc2-protoss/mothership-death00.mp3",
+        "sc2-protoss/mothership-ready00.mp3",
+        "sc2-protoss/mothership-what00.mp3",
+        "sc2-protoss/mothership-what01.mp3",
+        "sc2-protoss/mothership-what02.mp3",
+        "sc2-protoss/mothership-what03.mp3",
+        "sc2-protoss/mothership-what04.mp3",
+        "sc2-protoss/mothership-what05.mp3",
+        "sc2-protoss/mothership-what06.mp3",
+        "sc2-protoss/mothership-yes00.mp3",
+        "sc2-protoss/mothership-yes01.mp3",
+        "sc2-protoss/mothership-yes02.mp3",
+        "sc2-protoss/mothership-yes03.mp3",
+        "sc2-protoss/mothership-yes04.mp3",
+        "sc2-protoss/mothership-yes05.mp3",
+        "sc2-protoss/mothership-yes06.mp3",
+        "sc2-protoss/mothership-yes07.mp3"
       ]
     },
     {

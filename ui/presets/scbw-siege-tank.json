@@ -40,10 +40,16 @@
         }
       ],
       "sounds": [
-        "scbw-terran/tank-pss00.wav",
-        "scbw-terran/tank-pss01.wav",
-        "scbw-terran/tank-pss02.wav",
-        "scbw-terran/tank-pss03.wav"
+        "scbw-terran/tank-dth00.wav",
+        "scbw-terran/tank-rdy00.wav",
+        "scbw-terran/tank-wht00.wav",
+        "scbw-terran/tank-wht01.wav",
+        "scbw-terran/tank-wht02.wav",
+        "scbw-terran/tank-wht03.wav",
+        "scbw-terran/tank-yes00.wav",
+        "scbw-terran/tank-yes01.wav",
+        "scbw-terran/tank-yes02.wav",
+        "scbw-terran/tank-yes03.wav"
       ]
     },
     {

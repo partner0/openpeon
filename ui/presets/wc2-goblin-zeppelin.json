@@ -37,8 +37,8 @@
         }
       ],
       "sounds": [
-        "wc2-horde/goblin-zeppelin-annoyed-1.wav",
-        "wc2-horde/goblin-zeppelin-annoyed-2.wav"
+        "wc2-horde/goblin-zeppelin-acknowledge-1.wav",
+        "wc2-horde/goblin-zeppelin-other-ready.wav"
       ]
     },
     {

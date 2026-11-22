@@ -40,14 +40,21 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/brewmaster-annoyed-1.wav",
-        "wc3-neutral/brewmaster-annoyed-2.wav",
-        "wc3-neutral/brewmaster-annoyed-3.wav",
-        "wc3-neutral/brewmaster-annoyed-4.wav",
-        "wc3-neutral/brewmaster-annoyed-5.wav",
-        "wc3-neutral/brewmaster-annoyed-6.wav",
-        "wc3-neutral/brewmaster-annoyed-7.wav",
-        "wc3-neutral/brewmaster-annoyed-8.wav"
+        "wc3-neutral/brewmaster-acknowledge-1.wav",
+        "wc3-neutral/brewmaster-acknowledge-2.wav",
+        "wc3-neutral/brewmaster-acknowledge-3.wav",
+        "wc3-neutral/brewmaster-acknowledge-4.wav",
+        "wc3-neutral/brewmaster-attack-1.wav",
+        "wc3-neutral/brewmaster-attack-2.wav",
+        "wc3-neutral/brewmaster-attack-3.wav",
+        "wc3-neutral/brewmaster-attack-4.wav",
+        "wc3-neutral/brewmaster-death-1.wav",
+        "wc3-neutral/brewmaster-ready-1.wav",
+        "wc3-neutral/brewmaster-selected-1.wav",
+        "wc3-neutral/brewmaster-selected-2.wav",
+        "wc3-neutral/brewmaster-selected-3.wav",
+        "wc3-neutral/brewmaster-selected-4.wav",
+        "wc3-neutral/brewmaster-warcry-1.wav"
       ]
     },
     {

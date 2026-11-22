@@ -39,9 +39,9 @@
         }
       ],
       "sounds": [
-        "wc2-horde/ships-annoyed-1.wav",
-        "wc2-horde/ships-annoyed-2.wav",
-        "wc2-horde/ships-annoyed-3.wav"
+        "wc2-horde/ships-acknowledge-1.wav",
+        "wc2-horde/ships-acknowledge-2.wav",
+        "wc2-horde/ships-acknowledge-3.wav"
       ]
     },
     {

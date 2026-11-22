@@ -40,14 +40,21 @@
         }
       ],
       "sounds": [
-        "wc3-undead/acolyte-annoyed-1.wav",
-        "wc3-undead/acolyte-annoyed-2.wav",
-        "wc3-undead/acolyte-annoyed-3.wav",
-        "wc3-undead/acolyte-annoyed-4.wav",
-        "wc3-undead/acolyte-annoyed-5.wav",
-        "wc3-undead/acolyte-annoyed-6.wav",
-        "wc3-undead/acolyte-annoyed-7.wav",
-        "wc3-undead/acolyte-annoyed-8.wav"
+        "wc3-undead/acolyte-acknowledge-1.wav",
+        "wc3-undead/acolyte-acknowledge-2.wav",
+        "wc3-undead/acolyte-acknowledge-3.wav",
+        "wc3-undead/acolyte-acknowledge-4.wav",
+        "wc3-undead/acolyte-attack-1.wav",
+        "wc3-undead/acolyte-attack-2.wav",
+        "wc3-undead/acolyte-attack-3.wav",
+        "wc3-undead/acolyte-death-1.wav",
+        "wc3-undead/acolyte-ready-1.wav",
+        "wc3-undead/acolyte-selected-1.wav",
+        "wc3-undead/acolyte-selected-2.wav",
+        "wc3-undead/acolyte-selected-3.wav",
+        "wc3-undead/acolyte-selected-4.wav",
+        "wc3-undead/acolyte-selected-5.wav",
+        "wc3-undead/acolyte-warcry-1.wav"
       ]
     },
     {

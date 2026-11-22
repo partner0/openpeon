@@ -42,15 +42,24 @@
         }
       ],
       "sounds": [
-        "wc3-human/mortar-team-annoyed-1.wav",
-        "wc3-human/mortar-team-annoyed-2.wav",
-        "wc3-human/mortar-team-annoyed-3.wav",
-        "wc3-human/mortar-team-annoyed-4.wav",
-        "wc3-human/mortar-team-annoyed-5.wav",
-        "wc3-human/mortar-team-annoyed-6.wav",
-        "wc3-human/mortar-team-annoyed-7.wav",
-        "wc3-human/mortar-team-annoyed-8.wav",
-        "wc3-human/mortar-team-annoyed-9.wav"
+        "wc3-human/mortar-team-acknowledge-1.wav",
+        "wc3-human/mortar-team-acknowledge-2.wav",
+        "wc3-human/mortar-team-acknowledge-3.wav",
+        "wc3-human/mortar-team-acknowledge-4.wav",
+        "wc3-human/mortar-team-acknowledge-5.wav",
+        "wc3-human/mortar-team-acknowledge-6.wav",
+        "wc3-human/mortar-team-attack-1.wav",
+        "wc3-human/mortar-team-attack-2.wav",
+        "wc3-human/mortar-team-attack-3.wav",
+        "wc3-human/mortar-team-attack-4.wav",
+        "wc3-human/mortar-team-attack-5.wav",
+        "wc3-human/mortar-team-death-1.wav",
+        "wc3-human/mortar-team-ready-1.wav",
+        "wc3-human/mortar-team-selected-1.wav",
+        "wc3-human/mortar-team-selected-2.wav",
+        "wc3-human/mortar-team-selected-3.wav",
+        "wc3-human/mortar-team-selected-4.wav",
+        "wc3-human/mortar-team-warcry-1.wav"
       ]
     },
     {

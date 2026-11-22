@@ -41,13 +41,24 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/goblin-sapper-annoyed-1.wav",
-        "wc3-neutral/goblin-sapper-annoyed-2.wav",
-        "wc3-neutral/goblin-sapper-annoyed-3.wav",
-        "wc3-neutral/goblin-sapper-annoyed-4.wav",
-        "wc3-neutral/goblin-sapper-annoyed-5.wav",
-        "wc3-neutral/goblin-sapper-annoyed-6.wav",
-        "wc3-neutral/goblin-sapper-annoyed-7.wav"
+        "wc3-neutral/goblin-sapper-acknowledge-1.wav",
+        "wc3-neutral/goblin-sapper-acknowledge-2.wav",
+        "wc3-neutral/goblin-sapper-acknowledge-3.wav",
+        "wc3-neutral/goblin-sapper-acknowledge-4.wav",
+        "wc3-neutral/goblin-sapper-acknowledge-5.wav",
+        "wc3-neutral/goblin-sapper-attack-1.wav",
+        "wc3-neutral/goblin-sapper-attack-2.wav",
+        "wc3-neutral/goblin-sapper-attack-3.wav",
+        "wc3-neutral/goblin-sapper-attack-4.wav",
+        "wc3-neutral/goblin-sapper-attack-5.wav",
+        "wc3-neutral/goblin-sapper-death-1.wav",
+        "wc3-neutral/goblin-sapper-ready-1.wav",
+        "wc3-neutral/goblin-sapper-selected-1.wav",
+        "wc3-neutral/goblin-sapper-selected-2.wav",
+        "wc3-neutral/goblin-sapper-selected-3.wav",
+        "wc3-neutral/goblin-sapper-selected-4.wav",
+        "wc3-neutral/goblin-sapper-selected-5.wav",
+        "wc3-neutral/goblin-sapper-warcry-1.wav"
       ]
     },
     {

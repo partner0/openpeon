@@ -40,10 +40,16 @@
         }
       ],
       "sounds": [
-        "scbw-zerg/mutalid-pss00.wav",
-        "scbw-zerg/mutalid-pss01.wav",
-        "scbw-zerg/mutalid-pss02.wav",
-        "scbw-zerg/mutalid-pss03.wav"
+        "scbw-zerg/mutalid-dth00.wav",
+        "scbw-zerg/mutalid-rdy00.wav",
+        "scbw-zerg/mutalid-wht00.wav",
+        "scbw-zerg/mutalid-wht01.wav",
+        "scbw-zerg/mutalid-wht02.wav",
+        "scbw-zerg/mutalid-wht03.wav",
+        "scbw-zerg/mutalid-yes00.wav",
+        "scbw-zerg/mutalid-yes01.wav",
+        "scbw-zerg/mutalid-yes02.wav",
+        "scbw-zerg/mutalid-yes03.wav"
       ]
     },
     {

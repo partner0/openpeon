@@ -44,16 +44,24 @@
         }
       ],
       "sounds": [
-        "scbw-terran/dukeb-pss00.wav",
-        "scbw-terran/dukeb-pss01.wav",
-        "scbw-terran/dukeb-pss02.wav",
-        "scbw-terran/dukeb-pss03.wav",
-        "scbw-terran/dukeb-pss04.wav",
-        "scbw-terran/duket-pss00.wav",
-        "scbw-terran/duket-pss01.wav",
-        "scbw-terran/duket-pss02.wav",
-        "scbw-terran/duket-pss03.wav",
-        "scbw-terran/duket-pss04.wav"
+        "scbw-terran/dukeb-dth00.wav",
+        "scbw-terran/dukeb-wht00.wav",
+        "scbw-terran/dukeb-wht01.wav",
+        "scbw-terran/dukeb-wht02.wav",
+        "scbw-terran/dukeb-wht03.wav",
+        "scbw-terran/dukeb-yes00.wav",
+        "scbw-terran/dukeb-yes01.wav",
+        "scbw-terran/dukeb-yes02.wav",
+        "scbw-terran/dukeb-yes03.wav",
+        "scbw-terran/duket-dth00.wav",
+        "scbw-terran/duket-wht00.wav",
+        "scbw-terran/duket-wht01.wav",
+        "scbw-terran/duket-wht02.wav",
+        "scbw-terran/duket-wht03.wav",
+        "scbw-terran/duket-yes00.wav",
+        "scbw-terran/duket-yes01.wav",
+        "scbw-terran/duket-yes02.wav",
+        "scbw-terran/duket-yes03.wav"
       ]
     },
     {

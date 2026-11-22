@@ -40,10 +40,16 @@
         }
       ],
       "sounds": [
-        "scbw-protoss/probe-pss00.wav",
-        "scbw-protoss/probe-pss01.wav",
-        "scbw-protoss/probe-pss02.wav",
-        "scbw-protoss/probe-pss03.wav"
+        "scbw-protoss/probe-dth00.wav",
+        "scbw-protoss/probe-rdy00.wav",
+        "scbw-protoss/probe-wht00.wav",
+        "scbw-protoss/probe-wht01.wav",
+        "scbw-protoss/probe-wht02.wav",
+        "scbw-protoss/probe-wht03.wav",
+        "scbw-protoss/probe-yes00.wav",
+        "scbw-protoss/probe-yes01.wav",
+        "scbw-protoss/probe-yes02.wav",
+        "scbw-protoss/probe-yes03.wav"
       ]
     },
     {

@@ -41,9 +41,14 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/dwarven-demolition-squad-annoyed-1.wav",
-        "wc2-alliance/dwarven-demolition-squad-annoyed-2.wav",
-        "wc2-alliance/dwarven-demolition-squad-annoyed-3.wav"
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-1.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-2.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-3.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-4.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-5.wav",
+        "wc2-alliance/dwarven-demolition-squad-other-ready.wav",
+        "wc2-alliance/dwarven-demolition-squad-selected-1.wav",
+        "wc2-alliance/dwarven-demolition-squad-selected-2.wav"
       ]
     },
     {

@@ -39,11 +39,14 @@
         }
       ],
       "sounds": [
-        "wc2-horde/ogre-annoyed-1.wav",
-        "wc2-horde/ogre-annoyed-2.wav",
-        "wc2-horde/ogre-annoyed-3.wav",
-        "wc2-horde/ogre-annoyed-4.wav",
-        "wc2-horde/ogre-annoyed-5.wav"
+        "wc2-horde/ogre-acknowledge-1.wav",
+        "wc2-horde/ogre-acknowledge-2.wav",
+        "wc2-horde/ogre-acknowledge-3.wav",
+        "wc2-horde/ogre-other-ready.wav",
+        "wc2-horde/ogre-selected-1.wav",
+        "wc2-horde/ogre-selected-2.wav",
+        "wc2-horde/ogre-selected-3.wav",
+        "wc2-horde/ogre-selected-4.wav"
       ]
     },
     {

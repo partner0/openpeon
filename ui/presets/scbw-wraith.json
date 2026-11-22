@@ -40,13 +40,16 @@
         }
       ],
       "sounds": [
-        "scbw-terran/phoenix-pss00.wav",
-        "scbw-terran/phoenix-pss01.wav",
-        "scbw-terran/phoenix-pss02.wav",
-        "scbw-terran/phoenix-pss03.wav",
-        "scbw-terran/phoenix-pss04.wav",
-        "scbw-terran/phoenix-pss05.wav",
-        "scbw-terran/phoenix-pss06.wav"
+        "scbw-terran/phoenix-dth00.wav",
+        "scbw-terran/phoenix-rdy00.wav",
+        "scbw-terran/phoenix-wht00.wav",
+        "scbw-terran/phoenix-wht01.wav",
+        "scbw-terran/phoenix-wht02.wav",
+        "scbw-terran/phoenix-wht03.wav",
+        "scbw-terran/phoenix-yes00.wav",
+        "scbw-terran/phoenix-yes01.wav",
+        "scbw-terran/phoenix-yes02.wav",
+        "scbw-terran/phoenix-yes03.wav"
       ]
     },
     {

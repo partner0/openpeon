@@ -40,13 +40,16 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/peasant-annoyed-1.wav",
-        "wc2-alliance/peasant-annoyed-2.wav",
-        "wc2-alliance/peasant-annoyed-3.wav",
-        "wc2-alliance/peasant-annoyed-4.wav",
-        "wc2-alliance/peasant-annoyed-5.wav",
-        "wc2-alliance/peasant-annoyed-6.wav",
-        "wc2-alliance/peasant-annoyed-7.wav"
+        "wc2-alliance/peasant-acknowledge-1.wav",
+        "wc2-alliance/peasant-acknowledge-2.wav",
+        "wc2-alliance/peasant-acknowledge-3.wav",
+        "wc2-alliance/peasant-acknowledge-4.wav",
+        "wc2-alliance/peasant-other-ready.wav",
+        "wc2-alliance/peasant-other-work-complete.wav",
+        "wc2-alliance/peasant-selected-1.wav",
+        "wc2-alliance/peasant-selected-2.wav",
+        "wc2-alliance/peasant-selected-3.wav",
+        "wc2-alliance/peasant-selected-4.wav"
       ]
     },
     {

@@ -40,13 +40,21 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/tinker-annoyed-1.wav",
-        "wc3-neutral/tinker-annoyed-2.wav",
-        "wc3-neutral/tinker-annoyed-3.wav",
-        "wc3-neutral/tinker-annoyed-4.wav",
-        "wc3-neutral/tinker-annoyed-5.wav",
-        "wc3-neutral/tinker-annoyed-7.wav",
-        "wc3-neutral/tinker-annoyed-8.wav"
+        "wc3-neutral/tinker-acknowledge-1.wav",
+        "wc3-neutral/tinker-acknowledge-2.wav",
+        "wc3-neutral/tinker-acknowledge-3.wav",
+        "wc3-neutral/tinker-acknowledge-4.wav",
+        "wc3-neutral/tinker-attack-1.wav",
+        "wc3-neutral/tinker-attack-2.wav",
+        "wc3-neutral/tinker-attack-3.wav",
+        "wc3-neutral/tinker-attack-4.wav",
+        "wc3-neutral/tinker-death-1.wav",
+        "wc3-neutral/tinker-ready-1.wav",
+        "wc3-neutral/tinker-selected-1.wav",
+        "wc3-neutral/tinker-selected-2.wav",
+        "wc3-neutral/tinker-selected-3.wav",
+        "wc3-neutral/tinker-selected-4.wav",
+        "wc3-neutral/tinker-warcry-1.wav"
       ]
     },
     {
