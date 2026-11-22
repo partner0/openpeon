@@ -44,27 +44,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/carrier-attack00.mp3",
-        "sc2-protoss/carrier-attack01.mp3",
-        "sc2-protoss/carrier-attack02.mp3",
-        "sc2-protoss/carrier-attack03.mp3",
-        "sc2-protoss/carrier-attack04.mp3",
-        "sc2-protoss/carrier-attack05.mp3",
-        "sc2-protoss/carrier-ready00.mp3",
-        "sc2-protoss/carrier-what00.mp3",
-        "sc2-protoss/carrier-what01.mp3",
-        "sc2-protoss/carrier-what02.mp3",
-        "sc2-protoss/carrier-what03.mp3",
-        "sc2-protoss/carrier-what04.mp3",
-        "sc2-protoss/carrier-what05.mp3",
-        "sc2-protoss/carrier-yes00.mp3",
-        "sc2-protoss/carrier-yes01.mp3",
-        "sc2-protoss/carrier-yes02.mp3",
-        "sc2-protoss/carrier-yes03.mp3",
-        "sc2-protoss/carrier-yes04.mp3",
-        "sc2-protoss/carrier-yes05.mp3",
-        "sc2-protoss/carrier-yes06.mp3",
-        "sc2-protoss/carrier-yes07.mp3"
+        "sc2-protoss/alert-protossupgradecomplete.mp3"
       ]
     },
     {
@@ -80,12 +60,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/carrier-what00.mp3",
-        "sc2-protoss/carrier-what01.mp3",
-        "sc2-protoss/carrier-what02.mp3",
-        "sc2-protoss/carrier-what03.mp3",
-        "sc2-protoss/carrier-what04.mp3",
-        "sc2-protoss/carrier-what05.mp3"
+        "sc2-protoss/carrier-what03.mp3"
       ]
     },
     {

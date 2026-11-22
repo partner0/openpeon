@@ -43,33 +43,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/hightemplar-attack00.mp3",
-        "sc2-protoss/hightemplar-attack01.mp3",
-        "sc2-protoss/hightemplar-attack02.mp3",
-        "sc2-protoss/hightemplar-attack03.mp3",
-        "sc2-protoss/hightemplar-attack04.mp3",
-        "sc2-protoss/hightemplar-attack05.mp3",
-        "sc2-protoss/hightemplar-attack06.mp3",
-        "sc2-protoss/hightemplar-death0.mp3",
-        "sc2-protoss/hightemplar-death1.mp3",
-        "sc2-protoss/hightemplar-death2.mp3",
-        "sc2-protoss/hightemplar-death3.mp3",
-        "sc2-protoss/hightemplar-death4.mp3",
-        "sc2-protoss/hightemplar-ready00.mp3",
-        "sc2-protoss/hightemplar-what00.mp3",
-        "sc2-protoss/hightemplar-what01.mp3",
-        "sc2-protoss/hightemplar-what02.mp3",
-        "sc2-protoss/hightemplar-what03.mp3",
-        "sc2-protoss/hightemplar-what04.mp3",
-        "sc2-protoss/hightemplar-what05.mp3",
-        "sc2-protoss/hightemplar-what06.mp3",
-        "sc2-protoss/hightemplar-yes00.mp3",
-        "sc2-protoss/hightemplar-yes01.mp3",
-        "sc2-protoss/hightemplar-yes02.mp3",
-        "sc2-protoss/hightemplar-yes03.mp3",
-        "sc2-protoss/hightemplar-yes04.mp3",
-        "sc2-protoss/hightemplar-yes05.mp3",
-        "sc2-protoss/hightemplar-yes06.mp3"
+        "sc2-protoss/alert-protossupgradecomplete.mp3"
       ]
     },
     {
@@ -86,11 +60,6 @@
       ],
       "sounds": [
         "sc2-protoss/hightemplar-what00.mp3",
-        "sc2-protoss/hightemplar-what01.mp3",
-        "sc2-protoss/hightemplar-what02.mp3",
-        "sc2-protoss/hightemplar-what03.mp3",
-        "sc2-protoss/hightemplar-what04.mp3",
-        "sc2-protoss/hightemplar-what05.mp3",
         "sc2-protoss/hightemplar-what06.mp3"
       ]
     },

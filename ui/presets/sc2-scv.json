@@ -56,48 +56,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/scv-attack00.mp3",
-        "sc2-terran/scv-attack01.mp3",
-        "sc2-terran/scv-attack02.mp3",
-        "sc2-terran/scv-attack03.mp3",
-        "sc2-terran/scv-death00.mp3",
-        "sc2-terran/scv-death01.mp3",
-        "sc2-terran/scv-death02.mp3",
-        "sc2-terran/scv-death03.mp3",
-        "sc2-terran/scv-death04.mp3",
-        "sc2-terran/scv-death05.mp3",
-        "sc2-terran/scv-death06.mp3",
-        "sc2-terran/scv-death07.mp3",
-        "sc2-terran/scv-death08.mp3",
-        "sc2-terran/scv-death09.mp3",
-        "sc2-terran/scv-ready00.mp3",
-        "sc2-terran/scv-ready01.mp3",
-        "sc2-terran/scv-what00.mp3",
-        "sc2-terran/scv-what01.mp3",
-        "sc2-terran/scv-what02.mp3",
-        "sc2-terran/scv-what03.mp3",
-        "sc2-terran/scv-what04.mp3",
-        "sc2-terran/scv-what05.mp3",
-        "sc2-terran/scv-what06.mp3",
-        "sc2-terran/scv-yes00.mp3",
-        "sc2-terran/scv-yes01.mp3",
-        "sc2-terran/scv-yes02.mp3",
-        "sc2-terran/scv-yes03.mp3",
-        "sc2-terran/scv-yes04.mp3",
-        "sc2-terran/scv-yes05.mp3",
-        "sc2-terran/scv-yes06.mp3",
-        "sc2-terran/scv-yes07.mp3",
-        "sc2-terran/scv-yes08.mp3",
-        "sc2-terran/scv-yes09.mp3",
-        "sc2-terran/scv-yes10.mp3",
-        "sc2-terran/scv-yes11.mp3",
-        "sc2-terran/scv-yes12.mp3",
-        "sc2-terran/scv-yes13.mp3",
-        "sc2-terran/scv-yes14.mp3",
-        "sc2-terran/scv-yes15.mp3",
-        "sc2-terran/scv-yes16.mp3",
-        "sc2-terran/scv-yes17.mp3",
-        "sc2-terran/scv-yes18.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -113,13 +72,9 @@
         }
       ],
       "sounds": [
-        "sc2-terran/scv-what00.mp3",
         "sc2-terran/scv-what01.mp3",
-        "sc2-terran/scv-what02.mp3",
-        "sc2-terran/scv-what03.mp3",
         "sc2-terran/scv-what04.mp3",
-        "sc2-terran/scv-what05.mp3",
-        "sc2-terran/scv-what06.mp3"
+        "sc2-terran/scv-what05.mp3"
       ]
     },
     {

@@ -44,25 +44,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/kerrigan-dth00.wav",
-        "scbw-terran/kerrigan-dth01.wav",
-        "scbw-terran/kerrigan-wht00.wav",
-        "scbw-terran/kerrigan-wht01.wav",
-        "scbw-terran/kerrigan-wht02.wav",
-        "scbw-terran/kerrigan-wht03.wav",
-        "scbw-terran/kerrigan-yes00.wav",
-        "scbw-terran/kerrigan-yes01.wav",
-        "scbw-terran/kerrigan-yes02.wav",
-        "scbw-terran/kerrigan-yes03.wav",
-        "scbw-zerg/zergkerri-dth00.wav",
-        "scbw-zerg/zergkerri-wht00.wav",
-        "scbw-zerg/zergkerri-wht01.wav",
-        "scbw-zerg/zergkerri-wht02.wav",
-        "scbw-zerg/zergkerri-wht03.wav",
-        "scbw-zerg/zergkerri-yes00.wav",
-        "scbw-zerg/zergkerri-yes01.wav",
-        "scbw-zerg/zergkerri-yes02.wav",
-        "scbw-zerg/zergkerri-yes03.wav"
+        "scbw-zerg/advisor-upd02.wav"
       ]
     },
     {
@@ -78,12 +60,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/kerrigan-wht00.wav",
         "scbw-terran/kerrigan-wht01.wav",
-        "scbw-terran/kerrigan-wht02.wav",
-        "scbw-terran/kerrigan-wht03.wav",
-        "scbw-zerg/zergkerri-wht00.wav",
-        "scbw-zerg/zergkerri-wht01.wav",
         "scbw-zerg/zergkerri-wht02.wav",
         "scbw-zerg/zergkerri-wht03.wav"
       ]

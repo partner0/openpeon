@@ -40,16 +40,7 @@
         }
       ],
       "sounds": [
-        "scbw-zerg/overlord-dth00.wav",
-        "scbw-zerg/overlord-rdy00.wav",
-        "scbw-zerg/overlord-wht00.wav",
-        "scbw-zerg/overlord-wht01.wav",
-        "scbw-zerg/overlord-wht02.wav",
-        "scbw-zerg/overlord-wht03.wav",
-        "scbw-zerg/overlord-yes00.wav",
-        "scbw-zerg/overlord-yes01.wav",
-        "scbw-zerg/overlord-yes02.wav",
-        "scbw-zerg/overlord-yes03.wav"
+        "scbw-zerg/advisor-upd02.wav"
       ]
     },
     {

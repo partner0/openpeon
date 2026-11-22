@@ -49,33 +49,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/banshee-attack00.mp3",
-        "sc2-terran/banshee-attack01.mp3",
-        "sc2-terran/banshee-attack02.mp3",
-        "sc2-terran/banshee-attack03.mp3",
-        "sc2-terran/banshee-attack04.mp3",
-        "sc2-terran/banshee-attack05.mp3",
-        "sc2-terran/banshee-attack06.mp3",
-        "sc2-terran/banshee-ready00.mp3",
-        "sc2-terran/banshee-what00.mp3",
-        "sc2-terran/banshee-what01.mp3",
-        "sc2-terran/banshee-what02.mp3",
-        "sc2-terran/banshee-what03.mp3",
-        "sc2-terran/banshee-what04.mp3",
-        "sc2-terran/banshee-what05.mp3",
-        "sc2-terran/banshee-yes00.mp3",
-        "sc2-terran/banshee-yes01.mp3",
-        "sc2-terran/banshee-yes02.mp3",
-        "sc2-terran/banshee-yes03.mp3",
-        "sc2-terran/banshee-yes04.mp3",
-        "sc2-terran/banshee-yes05.mp3",
-        "sc2-terran/banshee-yes06.mp3",
-        "sc2-terran/banshee-yes07.mp3",
-        "sc2-terran/banshee-yes08.mp3",
-        "sc2-terran/banshee-yes09.mp3",
-        "sc2-terran/banshee-yes10.mp3",
-        "sc2-terran/banshee-yes11.mp3",
-        "sc2-terran/banshee-yes12.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -91,11 +65,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/banshee-what00.mp3",
         "sc2-terran/banshee-what01.mp3",
-        "sc2-terran/banshee-what02.mp3",
-        "sc2-terran/banshee-what03.mp3",
-        "sc2-terran/banshee-what04.mp3",
         "sc2-terran/banshee-what05.mp3"
       ]
     },

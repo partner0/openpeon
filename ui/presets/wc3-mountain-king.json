@@ -40,21 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-human/mountain-king-acknowledge-1.wav",
-        "wc3-human/mountain-king-acknowledge-2.wav",
-        "wc3-human/mountain-king-acknowledge-3.wav",
-        "wc3-human/mountain-king-acknowledge-4.wav",
-        "wc3-human/mountain-king-attack-1.wav",
-        "wc3-human/mountain-king-attack-2.wav",
-        "wc3-human/mountain-king-attack-3.wav",
-        "wc3-human/mountain-king-attack-4.wav",
-        "wc3-human/mountain-king-death-1.wav",
-        "wc3-human/mountain-king-ready-1.wav",
-        "wc3-human/mountain-king-selected-1.wav",
-        "wc3-human/mountain-king-selected-2.wav",
-        "wc3-human/mountain-king-selected-3.wav",
-        "wc3-human/mountain-king-selected-4.wav",
-        "wc3-human/mountain-king-warcry-1.wav"
+        "wc3-peasant/peasant-work-complete-1.mp3"
       ]
     },
     {
@@ -70,8 +56,6 @@
         }
       ],
       "sounds": [
-        "wc3-human/mountain-king-selected-1.wav",
-        "wc3-human/mountain-king-selected-2.wav",
         "wc3-human/mountain-king-selected-3.wav",
         "wc3-human/mountain-king-selected-4.wav"
       ]

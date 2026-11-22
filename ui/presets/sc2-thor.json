@@ -45,32 +45,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/thor-attack00.mp3",
-        "sc2-terran/thor-attack01.mp3",
-        "sc2-terran/thor-attack02.mp3",
-        "sc2-terran/thor-attack03.mp3",
-        "sc2-terran/thor-attack04.mp3",
-        "sc2-terran/thor-attack05.mp3",
-        "sc2-terran/thor-death00.mp3",
-        "sc2-terran/thor-ready00.mp3",
-        "sc2-terran/thor-what00.mp3",
-        "sc2-terran/thor-what01.mp3",
-        "sc2-terran/thor-what02.mp3",
-        "sc2-terran/thor-what03.mp3",
-        "sc2-terran/thor-what04.mp3",
-        "sc2-terran/thor-what05.mp3",
-        "sc2-terran/thor-what06.mp3",
-        "sc2-terran/thor-what07.mp3",
-        "sc2-terran/thor-what08.mp3",
-        "sc2-terran/thor-yes00.mp3",
-        "sc2-terran/thor-yes02.mp3",
-        "sc2-terran/thor-yes03.mp3",
-        "sc2-terran/thor-yes04.mp3",
-        "sc2-terran/thor-yes05.mp3",
-        "sc2-terran/thor-yes06.mp3",
-        "sc2-terran/thor-yes07.mp3",
-        "sc2-terran/thor-yes08.mp3",
-        "sc2-terran/thor-yes09.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -86,15 +61,8 @@
         }
       ],
       "sounds": [
-        "sc2-terran/thor-what00.mp3",
         "sc2-terran/thor-what01.mp3",
-        "sc2-terran/thor-what02.mp3",
-        "sc2-terran/thor-what03.mp3",
-        "sc2-terran/thor-what04.mp3",
-        "sc2-terran/thor-what05.mp3",
-        "sc2-terran/thor-what06.mp3",
-        "sc2-terran/thor-what07.mp3",
-        "sc2-terran/thor-what08.mp3"
+        "sc2-terran/thor-what05.mp3"
       ]
     },
     {

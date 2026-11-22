@@ -40,16 +40,7 @@
         }
       ],
       "sounds": [
-        "scbw-protoss/templar-dth00.wav",
-        "scbw-protoss/templar-rdy00.wav",
-        "scbw-protoss/templar-wht00.wav",
-        "scbw-protoss/templar-wht01.wav",
-        "scbw-protoss/templar-wht02.wav",
-        "scbw-protoss/templar-wht03.wav",
-        "scbw-protoss/templar-yes00.wav",
-        "scbw-protoss/templar-yes01.wav",
-        "scbw-protoss/templar-yes02.wav",
-        "scbw-protoss/templar-yes03.wav"
+        "scbw-protoss/advisor-upd06.wav"
       ]
     },
     {
@@ -66,9 +57,7 @@
       ],
       "sounds": [
         "scbw-protoss/templar-wht00.wav",
-        "scbw-protoss/templar-wht01.wav",
-        "scbw-protoss/templar-wht02.wav",
-        "scbw-protoss/templar-wht03.wav"
+        "scbw-protoss/templar-wht02.wav"
       ]
     },
     {

@@ -40,18 +40,7 @@
         }
       ],
       "sounds": [
-        "wc2-horde/basic-orc-voices-acknowledge-1.wav",
-        "wc2-horde/basic-orc-voices-acknowledge-2.wav",
-        "wc2-horde/basic-orc-voices-acknowledge-3.wav",
-        "wc2-horde/basic-orc-voices-acknowledge-4.wav",
-        "wc2-horde/basic-orc-voices-other-death.wav",
-        "wc2-horde/basic-orc-voices-other-work-complete.wav",
-        "wc2-horde/basic-orc-voices-selected-1.wav",
-        "wc2-horde/basic-orc-voices-selected-2.wav",
-        "wc2-horde/basic-orc-voices-selected-3.wav",
-        "wc2-horde/basic-orc-voices-selected-4.wav",
-        "wc2-horde/basic-orc-voices-selected-5.wav",
-        "wc2-horde/basic-orc-voices-selected-6.wav"
+        "wc2-horde/basic-orc-voices-other-work-complete.wav"
       ]
     },
     {
@@ -67,11 +56,7 @@
         }
       ],
       "sounds": [
-        "wc2-horde/basic-orc-voices-selected-1.wav",
-        "wc2-horde/basic-orc-voices-selected-2.wav",
-        "wc2-horde/basic-orc-voices-selected-3.wav",
         "wc2-horde/basic-orc-voices-selected-4.wav",
-        "wc2-horde/basic-orc-voices-selected-5.wav",
         "wc2-horde/basic-orc-voices-selected-6.wav"
       ]
     },

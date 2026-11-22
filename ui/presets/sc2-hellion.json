@@ -48,38 +48,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/hellion-attack00.mp3",
-        "sc2-terran/hellion-attack01.mp3",
-        "sc2-terran/hellion-attack02.mp3",
-        "sc2-terran/hellion-attack03.mp3",
-        "sc2-terran/hellion-attack04.mp3",
-        "sc2-terran/hellion-attack05.mp3",
-        "sc2-terran/hellion-attack06.mp3",
-        "sc2-terran/hellion-death00.mp3",
-        "sc2-terran/hellion-death01.mp3",
-        "sc2-terran/hellion-death02.mp3",
-        "sc2-terran/hellion-death03.mp3",
-        "sc2-terran/hellion-death04.mp3",
-        "sc2-terran/hellion-death05.mp3",
-        "sc2-terran/hellion-ready00.mp3",
-        "sc2-terran/hellion-what00.mp3",
-        "sc2-terran/hellion-what01.mp3",
-        "sc2-terran/hellion-what02.mp3",
-        "sc2-terran/hellion-what03.mp3",
-        "sc2-terran/hellion-what04.mp3",
-        "sc2-terran/hellion-what05.mp3",
-        "sc2-terran/hellion-yes00.mp3",
-        "sc2-terran/hellion-yes01.mp3",
-        "sc2-terran/hellion-yes02.mp3",
-        "sc2-terran/hellion-yes03.mp3",
-        "sc2-terran/hellion-yes04.mp3",
-        "sc2-terran/hellion-yes05.mp3",
-        "sc2-terran/hellion-yes06.mp3",
-        "sc2-terran/hellion-yes07.mp3",
-        "sc2-terran/hellion-yes08.mp3",
-        "sc2-terran/hellion-yes09.mp3",
-        "sc2-terran/hellion-yes10.mp3",
-        "sc2-terran/hellion-yes11.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -96,10 +65,7 @@
       ],
       "sounds": [
         "sc2-terran/hellion-what00.mp3",
-        "sc2-terran/hellion-what01.mp3",
         "sc2-terran/hellion-what02.mp3",
-        "sc2-terran/hellion-what03.mp3",
-        "sc2-terran/hellion-what04.mp3",
         "sc2-terran/hellion-what05.mp3"
       ]
     },

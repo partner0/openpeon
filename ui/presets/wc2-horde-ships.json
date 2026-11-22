@@ -39,9 +39,7 @@
         }
       ],
       "sounds": [
-        "wc2-horde/ships-acknowledge-1.wav",
-        "wc2-horde/ships-acknowledge-2.wav",
-        "wc2-horde/ships-acknowledge-3.wav"
+        "wc2-horde/basic-orc-voices-other-work-complete.wav"
       ]
     },
     {
@@ -57,9 +55,6 @@
         }
       ],
       "sounds": [
-        "wc2-horde/ships-selected-orc1.wav",
-        "wc2-horde/ships-selected-orc2.wav",
-        "wc2-horde/ships-selected-orc3.wav",
         "wc2-horde/ships-selected-orc4.wav"
       ]
     },

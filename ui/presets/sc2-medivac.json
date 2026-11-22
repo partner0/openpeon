@@ -48,33 +48,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/medivac-attack00.mp3",
-        "sc2-terran/medivac-attack01.mp3",
-        "sc2-terran/medivac-attack02.mp3",
-        "sc2-terran/medivac-attack03.mp3",
-        "sc2-terran/medivac-attack04.mp3",
-        "sc2-terran/medivac-attack05.mp3",
-        "sc2-terran/medivac-death00.mp3",
-        "sc2-terran/medivac-ready00.mp3",
-        "sc2-terran/medivac-what00.mp3",
-        "sc2-terran/medivac-what01.mp3",
-        "sc2-terran/medivac-what02.mp3",
-        "sc2-terran/medivac-what03.mp3",
-        "sc2-terran/medivac-what04.mp3",
-        "sc2-terran/medivac-what05.mp3",
-        "sc2-terran/medivac-what06.mp3",
-        "sc2-terran/medivac-yes01.mp3",
-        "sc2-terran/medivac-yes02.mp3",
-        "sc2-terran/medivac-yes03.mp3",
-        "sc2-terran/medivac-yes04.mp3",
-        "sc2-terran/medivac-yes05.mp3",
-        "sc2-terran/medivac-yes06.mp3",
-        "sc2-terran/medivac-yes07.mp3",
-        "sc2-terran/medivac-yes08.mp3",
-        "sc2-terran/medivac-yes09.mp3",
-        "sc2-terran/medivac-yes10.mp3",
-        "sc2-terran/medivac-yes11.mp3",
-        "sc2-terran/medivac-yes12.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -90,13 +64,9 @@
         }
       ],
       "sounds": [
-        "sc2-terran/medivac-what00.mp3",
-        "sc2-terran/medivac-what01.mp3",
         "sc2-terran/medivac-what02.mp3",
         "sc2-terran/medivac-what03.mp3",
-        "sc2-terran/medivac-what04.mp3",
-        "sc2-terran/medivac-what05.mp3",
-        "sc2-terran/medivac-what06.mp3"
+        "sc2-terran/medivac-what04.mp3"
       ]
     },
     {

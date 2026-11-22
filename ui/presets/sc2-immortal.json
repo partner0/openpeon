@@ -42,27 +42,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/immortal-attack00.mp3",
-        "sc2-protoss/immortal-attack01.mp3",
-        "sc2-protoss/immortal-attack02.mp3",
-        "sc2-protoss/immortal-attack03.mp3",
-        "sc2-protoss/immortal-attack04.mp3",
-        "sc2-protoss/immortal-attack05.mp3",
-        "sc2-protoss/immortal-attack06.mp3",
-        "sc2-protoss/immortal-ready00.mp3",
-        "sc2-protoss/immortal-what00.mp3",
-        "sc2-protoss/immortal-what01.mp3",
-        "sc2-protoss/immortal-what02.mp3",
-        "sc2-protoss/immortal-what03.mp3",
-        "sc2-protoss/immortal-what04.mp3",
-        "sc2-protoss/immortal-what05.mp3",
-        "sc2-protoss/immortal-what06.mp3",
-        "sc2-protoss/immortal-yes00.mp3",
-        "sc2-protoss/immortal-yes01.mp3",
-        "sc2-protoss/immortal-yes02.mp3",
-        "sc2-protoss/immortal-yes03.mp3",
-        "sc2-protoss/immortal-yes04.mp3",
-        "sc2-protoss/immortal-yes05.mp3"
+        "sc2-protoss/alert-protossupgradecomplete.mp3"
       ]
     },
     {
@@ -78,13 +58,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/immortal-what00.mp3",
-        "sc2-protoss/immortal-what01.mp3",
-        "sc2-protoss/immortal-what02.mp3",
-        "sc2-protoss/immortal-what03.mp3",
-        "sc2-protoss/immortal-what04.mp3",
-        "sc2-protoss/immortal-what05.mp3",
-        "sc2-protoss/immortal-what06.mp3"
+        "sc2-protoss/immortal-what01.mp3"
       ]
     },
     {

@@ -37,8 +37,7 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/gnomish-flying-machine-acknowledge-1.wav",
-        "wc2-alliance/gnomish-flying-machine-other-ready.wav"
+        "wc2-alliance/peasant-other-work-complete.wav"
       ]
     },
     {

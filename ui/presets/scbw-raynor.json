@@ -44,25 +44,7 @@
         }
       ],
       "sounds": [
-        "scbw-terran/raynorm-dth00.wav",
-        "scbw-terran/raynorm-dth01.wav",
-        "scbw-terran/raynorm-wht00.wav",
-        "scbw-terran/raynorm-wht01.wav",
-        "scbw-terran/raynorm-wht02.wav",
-        "scbw-terran/raynorm-wht03.wav",
-        "scbw-terran/raynorm-yes00.wav",
-        "scbw-terran/raynorm-yes01.wav",
-        "scbw-terran/raynorm-yes02.wav",
-        "scbw-terran/raynorm-yes03.wav",
-        "scbw-terran/raynorv-dth00.wav",
-        "scbw-terran/raynorv-wht00.wav",
-        "scbw-terran/raynorv-wht01.wav",
-        "scbw-terran/raynorv-wht02.wav",
-        "scbw-terran/raynorv-wht03.wav",
-        "scbw-terran/raynorv-yes00.wav",
-        "scbw-terran/raynorv-yes01.wav",
-        "scbw-terran/raynorv-yes02.wav",
-        "scbw-terran/raynorv-yes03.wav"
+        "scbw-terran/scv-upd00.wav"
       ]
     },
     {
@@ -78,12 +60,8 @@
         }
       ],
       "sounds": [
-        "scbw-terran/raynorm-wht00.wav",
-        "scbw-terran/raynorm-wht01.wav",
         "scbw-terran/raynorm-wht02.wav",
         "scbw-terran/raynorm-wht03.wav",
-        "scbw-terran/raynorv-wht00.wav",
-        "scbw-terran/raynorv-wht01.wav",
         "scbw-terran/raynorv-wht02.wav",
         "scbw-terran/raynorv-wht03.wav"
       ]

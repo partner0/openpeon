@@ -48,37 +48,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/reaper-attack00.mp3",
-        "sc2-terran/reaper-attack01.mp3",
-        "sc2-terran/reaper-attack02.mp3",
-        "sc2-terran/reaper-attack04.mp3",
-        "sc2-terran/reaper-attack05.mp3",
-        "sc2-terran/reaper-attack06.mp3",
-        "sc2-terran/reaper-death00.mp3",
-        "sc2-terran/reaper-death01.mp3",
-        "sc2-terran/reaper-death02.mp3",
-        "sc2-terran/reaper-death03.mp3",
-        "sc2-terran/reaper-death04.mp3",
-        "sc2-terran/reaper-death05.mp3",
-        "sc2-terran/reaper-ready00.mp3",
-        "sc2-terran/reaper-what01.mp3",
-        "sc2-terran/reaper-what02.mp3",
-        "sc2-terran/reaper-what03.mp3",
-        "sc2-terran/reaper-what04.mp3",
-        "sc2-terran/reaper-what05.mp3",
-        "sc2-terran/reaper-what06.mp3",
-        "sc2-terran/reaper-yes00.mp3",
-        "sc2-terran/reaper-yes01.mp3",
-        "sc2-terran/reaper-yes02.mp3",
-        "sc2-terran/reaper-yes03.mp3",
-        "sc2-terran/reaper-yes04.mp3",
-        "sc2-terran/reaper-yes05.mp3",
-        "sc2-terran/reaper-yes06.mp3",
-        "sc2-terran/reaper-yes07.mp3",
-        "sc2-terran/reaper-yes08.mp3",
-        "sc2-terran/reaper-yes09.mp3",
-        "sc2-terran/reaper-yes10.mp3",
-        "sc2-terran/reaper-yes11.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -95,9 +65,6 @@
       ],
       "sounds": [
         "sc2-terran/reaper-what01.mp3",
-        "sc2-terran/reaper-what02.mp3",
-        "sc2-terran/reaper-what03.mp3",
-        "sc2-terran/reaper-what04.mp3",
         "sc2-terran/reaper-what05.mp3",
         "sc2-terran/reaper-what06.mp3"
       ]

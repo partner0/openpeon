@@ -40,20 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/far-seer-acknowledge-1.wav",
-        "wc3-orc/far-seer-acknowledge-2.wav",
-        "wc3-orc/far-seer-acknowledge-3.wav",
-        "wc3-orc/far-seer-acknowledge-4.wav",
-        "wc3-orc/far-seer-attack-1.wav",
-        "wc3-orc/far-seer-attack-2.wav",
-        "wc3-orc/far-seer-attack-3.wav",
-        "wc3-orc/far-seer-death-1.wav",
-        "wc3-orc/far-seer-ready-1.wav",
-        "wc3-orc/far-seer-selected-1.wav",
-        "wc3-orc/far-seer-selected-2.wav",
-        "wc3-orc/far-seer-selected-3.wav",
-        "wc3-orc/far-seer-selected-4.wav",
-        "wc3-orc/far-seer-warcry-1.wav"
+        "wc3-orc/peon-work-complete-1.wav"
       ]
     },
     {
@@ -69,9 +56,6 @@
         }
       ],
       "sounds": [
-        "wc3-orc/far-seer-selected-1.wav",
-        "wc3-orc/far-seer-selected-2.wav",
-        "wc3-orc/far-seer-selected-3.wav",
         "wc3-orc/far-seer-selected-4.wav"
       ]
     },

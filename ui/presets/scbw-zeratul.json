@@ -40,15 +40,7 @@
         }
       ],
       "sounds": [
-        "scbw-protoss/zeratul-dth00.wav",
-        "scbw-protoss/zeratul-wht00.wav",
-        "scbw-protoss/zeratul-wht01.wav",
-        "scbw-protoss/zeratul-wht02.wav",
-        "scbw-protoss/zeratul-wht03.wav",
-        "scbw-protoss/zeratul-yes00.wav",
-        "scbw-protoss/zeratul-yes01.wav",
-        "scbw-protoss/zeratul-yes02.wav",
-        "scbw-protoss/zeratul-yes03.wav"
+        "scbw-protoss/advisor-upd06.wav"
       ]
     },
     {
@@ -64,10 +56,8 @@
         }
       ],
       "sounds": [
-        "scbw-protoss/zeratul-wht00.wav",
         "scbw-protoss/zeratul-wht01.wav",
-        "scbw-protoss/zeratul-wht02.wav",
-        "scbw-protoss/zeratul-wht03.wav"
+        "scbw-protoss/zeratul-wht02.wav"
       ]
     }
   ]

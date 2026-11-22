@@ -41,22 +41,7 @@
         }
       ],
       "sounds": [
-        "wc3-nightelf/warden-acknowledge-1.wav",
-        "wc3-nightelf/warden-acknowledge-2.wav",
-        "wc3-nightelf/warden-acknowledge-3.wav",
-        "wc3-nightelf/warden-acknowledge-4.wav",
-        "wc3-nightelf/warden-acknowledge-5.wav",
-        "wc3-nightelf/warden-attack-1.wav",
-        "wc3-nightelf/warden-attack-2.wav",
-        "wc3-nightelf/warden-attack-3.wav",
-        "wc3-nightelf/warden-death-1.wav",
-        "wc3-nightelf/warden-ready-1.wav",
-        "wc3-nightelf/warden-selected-1.wav",
-        "wc3-nightelf/warden-selected-2.wav",
-        "wc3-nightelf/warden-selected-3.wav",
-        "wc3-nightelf/warden-selected-4.wav",
-        "wc3-nightelf/warden-selected-5.wav",
-        "wc3-nightelf/warden-warcry-1.wav"
+        "wc3-nightelf/sentinel-upgrade-complete-1.wav"
       ]
     },
     {
@@ -72,11 +57,7 @@
         }
       ],
       "sounds": [
-        "wc3-nightelf/warden-selected-1.wav",
-        "wc3-nightelf/warden-selected-2.wav",
-        "wc3-nightelf/warden-selected-3.wav",
-        "wc3-nightelf/warden-selected-4.wav",
-        "wc3-nightelf/warden-selected-5.wav"
+        "wc3-nightelf/warden-selected-1.wav"
       ]
     },
     {

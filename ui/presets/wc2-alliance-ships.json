@@ -39,13 +39,7 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/ships-acknowledge-1.wav",
-        "wc2-alliance/ships-acknowledge-2.wav",
-        "wc2-alliance/ships-acknowledge-3.wav",
-        "wc2-alliance/ships-selected-1.wav",
-        "wc2-alliance/ships-selected-2.wav",
-        "wc2-alliance/ships-selected-3.wav",
-        "wc2-alliance/ships-selected-4.wav"
+        "wc2-alliance/peasant-other-work-complete.wav"
       ]
     },
     {
@@ -61,10 +55,8 @@
         }
       ],
       "sounds": [
-        "wc2-alliance/ships-selected-1.wav",
         "wc2-alliance/ships-selected-2.wav",
-        "wc2-alliance/ships-selected-3.wav",
-        "wc2-alliance/ships-selected-4.wav"
+        "wc2-alliance/ships-selected-3.wav"
       ]
     },
     {

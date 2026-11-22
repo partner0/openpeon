@@ -48,38 +48,7 @@
         }
       ],
       "sounds": [
-        "sc2-terran/marauder-attack00.mp3",
-        "sc2-terran/marauder-attack01.mp3",
-        "sc2-terran/marauder-attack02.mp3",
-        "sc2-terran/marauder-attack03.mp3",
-        "sc2-terran/marauder-attack04.mp3",
-        "sc2-terran/marauder-attack05.mp3",
-        "sc2-terran/marauder-death00.mp3",
-        "sc2-terran/marauder-death01.mp3",
-        "sc2-terran/marauder-death02.mp3",
-        "sc2-terran/marauder-death03.mp3",
-        "sc2-terran/marauder-death04.mp3",
-        "sc2-terran/marauder-death05.mp3",
-        "sc2-terran/marauder-death06.mp3",
-        "sc2-terran/marauder-ready00.mp3",
-        "sc2-terran/marauder-what00.mp3",
-        "sc2-terran/marauder-what01.mp3",
-        "sc2-terran/marauder-what02.mp3",
-        "sc2-terran/marauder-what03.mp3",
-        "sc2-terran/marauder-what04.mp3",
-        "sc2-terran/marauder-what05.mp3",
-        "sc2-terran/marauder-yes00.mp3",
-        "sc2-terran/marauder-yes01.mp3",
-        "sc2-terran/marauder-yes02.mp3",
-        "sc2-terran/marauder-yes03.mp3",
-        "sc2-terran/marauder-yes04.mp3",
-        "sc2-terran/marauder-yes05.mp3",
-        "sc2-terran/marauder-yes06.mp3",
-        "sc2-terran/marauder-yes07.mp3",
-        "sc2-terran/marauder-yes08.mp3",
-        "sc2-terran/marauder-yes09.mp3",
-        "sc2-terran/marauder-yes10.mp3",
-        "sc2-terran/marauder-yes11.mp3"
+        "sc2-terran/scv-jobsfinished00.mp3"
       ]
     },
     {
@@ -97,10 +66,7 @@
       "sounds": [
         "sc2-terran/marauder-what00.mp3",
         "sc2-terran/marauder-what01.mp3",
-        "sc2-terran/marauder-what02.mp3",
-        "sc2-terran/marauder-what03.mp3",
-        "sc2-terran/marauder-what04.mp3",
-        "sc2-terran/marauder-what05.mp3"
+        "sc2-terran/marauder-what02.mp3"
       ]
     },
     {

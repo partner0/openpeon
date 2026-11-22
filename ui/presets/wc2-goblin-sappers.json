@@ -40,15 +40,7 @@
         }
       ],
       "sounds": [
-        "wc2-horde/goblin-sappers-acknowledge-1.wav",
-        "wc2-horde/goblin-sappers-acknowledge-2.wav",
-        "wc2-horde/goblin-sappers-acknowledge-3.wav",
-        "wc2-horde/goblin-sappers-acknowledge-4.wav",
-        "wc2-horde/goblin-sappers-other-ready.wav",
-        "wc2-horde/goblin-sappers-selected-1.wav",
-        "wc2-horde/goblin-sappers-selected-2.wav",
-        "wc2-horde/goblin-sappers-selected-3.wav",
-        "wc2-horde/goblin-sappers-selected-4.wav"
+        "wc2-horde/basic-orc-voices-other-work-complete.wav"
       ]
     },
     {
@@ -65,9 +57,7 @@
       ],
       "sounds": [
         "wc2-horde/goblin-sappers-selected-1.wav",
-        "wc2-horde/goblin-sappers-selected-2.wav",
-        "wc2-horde/goblin-sappers-selected-3.wav",
-        "wc2-horde/goblin-sappers-selected-4.wav"
+        "wc2-horde/goblin-sappers-selected-3.wav"
       ]
     },
     {

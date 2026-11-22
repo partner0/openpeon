@@ -41,23 +41,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/troll-batrider-acknowledge-1.wav",
-        "wc3-orc/troll-batrider-acknowledge-2.wav",
-        "wc3-orc/troll-batrider-acknowledge-3.wav",
-        "wc3-orc/troll-batrider-acknowledge-4.wav",
-        "wc3-orc/troll-batrider-acknowledge-5.wav",
-        "wc3-orc/troll-batrider-attack-1.wav",
-        "wc3-orc/troll-batrider-attack-2.wav",
-        "wc3-orc/troll-batrider-attack-3.wav",
-        "wc3-orc/troll-batrider-attack-4.wav",
-        "wc3-orc/troll-batrider-death-1.wav",
-        "wc3-orc/troll-batrider-ready-1.wav",
-        "wc3-orc/troll-batrider-selected-1.wav",
-        "wc3-orc/troll-batrider-selected-2.wav",
-        "wc3-orc/troll-batrider-selected-3.wav",
-        "wc3-orc/troll-batrider-selected-4.wav",
-        "wc3-orc/troll-batrider-selected-5.wav",
-        "wc3-orc/troll-batrider-warcry-1.wav"
+        "wc3-orc/peon-work-complete-1.wav"
       ]
     },
     {
@@ -73,10 +57,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/troll-batrider-selected-1.wav",
         "wc3-orc/troll-batrider-selected-2.wav",
-        "wc3-orc/troll-batrider-selected-3.wav",
-        "wc3-orc/troll-batrider-selected-4.wav",
         "wc3-orc/troll-batrider-selected-5.wav"
       ]
     },

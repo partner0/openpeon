@@ -40,20 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-nightelf/priestess-of-the-moon-acknowledge-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-acknowledge-2.wav",
-        "wc3-nightelf/priestess-of-the-moon-acknowledge-3.wav",
-        "wc3-nightelf/priestess-of-the-moon-acknowledge-4.wav",
-        "wc3-nightelf/priestess-of-the-moon-attack-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-attack-2.wav",
-        "wc3-nightelf/priestess-of-the-moon-attack-3.wav",
-        "wc3-nightelf/priestess-of-the-moon-death-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-ready-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-2.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-3.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-4.wav",
-        "wc3-nightelf/priestess-of-the-moon-warcry-1.wav"
+        "wc3-nightelf/sentinel-upgrade-complete-1.wav"
       ]
     },
     {
@@ -69,9 +56,6 @@
         }
       ],
       "sounds": [
-        "wc3-nightelf/priestess-of-the-moon-selected-1.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-2.wav",
-        "wc3-nightelf/priestess-of-the-moon-selected-3.wav",
         "wc3-nightelf/priestess-of-the-moon-selected-4.wav"
       ]
     },

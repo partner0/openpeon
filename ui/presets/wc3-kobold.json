@@ -39,17 +39,7 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/kobold-acknowledge-1.wav",
-        "wc3-neutral/kobold-acknowledge-2.wav",
-        "wc3-neutral/kobold-acknowledge-3.wav",
-        "wc3-neutral/kobold-attack-1.wav",
-        "wc3-neutral/kobold-attack-2.wav",
-        "wc3-neutral/kobold-attack-3.wav",
-        "wc3-neutral/kobold-death-1.wav",
-        "wc3-neutral/kobold-ready-1.wav",
-        "wc3-neutral/kobold-selected-1.wav",
-        "wc3-neutral/kobold-selected-2.wav",
-        "wc3-neutral/kobold-selected-3.wav"
+        "wc3-peasant/peasant-work-complete-1.mp3"
       ]
     },
     {

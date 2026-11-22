@@ -41,18 +41,7 @@
         }
       ],
       "sounds": [
-        "scbw-zerg/drone-dth00.wav",
-        "scbw-zerg/drone-rdy00.wav",
-        "scbw-zerg/drone-wht00.wav",
-        "scbw-zerg/drone-wht01.wav",
-        "scbw-zerg/drone-wht02.wav",
-        "scbw-zerg/drone-wht03.wav",
-        "scbw-zerg/drone-wht04.wav",
-        "scbw-zerg/drone-yes00.wav",
-        "scbw-zerg/drone-yes01.wav",
-        "scbw-zerg/drone-yes02.wav",
-        "scbw-zerg/drone-yes03.wav",
-        "scbw-zerg/drone-yes04.wav"
+        "scbw-zerg/advisor-upd02.wav"
       ]
     },
     {

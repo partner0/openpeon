@@ -42,24 +42,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/archon-attack00.mp3",
-        "sc2-protoss/archon-attack01.mp3",
-        "sc2-protoss/archon-attack02.mp3",
-        "sc2-protoss/archon-death00.mp3",
-        "sc2-protoss/archon-death01.mp3",
-        "sc2-protoss/archon-death02.mp3",
-        "sc2-protoss/archon-death03.mp3",
-        "sc2-protoss/archon-ready00.mp3",
-        "sc2-protoss/archon-what00.mp3",
-        "sc2-protoss/archon-what01.mp3",
-        "sc2-protoss/archon-what02.mp3",
-        "sc2-protoss/archon-what03.mp3",
-        "sc2-protoss/archon-yes00.mp3",
-        "sc2-protoss/archon-yes01.mp3",
-        "sc2-protoss/archon-yes02.mp3",
-        "sc2-protoss/archon-yes03.mp3",
-        "sc2-protoss/archon-yes04.mp3",
-        "sc2-protoss/archon-yes05.mp3"
+        "sc2-protoss/alert-protossupgradecomplete.mp3"
       ]
     },
     {
@@ -75,9 +58,6 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/archon-what00.mp3",
-        "sc2-protoss/archon-what01.mp3",
-        "sc2-protoss/archon-what02.mp3",
         "sc2-protoss/archon-what03.mp3"
       ]
     },

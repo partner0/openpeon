@@ -40,16 +40,7 @@
         }
       ],
       "sounds": [
-        "scbw-protoss/archon-dth00.wav",
-        "scbw-protoss/archon-rdy00.wav",
-        "scbw-protoss/archon-wht00.wav",
-        "scbw-protoss/archon-wht01.wav",
-        "scbw-protoss/archon-wht02.wav",
-        "scbw-protoss/archon-wht03.wav",
-        "scbw-protoss/archon-yes00.wav",
-        "scbw-protoss/archon-yes01.wav",
-        "scbw-protoss/archon-yes02.wav",
-        "scbw-protoss/archon-yes03.wav"
+        "scbw-protoss/advisor-upd06.wav"
       ]
     },
     {

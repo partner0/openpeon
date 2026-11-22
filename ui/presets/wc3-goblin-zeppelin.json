@@ -40,16 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/goblin-zeppelin-acknowledge-1.wav",
-        "wc3-neutral/goblin-zeppelin-acknowledge-2.wav",
-        "wc3-neutral/goblin-zeppelin-acknowledge-3.wav",
-        "wc3-neutral/goblin-zeppelin-acknowledge-4.wav",
-        "wc3-neutral/goblin-zeppelin-death-1.wav",
-        "wc3-neutral/goblin-zeppelin-ready-1.wav",
-        "wc3-neutral/goblin-zeppelin-selected-1.wav",
-        "wc3-neutral/goblin-zeppelin-selected-2.wav",
-        "wc3-neutral/goblin-zeppelin-selected-3.wav",
-        "wc3-neutral/goblin-zeppelin-selected-4.wav"
+        "wc3-peasant/peasant-work-complete-1.mp3"
       ]
     },
     {
@@ -65,10 +56,7 @@
         }
       ],
       "sounds": [
-        "wc3-neutral/goblin-zeppelin-selected-1.wav",
-        "wc3-neutral/goblin-zeppelin-selected-2.wav",
-        "wc3-neutral/goblin-zeppelin-selected-3.wav",
-        "wc3-neutral/goblin-zeppelin-selected-4.wav"
+        "wc3-neutral/goblin-zeppelin-selected-1.wav"
       ]
     }
   ]

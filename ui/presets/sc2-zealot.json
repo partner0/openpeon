@@ -42,31 +42,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/zealot-attack00.mp3",
-        "sc2-protoss/zealot-attack01.mp3",
-        "sc2-protoss/zealot-attack02.mp3",
-        "sc2-protoss/zealot-attack03.mp3",
-        "sc2-protoss/zealot-attack04.mp3",
-        "sc2-protoss/zealot-attack05.mp3",
-        "sc2-protoss/zealot-attack06.mp3",
-        "sc2-protoss/zealot-death00.mp3",
-        "sc2-protoss/zealot-death01.mp3",
-        "sc2-protoss/zealot-death02.mp3",
-        "sc2-protoss/zealot-death03.mp3",
-        "sc2-protoss/zealot-death04.mp3",
-        "sc2-protoss/zealot-ready00.mp3",
-        "sc2-protoss/zealot-what00.mp3",
-        "sc2-protoss/zealot-what01.mp3",
-        "sc2-protoss/zealot-what02.mp3",
-        "sc2-protoss/zealot-what03.mp3",
-        "sc2-protoss/zealot-what04.mp3",
-        "sc2-protoss/zealot-what05.mp3",
-        "sc2-protoss/zealot-yes00.mp3",
-        "sc2-protoss/zealot-yes01.mp3",
-        "sc2-protoss/zealot-yes02.mp3",
-        "sc2-protoss/zealot-yes03.mp3",
-        "sc2-protoss/zealot-yes04.mp3",
-        "sc2-protoss/zealot-yes05.mp3"
+        "sc2-protoss/alert-protossupgradecomplete.mp3"
       ]
     },
     {
@@ -82,12 +58,7 @@
         }
       ],
       "sounds": [
-        "sc2-protoss/zealot-what00.mp3",
-        "sc2-protoss/zealot-what01.mp3",
-        "sc2-protoss/zealot-what02.mp3",
-        "sc2-protoss/zealot-what03.mp3",
-        "sc2-protoss/zealot-what04.mp3",
-        "sc2-protoss/zealot-what05.mp3"
+        "sc2-protoss/zealot-what02.mp3"
       ]
     },
     {

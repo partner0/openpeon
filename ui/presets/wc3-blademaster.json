@@ -40,20 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/blademaster-acknowledge-1.wav",
-        "wc3-orc/blademaster-acknowledge-2.wav",
-        "wc3-orc/blademaster-acknowledge-3.wav",
-        "wc3-orc/blademaster-acknowledge-4.wav",
-        "wc3-orc/blademaster-attack-1.wav",
-        "wc3-orc/blademaster-attack-2.wav",
-        "wc3-orc/blademaster-attack-3.wav",
-        "wc3-orc/blademaster-death-1.wav",
-        "wc3-orc/blademaster-ready-1.wav",
-        "wc3-orc/blademaster-selected-1.wav",
-        "wc3-orc/blademaster-selected-2.wav",
-        "wc3-orc/blademaster-selected-3.wav",
-        "wc3-orc/blademaster-selected-4.wav",
-        "wc3-orc/blademaster-warcry-1.wav"
+        "wc3-orc/peon-work-complete-1.wav"
       ]
     },
     {
@@ -69,10 +56,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/blademaster-selected-1.wav",
-        "wc3-orc/blademaster-selected-2.wav",
-        "wc3-orc/blademaster-selected-3.wav",
-        "wc3-orc/blademaster-selected-4.wav"
+        "wc3-orc/blademaster-selected-2.wav"
       ]
     },
     {

@@ -40,20 +40,7 @@
         }
       ],
       "sounds": [
-        "wc3-orc/peon-acknowledge-1.wav",
-        "wc3-orc/peon-acknowledge-2.wav",
-        "wc3-orc/peon-acknowledge-3.wav",
-        "wc3-orc/peon-acknowledge-4.wav",
-        "wc3-orc/peon-attack-1.wav",
-        "wc3-orc/peon-attack-2.wav",
-        "wc3-orc/peon-attack-3.wav",
-        "wc3-orc/peon-death-1.wav",
-        "wc3-orc/peon-ready-1.wav",
-        "wc3-orc/peon-selected-1.wav",
-        "wc3-orc/peon-selected-2.wav",
-        "wc3-orc/peon-selected-3.wav",
-        "wc3-orc/peon-selected-4.wav",
-        "wc3-orc/peon-warcry-1.wav"
+        "wc3-orc/peon-work-complete-1.wav"
       ]
     },
     {
