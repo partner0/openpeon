@@ -26,6 +26,7 @@ openpeon/
     wc2-horde/          # Full Warcraft II Horde sound library
     wc2-alliance/       # Full Warcraft II Alliance sound library
     wc3-<race>/         # Warcraft III voice lines (human, orc, undead, nightelf, neutral), named <unit>-<category>-<n>.wav
+  docs/                 # Sound transcripts used to curate presets (not deployed)
   skills/openpeon/      # Claude Code skill (session preset/volume control), deployed to ~/.claude/skills/
   tmux/                 # Herdr popup implementation plus legacy Claude tmux entry point
   test/                 # bun test suites + fixtures (Claude payloads, presets, configs)
@@ -83,6 +84,13 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 - Tier 1 = weight 3 (~50%), Tier 2 = weight 2 (~33%), Tier 3 = weight 1 (~17%).
 - Presets without a `tier` field default to weight 2.
 - Only affects random preset selection at startup when `randomPreset` is `true`.
+
+### Preset Sound Conventions (user decisions)
+
+- `work-complete` plays the unit's faction worker done line: peasant "Job's done", peon "Work complete", SCV "Job's finished". Factions without a worker line use their upgrade or evolution complete line (WC3 Undead and Night Elf, Protoss, Zerg).
+- `permission-asked` plays the unit's question lines ("What is it?"), else its "awaiting orders" lines ("Command me"). Units that only growl keep all their select lines.
+- No preset plays pissed lines, the ones a unit says when clicked repeatedly.
+- `docs/sound-transcripts.md` holds machine transcripts of the select and done lines, used to pick these. Listen before trusting a row.
 
 ### Trigger Types
 
