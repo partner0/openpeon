@@ -243,6 +243,13 @@ describe("popup-herdr", () => {
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
   })
 
+  test("caps the popup height and lets a long preset list scroll", () => {
+    addSession("herdr-1", "-Users-me-repo")
+    addPresets(40)
+    stubHerdr([{ agent: "claude", focused: true, cwd: "/Users/me/repo" }])
+    expect(runPopupHerdr()).toContain("--height 24")
+  })
+
   test("passes both install roots next to the pi session asset root", () => {
     // The pane's game redraw must reach Claude sessions too, although
     // OPENPEON_ROOT now names the pi session's asset root.

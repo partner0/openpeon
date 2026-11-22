@@ -564,8 +564,21 @@ show_msg() { # show_msg <width> <text>
   IFS= read -rsn1 k
 }
 
+# Popup height for the presets in PRESETS_DIR, capped at MAX_POPUP_HEIGHT
+# rows: a longer preset list scrolls inside the popup.
+MAX_POPUP_HEIGHT=24
+popup_height() {
+  local p n=0 h
+  for p in "$PRESETS_DIR/"*.json; do
+    [[ -e "$p" ]] && n=$((n + 1))
+  done
+  h=$((n + 7))   # volume + whisper + games + base row + n presets + help + border
+  (( h > MAX_POPUP_HEIGHT )) && h=$MAX_POPUP_HEIGHT
+  printf '%s' "$h"
+}
+
 run_popup() {
-  local client="${2:-}" pane="${3:-}" res status rest sid n w h self
+  local client="${2:-}" pane="${3:-}" res status rest sid w h self
   command -v tmux >/dev/null 2>&1 || exit 0
   self=$(self_path)
   res=$(resolve_pane "$pane")
@@ -579,11 +592,7 @@ run_popup() {
       -T ' openpeon ' -E "$(printf '%q msg %q %q' "$self" "$((w - 4))" "$rest")"
   fi
   sid="${rest%%$TAB*}"
-  n=0
-  for p in "$PRESETS_DIR/"*.json; do
-    [[ -e "$p" ]] && n=$((n + 1))
-  done
-  h=$((n + 7))   # volume + whisper + games + base row + n presets + help + border
+  h=$(popup_height)
   w=48
   exec tmux display-popup ${client:+-c "$client"} -x R -y 0 -w "$w" -h "$h" \
     -T ' openpeon ' -E "$(printf '%q tui %q' "$self" "$sid")"
@@ -594,7 +603,7 @@ run_popup() {
 # the result passed through the environment (popup sizes in config.toml are
 # static, only a plugin can size a popup at open time).
 run_popup_herdr() {
-  local res status rest sid count_and_roots roots popup_root popup_state_root n w h p
+  local res status rest sid count_and_roots roots popup_root popup_state_root w h
   res=$(resolve_herdr)
   status="${res%%$TAB*}"
   rest="${res#*$TAB}"
@@ -620,11 +629,7 @@ run_popup_herdr() {
   else
     STATE_ROOT="$ROOT"
   fi
-  n=0
-  for p in "$PRESETS_DIR/"*.json; do
-    [[ -e "$p" ]] && n=$((n + 1))
-  done
-  h=$((n + 7))   # volume + whisper + games + base row + n presets + help + border
+  h=$(popup_height)
   exec herdr plugin pane open --plugin openpeon --entrypoint popup \
     --placement popup --width 48 --height "$h" --focus \
     --env "OPENPEON_POPUP_SID=$sid" --env "OPENPEON_ROOT=$ROOT" \
