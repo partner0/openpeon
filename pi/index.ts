@@ -8,6 +8,7 @@ import {
   DEFAULT_CONFIG,
   getRandomSound,
   listPresets,
+  listRandomPresets,
   loadConfig,
   loadPreset,
   matchesEventTrigger,
@@ -41,6 +42,7 @@ interface OpenPeonMapping {
 interface OpenPeonConfig {
   volume?: number
   randomPreset?: boolean
+  enabledGames?: string[]
   mappings?: OpenPeonMapping[]
   tier?: number
 }
@@ -227,7 +229,7 @@ export default function openPeonExtension(pi: ExtensionAPI): void {
       return
     }
 
-    presetNames = listPresets(PRESETS_DIR)
+    presetNames = listRandomPresets(PRESETS_DIR, loadedConfig.enabledGames)
     pickedPreset = pickWeightedPreset(PRESETS_DIR, presetNames)
     if (pickedPreset && activatePreset(pickedPreset)) {
       logDebug("random-preset", { preset: pickedPreset })

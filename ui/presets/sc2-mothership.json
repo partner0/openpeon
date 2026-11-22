@@ -1,0 +1,130 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/mothership-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/mothership-yes00.mp3",
+        "sc2-protoss/mothership-yes01.mp3",
+        "sc2-protoss/mothership-yes02.mp3",
+        "sc2-protoss/mothership-yes03.mp3",
+        "sc2-protoss/mothership-yes04.mp3",
+        "sc2-protoss/mothership-yes05.mp3",
+        "sc2-protoss/mothership-yes06.mp3",
+        "sc2-protoss/mothership-yes07.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/mothership-pissed00.mp3",
+        "sc2-protoss/mothership-pissed01.mp3",
+        "sc2-protoss/mothership-pissed02.mp3",
+        "sc2-protoss/mothership-pissed03.mp3",
+        "sc2-protoss/mothership-pissed04.mp3",
+        "sc2-protoss/mothership-pissed05.mp3",
+        "sc2-protoss/mothership-pissed06.mp3",
+        "sc2-protoss/mothership-pissed07.mp3",
+        "sc2-protoss/mothership-pissed08.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/mothership-what00.mp3",
+        "sc2-protoss/mothership-what01.mp3",
+        "sc2-protoss/mothership-what02.mp3",
+        "sc2-protoss/mothership-what03.mp3",
+        "sc2-protoss/mothership-what04.mp3",
+        "sc2-protoss/mothership-what05.mp3",
+        "sc2-protoss/mothership-what06.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/mothership-attack00.mp3",
+        "sc2-protoss/mothership-attack01.mp3",
+        "sc2-protoss/mothership-attack02.mp3",
+        "sc2-protoss/mothership-attack04.mp3",
+        "sc2-protoss/mothership-attack05.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

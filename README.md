@@ -32,7 +32,7 @@ Switch to the wc2-ogre-mage preset
 
 The agent uses the `peon_switch_preset` tool, no restart required.
 
-Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. OpenCode and pi expose tools to switch it. Claude Code remembers the rolled preset for the session and uses the bundled `openpeon` skill for changes.
+Set `"randomPreset": true` in `openpeon.json` to load a random preset each session. Limit the roll to some games with `"enabledGames": ["wc2", "wc3"]` (the preset name prefix); leave it out to draw from every game. OpenCode and pi expose tools to switch it. Claude Code remembers the rolled preset for the session and uses the bundled `openpeon` skill for changes.
 
 ## Installation
 
@@ -131,7 +131,7 @@ bun run ui
 Open http://localhost:3456 to:
 
 - Adjust volume (1-10)
-- Toggle random preset on startup
+- Toggle random preset on startup, and pick the games it draws from
 - Add, remove, and edit mappings (triggers and sounds)
 - Toggle whisper mode per mapping
 - Browse and preview all available sounds
@@ -238,7 +238,7 @@ type = "plugin_action"
 command = "openpeon.popup"
 ```
 
-The popup shows a volume bar, whisper state, and preset list. Left and right adjust volume, `m` mutes, `w` toggles whisper, up and down choose a preset, Enter applies it, and `q` closes. Every change plays a sample and applies to the next sound.
+The popup shows a volume bar, whisper state, the games the random preset draws from, and the preset list. Left and right adjust volume, `m` mutes, `w` toggles whisper, up and down choose a preset, Enter applies it, and `q` closes. Every change plays a sample and applies to the next sound. `g` opens the games list, where Enter turns a game on or off for the random roll, and `g` or Esc goes back. The change applies to the Claude and pi configs, and every open Claude and pi session draws a new preset from the games left.
 
 The pi extension writes live control state under `~/.pi/agent/openpeon/state/`. Herdr matches the focused pi pane by working directory and uses the newest live session when several sessions share that directory. Claude keeps its transcript and state-file matching. Volume changes also update the base `openpeon.json`; preset and whisper changes stay session-scoped.
 

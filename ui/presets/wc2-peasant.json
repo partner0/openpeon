@@ -1,0 +1,119 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/peasant-other-ready.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/peasant-acknowledge-1.wav",
+        "wc2-alliance/peasant-acknowledge-2.wav",
+        "wc2-alliance/peasant-acknowledge-3.wav",
+        "wc2-alliance/peasant-acknowledge-4.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/peasant-annoyed-1.wav",
+        "wc2-alliance/peasant-annoyed-2.wav",
+        "wc2-alliance/peasant-annoyed-3.wav",
+        "wc2-alliance/peasant-annoyed-4.wav",
+        "wc2-alliance/peasant-annoyed-5.wav",
+        "wc2-alliance/peasant-annoyed-6.wav",
+        "wc2-alliance/peasant-annoyed-7.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/peasant-selected-1.wav",
+        "wc2-alliance/peasant-selected-2.wav",
+        "wc2-alliance/peasant-selected-3.wav",
+        "wc2-alliance/peasant-selected-4.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/buildings-gold-mine.wav",
+        "wc2-alliance/buildings-lumber-mill.wav",
+        "wc2-alliance/buildings-farm.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

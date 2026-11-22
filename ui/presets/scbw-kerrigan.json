@@ -1,0 +1,82 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/kerrigan-yes00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/kerrigan-yes00.wav",
+        "scbw-terran/kerrigan-yes01.wav",
+        "scbw-terran/kerrigan-yes02.wav",
+        "scbw-terran/kerrigan-yes03.wav",
+        "scbw-zerg/zergkerri-yes00.wav",
+        "scbw-zerg/zergkerri-yes01.wav",
+        "scbw-zerg/zergkerri-yes02.wav",
+        "scbw-zerg/zergkerri-yes03.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/kerrigan-pss00.wav",
+        "scbw-terran/kerrigan-pss01.wav",
+        "scbw-terran/kerrigan-pss02.wav",
+        "scbw-terran/kerrigan-pss03.wav",
+        "scbw-terran/kerrigan-pss04.wav",
+        "scbw-zerg/zergkerri-pss00.wav",
+        "scbw-zerg/zergkerri-pss01.wav",
+        "scbw-zerg/zergkerri-pss02.wav",
+        "scbw-zerg/zergkerri-pss03.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "scbw-terran/kerrigan-wht00.wav",
+        "scbw-terran/kerrigan-wht01.wav",
+        "scbw-terran/kerrigan-wht02.wav",
+        "scbw-terran/kerrigan-wht03.wav",
+        "scbw-zerg/zergkerri-wht00.wav",
+        "scbw-zerg/zergkerri-wht01.wav",
+        "scbw-zerg/zergkerri-wht02.wav",
+        "scbw-zerg/zergkerri-wht03.wav"
+      ]
+    }
+  ]
+}

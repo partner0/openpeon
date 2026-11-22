@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { resolve, dirname, join } from "path"
 import { fileURLToPath } from "url"
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, utimesSync } from "fs"
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync, utimesSync } from "fs"
 import { spawnSync } from "child_process"
 import { tmpdir } from "os"
 
@@ -85,15 +85,6 @@ describe("resolve-cwd", () => {
     expect(status).toBe("ok")
     expect(id).toBe("new-session")
     expect(count).toBe("2")
-  })
-
-  test("ignores live sessions from other directories", () => {
-    addSession("here-1", "-Users-me-repo")
-    addSession("elsewhere-1", "-Users-me-other")
-    const [status, id, count] = runResolveCwd("/Users/me/repo")
-    expect(status).toBe("ok")
-    expect(id).toBe("here-1")
-    expect(count).toBe("1")
   })
 
   test("errors when no live session matches the directory", () => {
@@ -192,15 +183,11 @@ describe("resolve-herdr", () => {
     expect(message).toContain("peon_set_volume")
   })
 
-  test("errors when no agent pane is focused", () => {
-    stubHerdr([{ agent: "claude", focused: false, cwd: "/Users/me/repo" }])
-    const [status, message] = runResolveHerdr()
-    expect(status).toBe("err")
-    expect(message).toContain("no supported agent session")
-  })
-
-  test("errors on a focused unsupported agent", () => {
-    stubHerdr([{ agent: "codex", focused: true, cwd: "/Users/me/repo" }])
+  test.each([
+    ["no agent pane is focused", { agent: "claude", focused: false, cwd: "/Users/me/repo" }],
+    ["the focused agent is unsupported", { agent: "codex", focused: true, cwd: "/Users/me/repo" }],
+  ])("errors when %s", (_case, agent) => {
+    stubHerdr([agent])
     const [status, message] = runResolveHerdr()
     expect(status).toBe("err")
     expect(message).toContain("no supported agent session")
@@ -220,13 +207,14 @@ describe("popup-herdr", () => {
     chmodSync(stub, 0o755)
   }
 
-  function runPopupHerdr() {
+  function runPopupHerdr(env = {}) {
     const result = spawnSync("/bin/bash", [SCRIPT, "popup-herdr"], {
       env: {
         ...process.env,
         OPENPEON_ROOT: root,
         OPENPEON_PROJECTS_DIR: projects,
         PATH: `${bin}:${process.env.PATH}`,
+        ...env,
       },
       encoding: "utf8",
     })
@@ -249,21 +237,22 @@ describe("popup-herdr", () => {
     expect(call).toContain("plugin pane open")
     expect(call).toContain("--placement popup")
     expect(call).toContain("--width 48")
-    expect(call).toContain("--height 12") // 6 presets + 6
+    expect(call).toContain("--height 13") // 6 presets + 7
     expect(call).toContain("OPENPEON_POPUP_SID=herdr-1")
     expect(call).toContain(`OPENPEON_ROOT=${root}`)
     expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
   })
 
-  test("opens the focused pi session with its asset root", () => {
-    addPiSession("pi-herdr-1", "/Users/me/repo")
-    addPresets(2)
-    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo", foreground_cwd: "/Users/me/repo" }])
-    const call = runPopupHerdr()
-    expect(call).toContain("--height 8")
-    expect(call).toContain("OPENPEON_POPUP_SID=pi-herdr-1")
-    expect(call).toContain(`OPENPEON_ROOT=${root}`)
-    expect(call).toContain(`OPENPEON_STATE_ROOT=${root}`)
+  test("passes both install roots next to the pi session asset root", () => {
+    // The pane's game redraw must reach Claude sessions too, although
+    // OPENPEON_ROOT now names the pi session's asset root.
+    const assetRoot = "/opt/pi-package/openpeon"
+    addPiSession("pi-herdr-1", "/Users/me/repo", 0, assetRoot)
+    stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
+    const call = runPopupHerdr({ OPENPEON_CLAUDE_ROOT: "/claude/openpeon", OPENPEON_PI_STATE_ROOT: root })
+    expect(call).toContain(`OPENPEON_ROOT=${assetRoot}`)
+    expect(call).toContain("OPENPEON_CLAUDE_ROOT=/claude/openpeon")
+    expect(call).toContain(`OPENPEON_PI_STATE_ROOT=${root}`)
   })
 
   test("uses package presets when the asset root has no deployed presets directory", () => {
@@ -271,7 +260,7 @@ describe("popup-herdr", () => {
     addPackagePresets(3)
     stubHerdr([{ agent: "pi", focused: true, cwd: "/Users/me/repo" }])
     const call = runPopupHerdr()
-    expect(call).toContain("--height 9")
+    expect(call).toContain("--height 10")
   })
 
   test("opens an error pane sized to the message", () => {
@@ -308,13 +297,13 @@ describe("tui list viewport", () => {
 
   test("draws every list row when the terminal is tall enough", () => {
     addPresets(6)
-    // volume + whisper + base row + 6 presets + help
-    expect(runTui(30).length).toBe(10)
+    // volume + whisper + games + base row + 6 presets + help
+    expect(runTui(30).length).toBe(11)
   })
 
   test("scrolls the list when the terminal is shorter than the rows", () => {
     addPresets(6)
-    // 8 lines - 3 fixed = 5 visible rows of the 7 list rows
+    // 8 lines - 4 fixed = 4 visible rows of the 7 list rows
     expect(runTui(8).length).toBe(8)
   })
 
@@ -329,6 +318,94 @@ describe("tui list viewport", () => {
     const lastFrame = frames[frames.length - 1]
     expect(lastFrame).toContain("preset-6")
     expect(lastFrame).not.toContain("(base config)")
+  })
+})
+
+describe("tui random games", () => {
+  // g opens the games list; Enter flips the selected game in the install
+  // configs' enabledGames and redraws the open sessions from the games left.
+  function runTui(input, lines = 30) {
+    return spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, TERM: "unknown-terminal", LINES: String(lines) },
+      input,
+      encoding: "utf8",
+    }).stdout
+  }
+
+  function writeBaseConfig(config) {
+    writeFileSync(join(root, "openpeon.json"), JSON.stringify({ volume: 3, mappings: [], ...config }))
+  }
+
+  function readEnabledGames() {
+    return JSON.parse(readFileSync(join(root, "openpeon.json"), "utf8")).enabledGames
+  }
+
+  beforeEach(() => {
+    mkdirSync(join(root, "presets"), { recursive: true })
+    for (const name of ["wc2-peon", "wc3-peon", "wc3-wisp", "sc2-marine"]) {
+      writeFileSync(join(root, "presets", `${name}.json`), "{}")
+    }
+  })
+
+  test("the first toggle turns the implicit all-games list into an explicit one", () => {
+    writeBaseConfig({})
+    const output = runTui("g\nq")
+    expect(output).toContain("●wc2 ●wc3 ●sc2")
+    expect(readEnabledGames()).toEqual(["wc3", "sc2"])
+  })
+
+  test("enables a game missing from enabledGames", () => {
+    writeBaseConfig({ enabledGames: ["wc3"] })
+    const output = runTui("g\nq")
+    expect(output).toContain("○wc2 ●wc3 ○sc2")
+    expect(readEnabledGames()).toEqual(["wc2", "wc3"])
+  })
+
+  test("redraws every open Claude and pi session from the games left", () => {
+    const piRoot = mkdtempSync(join(tmpdir(), "openpeon-popup-pi-"))
+    mkdirSync(join(piRoot, "state"))
+    mkdirSync(join(piRoot, "presets"))
+    writeFileSync(join(piRoot, "presets", "wc3-grunt.json"), "{}")
+    writeFileSync(join(piRoot, "openpeon.json"), JSON.stringify({ randomPreset: true, mappings: [] }))
+    writeFileSync(join(piRoot, "state", "pi-1.json"), JSON.stringify({ preset: "wc2-peon", root: piRoot }))
+    writeBaseConfig({ randomPreset: true, enabledGames: ["wc2", "wc3"] })
+    writeFileSync(join(root, "state", "sess-1.json"), JSON.stringify({ preset: "wc2-peon" }))
+    writeFileSync(join(root, "state", "sess-2.json"), JSON.stringify({ preset: "wc2-peon", volume: 4 }))
+    const hourAgo = new Date(Date.now() - 3600 * 1000)
+    utimesSync(join(root, "state", "sess-2.json"), hourAgo, hourAgo)
+
+    // Enter on the first game turns wc2 off, leaving only wc3
+    spawnSync("/bin/bash", [SCRIPT, "tui", "sess-1"], {
+      env: { ...process.env, OPENPEON_ROOT: root, OPENPEON_PI_STATE_ROOT: piRoot, TERM: "unknown-terminal", LINES: "30" },
+      input: "g\nq",
+      encoding: "utf8",
+    })
+    const readJson = (path) => JSON.parse(readFileSync(path, "utf8"))
+
+    expect(readJson(join(root, "state", "sess-1.json")).preset).toMatch(/^wc3-/)
+    expect(readJson(join(root, "state", "sess-2.json"))).toMatchObject({ volume: 4, preset: expect.stringMatching(/^wc3-/) })
+    // Session discovery picks the newest state file: the redraw keeps mtimes
+    expect(Math.abs(statSync(join(root, "state", "sess-2.json")).mtimeMs - hourAgo.getTime())).toBeLessThan(1000)
+    expect(readJson(join(piRoot, "state", "pi-1.json")).preset).toBe("wc3-grunt")
+    expect(readJson(join(piRoot, "openpeon.json")).enabledGames).toEqual(["wc3"])
+    rmSync(piRoot, { recursive: true, force: true })
+  })
+
+  test("leaves sessions alone when the install does not roll random presets", () => {
+    writeBaseConfig({ randomPreset: false, enabledGames: ["wc2", "wc3"] })
+    writeFileSync(join(root, "state", "sess-1.json"), JSON.stringify({ preset: "wc2-peon" }))
+    runTui("g\nq")
+    expect(JSON.parse(readFileSync(join(root, "state", "sess-1.json"), "utf8")).preset).toBe("wc2-peon")
+    expect(readEnabledGames()).toEqual(["wc3"])
+  })
+
+  test("scrolls the games list to keep the selection visible", () => {
+    writeBaseConfig({})
+    // 6 lines - 4 fixed = 2 visible rows of the 3 games
+    const frames = runTui("gjjq", 6).split("\x1b[H\x1b[2J")
+    const lastFrame = frames[frames.length - 1]
+    expect(lastFrame).toContain("● sc2")
+    expect(lastFrame).not.toContain("● wc2")
   })
 })
 

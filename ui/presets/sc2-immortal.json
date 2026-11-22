@@ -1,0 +1,128 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/immortal-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/immortal-yes00.mp3",
+        "sc2-protoss/immortal-yes01.mp3",
+        "sc2-protoss/immortal-yes02.mp3",
+        "sc2-protoss/immortal-yes03.mp3",
+        "sc2-protoss/immortal-yes04.mp3",
+        "sc2-protoss/immortal-yes05.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/immortal-pissed00.mp3",
+        "sc2-protoss/immortal-pissed01.mp3",
+        "sc2-protoss/immortal-pissed02.mp3",
+        "sc2-protoss/immortal-pissed03.mp3",
+        "sc2-protoss/immortal-pissed04.mp3",
+        "sc2-protoss/immortal-pissed06.mp3",
+        "sc2-protoss/immortal-pissed07.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/immortal-what00.mp3",
+        "sc2-protoss/immortal-what01.mp3",
+        "sc2-protoss/immortal-what02.mp3",
+        "sc2-protoss/immortal-what03.mp3",
+        "sc2-protoss/immortal-what04.mp3",
+        "sc2-protoss/immortal-what05.mp3",
+        "sc2-protoss/immortal-what06.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/immortal-attack00.mp3",
+        "sc2-protoss/immortal-attack01.mp3",
+        "sc2-protoss/immortal-attack02.mp3",
+        "sc2-protoss/immortal-attack03.mp3",
+        "sc2-protoss/immortal-attack04.mp3",
+        "sc2-protoss/immortal-attack05.mp3",
+        "sc2-protoss/immortal-attack06.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

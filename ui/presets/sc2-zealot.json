@@ -1,0 +1,128 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/zealot-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/zealot-yes00.mp3",
+        "sc2-protoss/zealot-yes01.mp3",
+        "sc2-protoss/zealot-yes02.mp3",
+        "sc2-protoss/zealot-yes03.mp3",
+        "sc2-protoss/zealot-yes04.mp3",
+        "sc2-protoss/zealot-yes05.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/zealot-pissed00.mp3",
+        "sc2-protoss/zealot-pissed01.mp3",
+        "sc2-protoss/zealot-pissed02.mp3",
+        "sc2-protoss/zealot-pissed03.mp3",
+        "sc2-protoss/zealot-pissed04.mp3",
+        "sc2-protoss/zealot-pissed05.mp3",
+        "sc2-protoss/zealot-pissed06.mp3",
+        "sc2-protoss/zealot-pissed07.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/zealot-what00.mp3",
+        "sc2-protoss/zealot-what01.mp3",
+        "sc2-protoss/zealot-what02.mp3",
+        "sc2-protoss/zealot-what03.mp3",
+        "sc2-protoss/zealot-what04.mp3",
+        "sc2-protoss/zealot-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/zealot-attack00.mp3",
+        "sc2-protoss/zealot-attack01.mp3",
+        "sc2-protoss/zealot-attack02.mp3",
+        "sc2-protoss/zealot-attack03.mp3",
+        "sc2-protoss/zealot-attack04.mp3",
+        "sc2-protoss/zealot-attack05.mp3",
+        "sc2-protoss/zealot-attack06.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

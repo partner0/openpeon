@@ -1,0 +1,130 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/marauder-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/marauder-yes00.mp3",
+        "sc2-terran/marauder-yes01.mp3",
+        "sc2-terran/marauder-yes02.mp3",
+        "sc2-terran/marauder-yes03.mp3",
+        "sc2-terran/marauder-yes04.mp3",
+        "sc2-terran/marauder-yes05.mp3",
+        "sc2-terran/marauder-yes06.mp3",
+        "sc2-terran/marauder-yes07.mp3",
+        "sc2-terran/marauder-yes08.mp3",
+        "sc2-terran/marauder-yes09.mp3",
+        "sc2-terran/marauder-yes10.mp3",
+        "sc2-terran/marauder-yes11.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/marauder-pissed00.mp3",
+        "sc2-terran/marauder-pissed01.mp3",
+        "sc2-terran/marauder-pissed04.mp3",
+        "sc2-terran/marauder-pissed05.mp3",
+        "sc2-terran/marauder-pissed06.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/marauder-what00.mp3",
+        "sc2-terran/marauder-what01.mp3",
+        "sc2-terran/marauder-what02.mp3",
+        "sc2-terran/marauder-what03.mp3",
+        "sc2-terran/marauder-what04.mp3",
+        "sc2-terran/marauder-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/marauder-attack00.mp3",
+        "sc2-terran/marauder-attack01.mp3",
+        "sc2-terran/marauder-attack02.mp3",
+        "sc2-terran/marauder-attack03.mp3",
+        "sc2-terran/marauder-attack04.mp3",
+        "sc2-terran/marauder-attack05.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

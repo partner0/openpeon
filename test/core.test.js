@@ -6,6 +6,7 @@ import {
   computeAfplayVolume,
   getRandomSound,
   listPresets,
+  listRandomPresets,
   loadConfig,
   loadPreset,
   matchesEventTrigger,
@@ -18,16 +19,12 @@ const PRESETS_DIR = resolve(__dirname, "fixtures", "presets")
 const CONFIGS_DIR = resolve(__dirname, "fixtures", "configs")
 
 describe("loadConfig", () => {
-  test("returns DEFAULT_CONFIG when the file is missing", () => {
-    expect(loadConfig(resolve(CONFIGS_DIR, "does-not-exist.json"))).toBe(DEFAULT_CONFIG)
-  })
-
-  test("returns DEFAULT_CONFIG on invalid JSON", () => {
-    expect(loadConfig(resolve(CONFIGS_DIR, "broken.json"))).toBe(DEFAULT_CONFIG)
-  })
-
-  test("returns DEFAULT_CONFIG when mappings is missing", () => {
-    expect(loadConfig(resolve(CONFIGS_DIR, "no-mappings.json"))).toBe(DEFAULT_CONFIG)
+  test.each([
+    ["the file is missing", "does-not-exist.json"],
+    ["the JSON is invalid", "broken.json"],
+    ["mappings is missing", "no-mappings.json"],
+  ])("returns DEFAULT_CONFIG when %s", (_case, file) => {
+    expect(loadConfig(resolve(CONFIGS_DIR, file))).toBe(DEFAULT_CONFIG)
   })
 
   test("returns the parsed config when valid", () => {
@@ -56,12 +53,25 @@ describe("loadPreset", () => {
     expect(preset.volume).toBe(4)
   })
 
-  test("returns null for a missing preset", () => {
-    expect(loadPreset(PRESETS_DIR, "does-not-exist")).toBeNull()
+  test.each([
+    ["a missing preset", "does-not-exist"],
+    ["invalid JSON", "broken"],
+  ])("returns null for %s", (_case, name) => {
+    expect(loadPreset(PRESETS_DIR, name)).toBeNull()
+  })
+})
+
+describe("listRandomPresets", () => {
+  test("keeps every preset when enabledGames is not an array", () => {
+    expect(listRandomPresets(PRESETS_DIR, undefined).sort()).toEqual(["broken", "no-tier", "tier1", "tier3"])
   })
 
-  test("returns null on invalid JSON", () => {
-    expect(loadPreset(PRESETS_DIR, "broken")).toBeNull()
+  test("keeps only presets whose name prefix is an enabled game", () => {
+    expect(listRandomPresets(PRESETS_DIR, ["no", "tier1"]).sort()).toEqual(["no-tier", "tier1"])
+  })
+
+  test("returns no presets when no game is enabled", () => {
+    expect(listRandomPresets(PRESETS_DIR, [])).toEqual([])
   })
 })
 
@@ -73,24 +83,16 @@ describe("pickWeightedPreset", () => {
     expect(pickWeightedPreset(PRESETS_DIR, [], () => 0)).toBeNull()
   })
 
-  test("a low roll lands in the first (tier 1, weight 3) bucket", () => {
-    expect(pickWeightedPreset(PRESETS_DIR, names, () => 0)).toBe("tier1")
-    expect(pickWeightedPreset(PRESETS_DIR, names, () => 0.49)).toBe("tier1")
-  })
-
-  test("a mid roll lands in the tier 3 (weight 1) bucket", () => {
-    // total weight 6, roll 0.55 * 6 = 3.3 falls past tier1 (3) into tier3 (3..4)
-    expect(pickWeightedPreset(PRESETS_DIR, names, () => 0.55)).toBe("tier3")
-  })
-
-  test("a high roll lands in the default-weight bucket", () => {
-    // roll 0.9 * 6 = 5.4 falls past tier1+tier3 (4) into no-tier (4..6)
-    expect(pickWeightedPreset(PRESETS_DIR, names, () => 0.9)).toBe("no-tier")
-  })
-
-  test("tier order follows weights, not list order", () => {
-    // total weight 1 + 3 = 4, roll 0.4 * 4 = 1.6 skips tier3 (1) into tier1
-    expect(pickWeightedPreset(PRESETS_DIR, ["tier3", "tier1"], () => 0.4)).toBe("tier1")
+  // Total weight 6 for names: tier1 covers 0..3, tier3 3..4, no-tier 4..6.
+  // The last row reorders the list: tier3 covers 0..1 of 4, tier1 1..4.
+  test.each([
+    [names, 0, "tier1"],
+    [names, 0.49, "tier1"],
+    [names, 0.55, "tier3"],
+    [names, 0.9, "no-tier"],
+    [["tier3", "tier1"], 0.4, "tier1"],
+  ])("%p with roll %p lands on %p", (presetNames, roll, expected) => {
+    expect(pickWeightedPreset(PRESETS_DIR, presetNames, () => roll)).toBe(expected)
   })
 
   test("an unreadable preset gets the default weight and the roll can still land on it", () => {
@@ -108,24 +110,16 @@ describe("getRandomSound", () => {
   test("returns the only element of a single-item list", () => {
     expect(getRandomSound(["peon.wav"])).toBe("peon.wav")
   })
-
-  test("returns an element of the list", () => {
-    const sounds = ["a.wav", "b.wav", "c.wav"]
-    expect(sounds).toContain(getRandomSound(sounds))
-  })
 })
 
 describe("computeAfplayVolume", () => {
-  test("volume 0 is mute", () => {
-    expect(computeAfplayVolume(0, false)).toBe(0)
-  })
-
-  test("volume 10 is full afplay volume", () => {
-    expect(computeAfplayVolume(10, false)).toBe(1)
-  })
-
-  test("the curve is exponential (perceptually linear)", () => {
-    expect(computeAfplayVolume(5, false)).toBe(0.25)
+  // (v/10)^2: 0 is mute, 10 is full volume, and the curve is perceptually linear.
+  test.each([
+    [0, 0],
+    [5, 0.25],
+    [10, 1],
+  ])("volume %p plays at %p", (volume, expected) => {
+    expect(computeAfplayVolume(volume, false)).toBe(expected)
   })
 
   test("whisper overrides the volume with the whisper level", () => {

@@ -1,0 +1,114 @@
+{
+  "volume": 3,
+  "tier": 3,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/ships-acknowledge-1.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/ships-acknowledge-1.wav",
+        "wc2-horde/ships-acknowledge-2.wav",
+        "wc2-horde/ships-acknowledge-3.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/ships-annoyed-1.wav",
+        "wc2-horde/ships-annoyed-2.wav",
+        "wc2-horde/ships-annoyed-3.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc2-horde/ships-selected-orc1.wav",
+        "wc2-horde/ships-selected-orc2.wav",
+        "wc2-horde/ships-selected-orc3.wav",
+        "wc2-horde/ships-selected-orc4.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/buildings-shipyard.wav",
+        "wc2-alliance/buildings-oil-platform.wav",
+        "wc2-alliance/buildings-oil-refinery.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

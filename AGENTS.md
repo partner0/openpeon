@@ -75,6 +75,7 @@ The `openpeon.json` file defines mappings between triggers and sounds:
 - The preset's mappings and volume override the base config for the session.
 - Selection is weighted by the preset's `tier` field (see below).
 - Can be toggled via the config UI.
+- `enabledGames` (string array) - Games the random roll draws from. A preset's game is its name prefix before the first `-` (`wc2`, `wc3`, `scbw`, `sc2`). Omitted means every game, including future ones; once set, a new game stays out until added. An empty array rolls nothing, so sessions keep the base config. Manual preset switches ignore it. The config UI sets it with the "Random games" toggles. Loading a preset into the UI editor replaces the whole config, so the UI carries `enabledGames` over explicitly and keeps it out of saved presets.
 
 ### Tier (Preset Weighting)
 
@@ -151,7 +152,17 @@ Package installs use `ui/presets/`; UI deployments copy presets to `<root>/prese
 - Volume writes go to the state file AND the base `openpeon.json` (user
   decision: new sessions inherit until the next deploy overwrites it).
   Preset and whisper (`w` key) writes are state-only so `randomPreset` keeps
-  rolling new sessions and whisper resets to on per session.
+  rolling new sessions and whisper resets to on per session. Game toggles
+  (`g` list) write `enabledGames` to every Claude and pi install config,
+  so the game selection is global, then redraw the preset of
+  every open session whose install has `randomPreset` on, by writing a new
+  `preset` into its state file. The redraw restores each state file's mtime,
+  since newest mtime is how the popup (pi) and the skill find the current
+  session. The Herdr action passes the Claude and pi install roots to the
+  pane next to the session's asset root, or the redraw would only see the
+  focused agent. The bash roll mirrors the core tier weights and reads tiers
+  with grep, because one jq call per preset made each toggle take about a
+  second.
 - Running OpenCode sessions are unreachable by design (in-memory config, no
   disk re-read); the popup shows an explanatory message for opencode panes.
 - bash 3.2 + UTF-8 gotcha: `"$bar▓"` parses as a variable NAMED `bar▓`

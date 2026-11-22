@@ -1,0 +1,115 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/drone-rdy00.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/drone-yes00.wav",
+        "scbw-zerg/drone-yes01.wav",
+        "scbw-zerg/drone-yes02.wav",
+        "scbw-zerg/drone-yes03.wav",
+        "scbw-zerg/drone-yes04.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/drone-pss00.wav",
+        "scbw-zerg/drone-pss01.wav",
+        "scbw-zerg/drone-pss02.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/drone-wht00.wav",
+        "scbw-zerg/drone-wht01.wav",
+        "scbw-zerg/drone-wht02.wav",
+        "scbw-zerg/drone-wht03.wav",
+        "scbw-zerg/drone-wht04.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "scbw-zerg/drone-min00.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

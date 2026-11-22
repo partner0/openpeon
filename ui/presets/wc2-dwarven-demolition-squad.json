@@ -1,0 +1,114 @@
+{
+  "volume": 3,
+  "tier": 2,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/dwarven-demolition-squad-other-ready.wav"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-1.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-2.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-3.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-4.wav",
+        "wc2-alliance/dwarven-demolition-squad-acknowledge-5.wav"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/dwarven-demolition-squad-annoyed-1.wav",
+        "wc2-alliance/dwarven-demolition-squad-annoyed-2.wav",
+        "wc2-alliance/dwarven-demolition-squad-annoyed-3.wav"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/dwarven-demolition-squad-selected-1.wav",
+        "wc2-alliance/dwarven-demolition-squad-selected-2.wav"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "wc2-alliance/buildings-gnomish-inventor.wav",
+        "wc2-alliance/buildings-foundry.wav",
+        "wc2-alliance/buildings-blacksmith.wav"
+      ],
+      "whisper": true
+    }
+  ]
+}

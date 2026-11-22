@@ -1,0 +1,137 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/thor-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/thor-yes00.mp3",
+        "sc2-terran/thor-yes02.mp3",
+        "sc2-terran/thor-yes03.mp3",
+        "sc2-terran/thor-yes04.mp3",
+        "sc2-terran/thor-yes05.mp3",
+        "sc2-terran/thor-yes06.mp3",
+        "sc2-terran/thor-yes07.mp3",
+        "sc2-terran/thor-yes08.mp3",
+        "sc2-terran/thor-yes09.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/thor-pissed00.mp3",
+        "sc2-terran/thor-pissed02.mp3",
+        "sc2-terran/thor-pissed03.mp3",
+        "sc2-terran/thor-pissed04.mp3",
+        "sc2-terran/thor-pissed05.mp3",
+        "sc2-terran/thor-pissed06.mp3",
+        "sc2-terran/thor-pissed07.mp3",
+        "sc2-terran/thor-pissed08.mp3",
+        "sc2-terran/thor-pissed09.mp3",
+        "sc2-terran/thor-pissed10.mp3",
+        "sc2-terran/thor-pissed11.mp3",
+        "sc2-terran/thor-pissed12.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/thor-what00.mp3",
+        "sc2-terran/thor-what01.mp3",
+        "sc2-terran/thor-what02.mp3",
+        "sc2-terran/thor-what03.mp3",
+        "sc2-terran/thor-what04.mp3",
+        "sc2-terran/thor-what05.mp3",
+        "sc2-terran/thor-what06.mp3",
+        "sc2-terran/thor-what07.mp3",
+        "sc2-terran/thor-what08.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-terran/thor-attack00.mp3",
+        "sc2-terran/thor-attack01.mp3",
+        "sc2-terran/thor-attack02.mp3",
+        "sc2-terran/thor-attack03.mp3",
+        "sc2-terran/thor-attack04.mp3",
+        "sc2-terran/thor-attack05.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

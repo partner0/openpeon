@@ -1,0 +1,126 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/darktemplar-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/darktemplar-yes00.mp3",
+        "sc2-protoss/darktemplar-yes01.mp3",
+        "sc2-protoss/darktemplar-yes02.mp3",
+        "sc2-protoss/darktemplar-yes03.mp3",
+        "sc2-protoss/darktemplar-yes04.mp3",
+        "sc2-protoss/darktemplar-yes05.mp3",
+        "sc2-protoss/darktemplar-yes06.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/darktemplar-pissed00.mp3",
+        "sc2-protoss/darktemplar-pissed01.mp3",
+        "sc2-protoss/darktemplar-pissed02.mp3",
+        "sc2-protoss/darktemplar-pissed03.mp3",
+        "sc2-protoss/darktemplar-pissed04.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/darktemplar-what00.mp3",
+        "sc2-protoss/darktemplar-what01.mp3",
+        "sc2-protoss/darktemplar-what02.mp3",
+        "sc2-protoss/darktemplar-what03.mp3",
+        "sc2-protoss/darktemplar-what04.mp3",
+        "sc2-protoss/darktemplar-what05.mp3",
+        "sc2-protoss/darktemplar-what06.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/darktemplar-attack00.mp3",
+        "sc2-protoss/darktemplar-attack01.mp3",
+        "sc2-protoss/darktemplar-attack02.mp3",
+        "sc2-protoss/darktemplar-attack03.mp3",
+        "sc2-protoss/darktemplar-attack04.mp3",
+        "sc2-protoss/darktemplar-attack05.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}

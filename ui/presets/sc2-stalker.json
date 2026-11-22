@@ -1,0 +1,137 @@
+{
+  "volume": 3,
+  "tier": 1,
+  "randomPreset": true,
+  "mappings": [
+    {
+      "name": "welcome",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "openpeon.startup"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/stalker-ready00.mp3"
+      ]
+    },
+    {
+      "name": "acknowledge",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "message.updated",
+          "role": "user"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/stalker-yes00.mp3",
+        "sc2-protoss/stalker-yes01.mp3",
+        "sc2-protoss/stalker-yes02.mp3",
+        "sc2-protoss/stalker-yes03.mp3",
+        "sc2-protoss/stalker-yes04.mp3",
+        "sc2-protoss/stalker-yes05.mp3",
+        "sc2-protoss/stalker-yes06.mp3",
+        "sc2-protoss/stalker-yes07.mp3"
+      ]
+    },
+    {
+      "name": "work-complete",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "session.idle"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/stalker-pissed00.mp3",
+        "sc2-protoss/stalker-pissed01.mp3",
+        "sc2-protoss/stalker-pissed02.mp3",
+        "sc2-protoss/stalker-pissed03.mp3",
+        "sc2-protoss/stalker-pissed04.mp3",
+        "sc2-protoss/stalker-pissed06.mp3",
+        "sc2-protoss/stalker-pissed07.mp3",
+        "sc2-protoss/stalker-pissed08.mp3",
+        "sc2-protoss/stalker-pissed09.mp3",
+        "sc2-protoss/stalker-pissed10.mp3",
+        "sc2-protoss/stalker-pissed11.mp3",
+        "sc2-protoss/stalker-pissed12.mp3",
+        "sc2-protoss/stalker-pissed13.mp3",
+        "sc2-protoss/stalker-pissed14.mp3"
+      ]
+    },
+    {
+      "name": "permission-asked",
+      "triggers": [
+        {
+          "type": "event",
+          "event": "permission.asked"
+        },
+        {
+          "type": "tool.before",
+          "tool": "question"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/stalker-what00.mp3",
+        "sc2-protoss/stalker-what01.mp3",
+        "sc2-protoss/stalker-what02.mp3",
+        "sc2-protoss/stalker-what03.mp3",
+        "sc2-protoss/stalker-what04.mp3",
+        "sc2-protoss/stalker-what05.mp3"
+      ]
+    },
+    {
+      "name": "working-hard",
+      "triggers": [
+        {
+          "type": "tool.before",
+          "tool": "todowrite"
+        },
+        {
+          "type": "tool.before",
+          "tool": "todoread"
+        },
+        {
+          "type": "tool.before",
+          "tool": "read"
+        },
+        {
+          "type": "tool.before",
+          "tool": "write"
+        },
+        {
+          "type": "tool.before",
+          "tool": "edit"
+        },
+        {
+          "type": "tool.before",
+          "tool": "glob"
+        },
+        {
+          "type": "tool.before",
+          "tool": "grep"
+        },
+        {
+          "type": "tool.before",
+          "tool": "webfetch"
+        },
+        {
+          "type": "tool.before",
+          "tool": "bash"
+        }
+      ],
+      "sounds": [
+        "sc2-protoss/stalker-attack00.mp3",
+        "sc2-protoss/stalker-attack01.mp3",
+        "sc2-protoss/stalker-attack02.mp3",
+        "sc2-protoss/stalker-attack03.mp3",
+        "sc2-protoss/stalker-attack04.mp3",
+        "sc2-protoss/stalker-attack05.mp3",
+        "sc2-protoss/stalker-attack06.mp3",
+        "sc2-protoss/stalker-attack07.mp3"
+      ],
+      "whisper": true
+    }
+  ]
+}
